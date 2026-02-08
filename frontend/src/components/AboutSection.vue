@@ -6,13 +6,13 @@
     
     <div class="intro-content mb-16">
       <img 
-        src="https://api.dicebear.com/7.x/avataaars/svg?seed=TesLongXiao" 
+        src="https://api.dicebear.com/7.x/avataaars/svg?seed=MetaXiao" 
         alt="Avatar" 
         class="avatar float-right ml-10 mb-6 w-40 h-40 rounded-full border-4 border-white/10 transition-all duration-500 hover:scale-110 hover:rotate-12 hover:border-accent hover:shadow-2xl hover:shadow-accent/50"
       >
       <div class="text-white/70 leading-8 text-base">
         <p class="mb-4">
-          你好！我是 <span class="text-accent font-medium">TesLongXiao</span>，一名热爱技术的开发者。
+          你好！我是 <span class="text-accent font-medium">MetaXiao</span>，一名热爱技术的开发者。
         </p>
         <p class="mb-4">
           这里是我的个人空间，记录着我在技术探索路上的点点滴滴。
