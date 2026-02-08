@@ -3,8 +3,8 @@
     <!-- 星轨背景 - 延伸到下方 -->
     <StarTrackBackground />
     
-    <!-- 灰色背景 - 从底部开始 -->
-    <div class="gray-background"></div>
+    <!-- 灰色背景 - 滚动后才显示 -->
+    <div class="gray-background" :class="{ visible: isScrolled }"></div>
     
     <!-- 侧边导航 -->
     <SideNavigation />
@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import StarTrackBackground from '@/components/StarTrackBackground.vue'
 import SideNavigation from '@/components/SideNavigation.vue'
 import HeroSection from '@/components/HeroSection.vue'
@@ -55,6 +55,12 @@ import PostsSection from '@/components/PostsSection.vue'
 import LinksSection from '@/components/LinksSection.vue'
 import ContactSection from '@/components/ContactSection.vue'
 import FooterSection from '@/components/FooterSection.vue'
+
+const isScrolled = ref(false)
+
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 50
+}
 
 onMounted(() => {
   // 初始化滚动动画观察器
@@ -75,6 +81,10 @@ onMounted(() => {
   document.querySelectorAll('.section-wrapper').forEach(el => {
     observer.observe(el)
   })
+  
+  // 监听滚动
+  window.addEventListener('scroll', handleScroll)
+  handleScroll() // 初始检查
 })
 </script>
 
@@ -87,13 +97,20 @@ onMounted(() => {
 /* 灰色背景从黄金分割点开始 */
 .gray-background {
   position: fixed;
-  top: 38.2vh;  /* 黄金分割比 */
+  top: 38.2vh; 
   left: 0;
   width: 100%;
-  height: 61.8vh;  /* 剩余部分 */
+  height: 61.8vh; 
   background: #202020;
   z-index: 0;
   pointer-events: none;
+  opacity: 0;  /* 初始隐藏 */
+  transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* 滚动后显示灰色背景 */
+.gray-background.visible {
+  opacity: 1;
 }
 
 .intro-section {
