@@ -1,7 +1,7 @@
 <template>
-  <div class="star-track-background">
+  <div class="star-track-background" :class="{ shrink: isScrolled }">
     <canvas ref="canvasRef" id="startrack"></canvas>
-    <!-- 渐变遮罩：完全复刻 xcnya.cn -->
+    <!-- 渐变遮罩-->
     <div class="cover"></div>
   </div>
 </template>
@@ -10,7 +10,13 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const canvasRef = ref(null)
+const isScrolled = ref(false)
 let animationId = null
+
+// 监听滚动
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 100
+}
 
 class StarTrack {
   constructor(canvas) {
@@ -26,7 +32,7 @@ class StarTrack {
   
   init() {
     this.canvas.width = window.innerWidth
-    this.canvas.height = window.innerHeight * 0.382  // 黄金分割比
+    this.canvas.height = window.innerHeight  // 全屏高度
     this.createStars()
   }
   
@@ -171,10 +177,13 @@ onMounted(() => {
     const handleResize = () => {
       starTrack.init()
     }
+    
     window.addEventListener('resize', handleResize)
+    window.addEventListener('scroll', handleScroll)
     
     onUnmounted(() => {
       window.removeEventListener('resize', handleResize)
+      window.removeEventListener('scroll', handleScroll)
       if (animationId) {
         cancelAnimationFrame(animationId)
       }
@@ -184,15 +193,21 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 完全复刻 xcnya.cn 的星轨背景 */
+/* 星空背景 - 带滚动动画 */
 .star-track-background {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
-  height: 38.2vh;  /* 黄金分割比（小的部分） */
+  height: 100vh;  /* 初始全屏 */
   z-index: 0;
   overflow: hidden;
+  transition: height 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* 滚动后收缩到黄金分割比 */
+.star-track-background.shrink {
+  height: 38.2vh;
 }
 
 #startrack {
@@ -208,6 +223,13 @@ onMounted(() => {
   width: 100%;
   background: linear-gradient(0deg, #202020 0%, rgba(32, 32, 32, 0) 100%);
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* 滚动后显示渐变遮罩 */
+.star-track-background.shrink .cover {
+  opacity: 1;
 }
 </style>
 
