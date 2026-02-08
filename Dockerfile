@@ -10,8 +10,8 @@ COPY frontend/package*.json ./frontend/
 COPY backend/package*.json ./backend/
 
 # 安装依赖
-RUN cd frontend && npm ci --only=production=false
-RUN cd backend && npm ci --only=production
+RUN cd frontend && npm install
+RUN cd backend && npm install --omit=dev
 
 #复制源代码
 COPY frontend/ ./frontend/
