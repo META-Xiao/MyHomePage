@@ -1,25 +1,29 @@
 <template>
   <div class="hero-section container-custom text-center">
     <div class="animate-fade-in-up">
-      <div class="circle flex justify-center gap-2 mb-8">
-        <span class="dot"></span>
-        <span class="dot delay-200"></span>
-        <span class="dot delay-400"></span>
+      <!-- 三色圆点 -->
+      <div class="circle">
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
       
-      <h1 class="text-5xl md:text-8xl font-bold mb-8 gradient-text tracking-wide leading-tight hero-title">
+      <h1 class="hero-title">
         {{ mainTitle }}
       </h1>
       
-      <h2 class="text-xl md:text-3xl font-light text-white/70 tracking-[0.3em] mb-12 hero-subtitle">
+      <h2 class="hero-subtitle" id="slogan">
         {{ currentSlogan }}
       </h2>
       
-      <div class="hero-footer text-sm text-white/40 font-mono">
-        <span class="dot-separator">🟢</span>
-        <span class="dot-separator">🟡</span>
-        <span class="dot-separator">🔴</span>
-        <span class="ml-4">libxcnya.so の Catnest</span>
+      <!-- 底部签名 -->
+      <div class="hero-footer">
+        <div class="circle-inline">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span class="signature">libxcnya.so の Catnest</span>
       </div>
     </div>
   </div>
@@ -33,17 +37,31 @@ const currentSlogan = ref('也值得被认真对待')
 
 const titles = [
   { main: '即使是最小的 margin', sub: '也值得被认真对待' },
+  { main: '在 git push 之前', sub: '记得先 pull 一下吧' },
   { main: '代码如诗', sub: '每一行都是艺术' },
-  { main: '不止于技术', sub: '更在于热爱' },
-  { main: '折腾是一种态度', sub: '创造是一种信仰' }
+  { main: '折腾是态度', sub: '创造是信仰' }
 ]
 
 let titleIndex = 0
 
 const rotateTitle = () => {
-  titleIndex = (titleIndex + 1) % titles.length
-  mainTitle.value = titles[titleIndex].main
-  currentSlogan.value = titles[titleIndex].sub
+  const slogan = document.getElementById('slogan')
+  if (slogan) {
+    slogan.classList.add('fade-out')
+    
+    setTimeout(() => {
+      titleIndex = (titleIndex + 1) % titles.length
+      mainTitle.value = titles[titleIndex].main
+      currentSlogan.value = titles[titleIndex].sub
+      
+      slogan.classList.remove('fade-out')
+      slogan.classList.add('fade-in')
+      
+      setTimeout(() => {
+        slogan.classList.remove('fade-in')
+      }, 500)
+    }, 500)
+  }
 }
 
 onMounted(() => {
@@ -53,33 +71,58 @@ onMounted(() => {
 
 <style scoped>
 .hero-section {
-  @apply relative;
+  position: relative;
 }
 
-.dot {
-  @apply inline-block w-3.5 h-3.5 rounded-full animate-pulse;
+/* 三色圆点 - 顶部 */
+.circle {
+  float: left;
+  margin-right: 10px;
+  letter-spacing: 0;
+  margin-bottom: 20px;
 }
 
-.dot:nth-child(1) {
+.circle span {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  background-color: #fff;
+  border-radius: 100%;
+  margin-right: 5px;
+}
+
+.circle span:first-child {
   background-color: #ff493f;
 }
 
-.dot:nth-child(2) {
+.circle span:nth-child(2) {
   background-color: #f7c900;
 }
 
-.dot:nth-child(3) {
+.circle span:nth-child(3) {
   background-color: #00ff37;
 }
 
+/* 标题样式 */
 .hero-title {
+  font-weight: 400;
+  font-size: 42px;
+  line-height: 1.5em;
+  letter-spacing: 0.5em;
+  color: #fff;
+  margin-bottom: 0.6em;
   animation: float 6s ease-in-out infinite;
-  text-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
 }
 
 .hero-subtitle {
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1.5em;
+  letter-spacing: 0.2em;
+  color: #fff;
   animation: float 6s ease-in-out infinite;
   animation-delay: 0.5s;
+  margin-bottom: 40px;
 }
 
 @keyframes float {
@@ -91,33 +134,96 @@ onMounted(() => {
   }
 }
 
-.dot-separator {
-  @apply inline-block mx-1;
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+/* 标题切换动画 */
+#slogan {
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
-.dot-separator:nth-child(1) {
-  animation-delay: 0s;
+#slogan.fade-in {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.dot-separator:nth-child(2) {
-  animation-delay: 0.3s;
+#slogan.fade-out {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
-.dot-separator:nth-child(3) {
-  animation-delay: 0.6s;
-}
-
+/* 底部签名 */
 .hero-footer {
-  animation: fadeIn 2s ease-in-out;
+  margin-top: 40px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Roboto', 'Consolas', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+.circle-inline {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.circle-inline span {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+}
+
+.circle-inline span:first-child {
+  background-color: #ff493f;
+}
+
+.circle-inline span:nth-child(2) {
+  background-color: #f7c900;
+}
+
+.circle-inline span:nth-child(3) {
+  background-color: #00ff37;
+}
+
+.signature {
+  letter-spacing: 0.1em;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 26px;
   }
-  to {
-    opacity: 1;
+  
+  .hero-subtitle {
+    font-size: 14px;
+  }
+  
+  .circle {
+    float: none;
+    margin: 0 auto 20px;
+    text-align: center;
+  }
+  
+  .circle span {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+  }
+  
+  .hero-footer {
+    font-size: 12px;
+  }
+}
+
+/* 大屏幕适配 */
+@media screen and (min-width: 1400px) {
+  .hero-title {
+    font-size: 52px;
+  }
+  
+  .hero-subtitle {
+    font-size: 28px;
   }
 }
 </style>

@@ -102,7 +102,6 @@ onMounted(() => {
   justify-content: center;
   position: relative;
   z-index: 2;
-  margin-left: 120px;
 }
 
 .section-wrapper {
@@ -111,7 +110,6 @@ onMounted(() => {
   padding: 120px 0;
   opacity: 0;
   transform: translateY(50px);
-  margin-left: 120px;
 }
 
 .section-wrapper.animate-fade-in-up {
@@ -127,13 +125,11 @@ onMounted(() => {
 
 @media (max-width: 768px) {
   .intro-section {
-    margin-left: 0;
     padding-bottom: 80px;
   }
   
   .section-wrapper {
     padding: 80px 0;
-    margin-left: 0;
   }
 }
 </style>

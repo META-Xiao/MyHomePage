@@ -9,3 +9,5 @@ dist
 .idea
 backend/node_modules
 backend/.env
+xcnya_source.html
+xcnya_styles.css
