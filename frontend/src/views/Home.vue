@@ -1,7 +1,10 @@
 <template>
   <div class="home-page">
-    <!-- 星轨背景 -->
+    <!-- 星轨背景 - 延伸到下方 -->
     <StarTrackBackground />
+    
+    <!-- 灰色背景 - 从底部开始 -->
+    <div class="gray-background"></div>
     
     <!-- 侧边导航 -->
     <SideNavigation />
@@ -81,6 +84,17 @@ onMounted(() => {
   min-height: 100vh;
 }
 
+/* 灰色背景从 75vh 开始，覆盖剩余所有内容 */
+.gray-background {
+  position: absolute;
+  top: 75vh;
+  left: 0;
+  width: 100%;
+  min-height: calc(100% - 75vh);
+  background: #1a1a1a;
+  z-index: 1;
+}
+
 .intro-section {
   height: 100vh;
   display: flex;
@@ -88,6 +102,7 @@ onMounted(() => {
   justify-content: center;
   position: relative;
   z-index: 2;
+  margin-left: 120px;
 }
 
 .section-wrapper {
@@ -96,6 +111,7 @@ onMounted(() => {
   padding: 120px 0;
   opacity: 0;
   transform: translateY(50px);
+  margin-left: 120px;
 }
 
 .section-wrapper.animate-fade-in-up {
@@ -110,8 +126,14 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
+  .intro-section {
+    margin-left: 0;
+    padding-bottom: 80px;
+  }
+  
   .section-wrapper {
     padding: 80px 0;
+    margin-left: 0;
   }
 }
 </style>

@@ -8,7 +8,7 @@
       <img 
         src="https://api.dicebear.com/7.x/avataaars/svg?seed=TesLongXiao" 
         alt="Avatar" 
-        class="avatar float-right ml-10 mb-6 w-40 h-40 rounded-full border-4 border-white/10 transition-all duration-300 hover:scale-105 hover:rotate-6 hover:border-accent hover:shadow-lg hover:shadow-accent/30"
+        class="avatar float-right ml-10 mb-6 w-40 h-40 rounded-full border-4 border-white/10 transition-all duration-500 hover:scale-110 hover:rotate-12 hover:border-accent hover:shadow-2xl hover:shadow-accent/50"
       >
       <div class="text-white/70 leading-8 text-base">
         <p class="mb-4">
@@ -29,15 +29,16 @@
       <div 
         v-for="(tech, index) in techStack" 
         :key="index"
-        class="tech-item glass-effect rounded-2xl p-6 text-center card-hover"
+        class="tech-item glass-effect rounded-2xl p-6 text-center card-hover group cursor-pointer"
+        :style="{ transitionDelay: `${index * 50}ms` }"
       >
         <div 
-          class="tech-icon w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center text-4xl shadow-lg"
+          class="tech-icon w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center text-4xl shadow-lg transition-all duration-500 group-hover:scale-125 group-hover:rotate-12"
           :style="{ background: tech.gradient }"
         >
           {{ tech.icon }}
         </div>
-        <div class="tech-name text-base font-medium mb-2 tracking-wide">{{ tech.name }}</div>
+        <div class="tech-name text-base font-medium mb-2 tracking-wide transition-colors group-hover:text-accent">{{ tech.name }}</div>
         <div class="tech-desc text-xs text-white/60 leading-relaxed">{{ tech.desc }}</div>
       </div>
     </div>
