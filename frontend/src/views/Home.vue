@@ -84,15 +84,16 @@ onMounted(() => {
   min-height: 100vh;
 }
 
-/* 灰色背景从 100vh 开始 */
+/* 灰色背景从第二屏开始 */
 .gray-background {
-  position: absolute;
+  position: fixed;
   top: 100vh;
   left: 0;
   width: 100%;
-  min-height: calc(100% - 100vh);
+  height: 100vh;
   background: #202020;
-  z-index: 1;
+  z-index: 1;  /* 在星空之上，在内容之下 */
+  pointer-events: none;
 }
 
 .intro-section {
