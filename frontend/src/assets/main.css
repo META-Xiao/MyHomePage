@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply transition-all duration-300;
+    transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-primary-dark text-white antialiased;
+    font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  /* 自定义滚动条 */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-primary-dark;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-white/20 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-white/30;
+  }
+
+  /* 容器 */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-6 md:px-12;
+  }
+
+  /* 渐变文字 */
+  .gradient-text {
+    @apply bg-gradient-to-r from-accent to-accent-secondary bg-clip-text text-transparent;
+  }
+
+  /* 玻璃态效果 */
+  .glass-effect {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+
+  /* 卡片悬停效果 */
+  .card-hover {
+    @apply transition-all duration-300 hover:bg-white/10 hover:-translate-y-2 hover:shadow-2xl;
+  }
+
+  /* 按钮样式 */
+  .btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-accent/20 to-accent-secondary/20 
+           border border-white/20 rounded-full font-medium
+           hover:from-accent/30 hover:to-accent-secondary/30 
+           hover:border-accent hover:shadow-lg hover:shadow-accent/50
+           transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  /* 动画延迟 */
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-300 { animation-delay: 0.3s; }
+  .delay-400 { animation-delay: 0.4s; }
+  .delay-500 { animation-delay: 0.5s; }
+}
+

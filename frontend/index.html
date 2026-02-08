@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TesLongXiao - 我是区</title>
+    
+    <!-- DaisyUI + Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+    <!-- Iconify -->
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    
+    <!-- Google Fonts - 使用更有个性的字体 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            overflow-x: hidden;
+            background: #0d1117;
+            position: relative;
+        }
+        
+        /* 噪点纹理背景 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: var(--noise);
+            opacity: 0.03;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* 星轨背景 */
+        #startrack-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        }
+        
+        #startrack {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Glass UI - 不对称设计 */
+        .glass {
+            background: rgba(13, 17, 23, 0.6);
+            backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+        
+        .glass-strong {
+            background: rgba(13, 17, 23, 0.8);
+            backdrop-filter: blur(20px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        
+        /* 内容容器 */
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* 不对称渐变文字 - 避免紫色 */
+        .gradient-text {
+            background: linear-gradient(120deg, #00ff87 0%, #60efff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* 不对称布局 */
+        .asymmetric-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .asymmetric-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 弹性动画 - 避免线性 */
+        .bounce-in {
+            animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) rotate(-5deg);
+            }
+            50% {
+                transform: scale(1.05) rotate(2deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0);
+            }
+        }
+        
+        /* 悬停效果 */
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-8px) rotate(1deg);
+            box-shadow: 0 20px 40px rgba(0, 255, 135, 0.2);
+        }
+        
+        /* 加载动画 */
+        .loading-pulse {
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+        
+        /* 导航栏 - 不完美对齐 */
+        .navbar-custom {
+            padding: 1rem 2rem;
+            transform: skewY(-0.5deg);
+        }
+        
+        /* 卡片倾斜 */
+        .card-tilt {
+            transform: rotate(-1deg);
+        }
+        
+        .card-tilt:nth-child(even) {
+            transform: rotate(1deg);
+        }
+        
+        /* 文字阴影 */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(0, 255, 135, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- 星轨背景 -->
+        <div id="startrack-bg">
+            <canvas id="startrack"></canvas>
+        </div>
+        
+        <!-- 主内容 -->
+        <div class="content-wrapper">
+            <!-- 导航栏 - 不对称设计 -->
+            <div class="navbar glass navbar-custom fixed top-0 z-50">
+                <div class="navbar-start">
+                    <div class="dropdown">
+                        <label tabindex="0" class="btn btn-ghost lg:hidden">
+                            <span class="iconify" data-icon="mdi:menu" data-width="24"></span>
+                        </label>
+                        <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow glass rounded-box w-52">
+                            <li><a @click="scrollTo('hero')">首页</a></li>
+                            <li><a @click="scrollTo('about')">关于</a></li>
+                            <li><a @click="scrollTo('posts')">写的东西</a></li>
+                            <li><a @click="scrollTo('stats')">数据</a></li>
+                        </ul>
+                    </div>
+                    <a class="text-xl font-bold gradient-text">TesLongXiao</a>
+                </div>
+                <div class="navbar-center hidden lg:flex">
+                    <ul class="menu menu-horizontal px-1 gap-2">
+                        <li><a @click="scrollTo('hero')" class="hover:text-[#00ff87]">首页</a></li>
+                        <li><a @click="scrollTo('about')" class="hover:text-[#00ff87]">关于</a></li>
+                        <li><a @click="scrollTo('posts')" class="hover:text-[#00ff87]">写的东西</a></li>
+                        <li><a @click="scrollTo('stats')" class="hover:text-[#00ff87]">数据</a></li>
+                    </ul>
+                </div>
+                <div class="navbar-end">
+                    <a href="https://teslongxiao.cn" target="_blank" class="btn btn-sm bg-[#00ff87] text-black hover:bg-[#00cc6f] border-0">
+                        去博客看看
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Hero Section - 不对称布局 -->
+            <div id="hero" class="min-h-screen flex items-center px-4 md:px-12 pt-20">
+                <div class="max-w-6xl mx-auto w-full">
+                    <div class="asymmetric-grid items-center">
+                        <div class="bounce-in">
+                            <div class="text-sm text-[#00ff87] mb-4 font-mono">{{ currentTime }}</div>
+                            <h1 class="text-5xl md:text-7xl font-bold mb-6 text-glow" style="line-height: 1.2;">
+                                {{ greeting }}<br>
+                                <span class="gradient-text">我是 TesLongXiao</span>
+                            </h1>
+                            <p class="text-xl md:text-2xl text-gray-400 mb-8 font-light">
+                                {{ slogan }}
+                            </p>
+                            <div class="flex gap-3 flex-wrap">
+                                <span class="px-4 py-2 bg-[#00ff87]/10 text-[#00ff87] rounded-lg border border-[#00ff87]/30">
+                                    写代码
+                                </span>
+                                <span class="px-4 py-2 bg-[#60efff]/10 text-[#60efff] rounded-lg border border-[#60efff]/30">
+                                    搞服务器
+                                </span>
+                                <span class="px-4 py-2 bg-[#ff6b6b]/10 text-[#ff6b6b] rounded-lg border border-[#ff6b6b]/30">
+                                    折腾 Docker
+                                </span>
+                            </div>
+                        </div>
+                        <div class="hidden md:block">
+                            <img src="https://picsum.photos/400/500?random=1" alt="Random" class="rounded-2xl glass hover-lift" style="transform: rotate(3deg);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 关于部分 - 不对称卡片 -->
+            <div id="about" class="px-4 md:px-12 py-20">
+                <div class="max-w-6xl mx-auto">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-12 gradient-text">关于我这个人</h2>
+                    <div class="asymmetric-grid">
+                        <div class="glass rounded-2xl p-8 hover-lift card-tilt">
+                            <div class="flex items-start gap-6">
+                                <div class="avatar">
+                                    <div class="w-24 rounded-2xl ring ring-[#00ff87] ring-offset-base-100 ring-offset-2">
+                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=TesLongXiao" />
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="text-2xl font-bold mb-3 text-[#00ff87]">TesLongXiao</h3>
+                                    <p class="text-gray-400 leading-relaxed mb-4">
+                                        不装的技术人。<br>
+                                        写代码，搞服务器。<br>
+                                        喜欢折腾新东西。<br>
+                                        偶尔写点文章。
+                                    </p>
+                                    <div class="flex gap-3">
+                                        <a href="#" class="text-2xl hover:text-[#00ff87] transition-colors">
+                                            <span class="iconify" data-icon="mdi:github"></span>
+                                        </a>
+                                        <a href="#" class="text-2xl hover:text-[#60efff] transition-colors">
+                                            <span class="iconify" data-icon="mdi:twitter"></span>
+                                        </a>
+                                        <a href="#" class="text-2xl hover:text-[#ff6b6b] transition-colors">
+                                            <span class="iconify" data-icon="mdi:email"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass rounded-2xl p-8 hover-lift" style="transform: rotate(1deg);">
+                            <h4 class="text-xl font-bold mb-4 text-[#60efff]">技能树</h4>
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-3">
+                                    <span class="iconify text-2xl text-[#00ff87]" data-icon="mdi:vuejs"></span>
+                                    <span>Vue 写了 2 年</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="iconify text-2xl text-[#60efff]" data-icon="mdi:nodejs"></span>
+                                    <span>Node.js 还行</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="iconify text-2xl text-[#ff6b6b]" data-icon="mdi:docker"></span>
+                                    <span>Docker 玩得溜</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="iconify text-2xl text-[#ffd93d]" data-icon="mdi:linux"></span>
+                                    <span>Linux 日常用</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 最新文章 - 不对称网格 -->
+            <div id="posts" class="px-4 md:px-12 py-20">
+                <div class="max-w-6xl mx-auto">
+                    <div class="flex justify-between items-end mb-12">
+                        <h2 class="text-4xl md:text-5xl font-bold gradient-text">最近写的</h2>
+                        <a href="https://teslongxiao.cn" target="_blank" class="text-[#00ff87] hover:underline">
+                            看全部 →
+                        </a>
+                    </div>
+                    
+                    <div v-if="loading" class="text-center py-20">
+                        <div class="flex justify-center gap-2 mb-4">
+                            <span class="w-3 h-3 bg-[#00ff87] rounded-full loading-pulse"></span>
+                            <span class="w-3 h-3 bg-[#60efff] rounded-full loading-pulse" style="animation-delay: 0.2s;"></span>
+                            <span class="w-3 h-3 bg-[#ff6b6b] rounded-full loading-pulse" style="animation-delay: 0.4s;"></span>
+                        </div>
+                        <p class="text-gray-500">加载中...</p>
+                    </div>
+                    
+                    <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div v-for="(post, index) in posts" :key="post.id" 
+                             class="glass rounded-2xl p-6 hover-lift card-tilt"
+                             :style="{ gridColumn: index === 0 ? 'span 2' : 'span 1' }">
+                            <div class="flex flex-col h-full">
+                                <div class="flex items-start justify-between mb-4">
+                                    <span class="px-3 py-1 bg-[#00ff87]/10 text-[#00ff87] text-sm rounded-lg border border-[#00ff87]/30">
+                                        {{ post.category }}
+                                    </span>
+                                    <span class="text-sm text-gray-500">{{ post.date }}</span>
+                                </div>
+                                <h3 class="text-xl font-bold mb-3 hover:text-[#00ff87] transition-colors">
+                                    <a :href="post.link" target="_blank">{{ post.title }}</a>
+                                </h3>
+                                <p class="text-gray-400 mb-4 flex-1 line-clamp-2">{{ post.excerpt }}</p>
+                                <div class="flex items-center justify-between text-sm text-gray-500">
+                                    <span class="flex items-center gap-2">
+                                        <span class="iconify" data-icon="mdi:eye"></span>
+                                        {{ post.views }} 次阅读
+                                    </span>
+                                    <a :href="post.link" target="_blank" class="text-[#00ff87] hover:underline">
+                                        读一读 →
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 统计信息 - 不对称卡片 -->
+            <div id="stats" class="px-4 md:px-12 py-20">
+                <div class="max-w-6xl mx-auto">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-12 gradient-text">一些数字</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="glass rounded-2xl p-8 hover-lift card-tilt">
+                            <div class="text-5xl font-bold text-[#00ff87] mb-2">{{ stats.posts }}</div>
+                            <div class="text-gray-400">篇文章</div>
+                            <div class="text-sm text-gray-600 mt-2">还在继续写</div>
+                        </div>
+                        <div class="glass rounded-2xl p-8 hover-lift" style="transform: rotate(1deg);">
+                            <div class="text-5xl font-bold text-[#60efff] mb-2">{{ formatNumber(stats.views) }}</div>
+                            <div class="text-gray-400">次阅读</div>
+                            <div class="text-sm text-gray-600 mt-2">感谢支持</div>
+                        </div>
+                        <div class="glass rounded-2xl p-8 hover-lift card-tilt">
+                            <div class="text-5xl font-bold text-[#ff6b6b] mb-2">{{ stats.categories }}</div>
+                            <div class="text-gray-400">个分类</div>
+                            <div class="text-sm text-gray-600 mt-2">内容挺杂</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 页脚 - 简洁设计 -->
+            <footer class="px-4 md:px-12 py-12 glass mt-20">
+                <div class="max-w-6xl mx-auto text-center">
+                    <p class="text-xl font-bold gradient-text mb-2">TesLongXiao</p>
+                    <p class="text-gray-500 text-sm mb-4">写代码 · 搞服务器 · 偶尔写文章</p>
+                    <p class="text-gray-600 text-xs">
+                        © 2024 · 用 
+                        <a href="https://mx-space.js.org/" target="_blank" class="text-[#00ff87] hover:underline">MX-Space</a>
+                        驱动
+                    </p>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        
+        createApp({
+            data() {
+                return {
+                    greeting: '嘿',
+                    slogan: '写代码，搞服务器，偶尔写点东西',
+                    currentTime: '',
+                    loading: true,
+                    posts: [],
+                    stats: {
+                        posts: 0,
+                        views: 0,
+                        categories: 0
+                    }
+                }
+            },
+            mounted() {
+                this.initStarTrack();
+                this.updateGreeting();
+                this.updateTime();
+                this.rotateSlogans();
+                this.fetchPosts();
+                this.fetchStats();
+                setInterval(this.updateTime, 1000);
+            },
+            methods: {
+                scrollTo(id) {
+                    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+                },
+                
+                updateTime() {
+                    const now = new Date();
+                    this.currentTime = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+                },
+                
+                updateGreeting() {
+                    const hour = new Date().getHours();
+                    const greetings = ['嘿', '哟', '嗨', '你好啊'];
+                    this.greeting = greetings[Math.floor(Math.random() * greetings.length)];
+                },
+                
+                rotateSlogans() {
+                    const slogans = [
+                        '写代码，搞服务器，偶尔写点东西',
+                        '技术宅，爱折腾，不装逼',
+                        '代码写得还行，服务器玩得溜',
+                        '喜欢新技术，讨厌老套路'
+                    ];
+                    let index = 0;
+                    setInterval(() => {
+                        index = (index + 1) % slogans.length;
+                        this.slogan = slogans[index];
+                    }, 5000);
+                },
+                
+                formatNumber(num) {
+                    if (num >= 10000) {
+                        return (num / 10000).toFixed(1) + 'w';
+                    }
+                    return num;
+                },
+                
+                async fetchPosts() {
+                    try {
+                        const response = await axios.get('/api/posts/latest?size=5');
+                        this.posts = response.data.data;
+                    } catch (error) {
+                        console.error('获取文章失败:', error);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                
+                async fetchStats() {
+                    try {
+                        const response = await axios.get('/api/stats');
+                        this.stats = response.data.data;
+                    } catch (error) {
+                        console.error('获取统计失败:', error);
+                    }
+                },
+                
+                initStarTrack() {
+                    const canvas = document.getElementById('startrack');
+                    const ctx = canvas.getContext('2d');
+                    
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    
+                    const stars = [];
+                    const shootingStars = [];
+                    const maxStars = 200;
+                    
+                    for (let i = 0; i < maxStars; i++) {
+                        stars.push({
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height,
+                            radius: Math.random() * 2,
+                            opacity: Math.random(),
+                            twinkleSpeed: Math.random() * 0.02 + 0.01,
+                            twinkleDirection: Math.random() > 0.5 ? 1 : -1
+                        });
+                    }
+                    
+                    function createShootingStar() {
+                        if (shootingStars.length < 3 && Math.random() < 0.01) {
+                            shootingStars.push({
+                                x: Math.random() * canvas.width,
+                                y: Math.random() * canvas.height * 0.3,
+                                length: Math.random() * 80 + 40,
+                                speed: Math.random() * 10 + 10,
+                                opacity: 1,
+                                angle: Math.PI / 4
+                            });
+                        }
+                    }
+                    
+                    function drawStar(star) {
+                        ctx.beginPath();
+                        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                        ctx.fill();
+                        
+                        if (star.radius > 1) {
+                            const gradient = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, star.radius * 3);
+                            gradient.addColorStop(0, `rgba(0, 255, 135, ${star.opacity * 0.3})`);
+                            gradient.addColorStop(1, 'rgba(0, 255, 135, 0)');
+                            ctx.fillStyle = gradient;
+                            ctx.beginPath();
+                            ctx.arc(star.x, star.y, star.radius * 3, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                    
+                    function drawShootingStar(star) {
+                        ctx.save();
+                        ctx.translate(star.x, star.y);
+                        ctx.rotate(star.angle);
+                        
+                        const gradient = ctx.createLinearGradient(0, 0, star.length, 0);
+                        gradient.addColorStop(0, `rgba(255, 255, 255, ${star.opacity})`);
+                        gradient.addColorStop(0.3, `rgba(0, 255, 135, ${star.opacity * 0.8})`);
+                        gradient.addColorStop(1, 'rgba(0, 255, 135, 0)');
+                        
+                        ctx.strokeStyle = gradient;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(star.length, 0);
+                        ctx.stroke();
+                        
+                        ctx.restore();
+                    }
+                    
+                    function animate() {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        
+                        stars.forEach(star => {
+                            star.opacity += star.twinkleSpeed * star.twinkleDirection;
+                            if (star.opacity <= 0.2 || star.opacity >= 1) {
+                                star.twinkleDirection *= -1;
+                            }
+                            drawStar(star);
+                        });
+                        
+                        createShootingStar();
+                        for (let i = shootingStars.length - 1; i >= 0; i--) {
+                            const star = shootingStars[i];
+                            star.x += Math.cos(star.angle) * star.speed;
+                            star.y += Math.sin(star.angle) * star.speed;
+                            star.opacity -= 0.01;
+                            
+                            if (star.opacity <= 0) {
+                                shootingStars.splice(i, 1);
+                            } else {
+                                drawShootingStar(star);
+                            }
+                        }
+                        
+                        requestAnimationFrame(animate);
+                    }
+                    
+                    animate();
+                    
+                    window.addEventListener('resize', () => {
+                        canvas.width = window.innerWidth;
+                        canvas.height = window.innerHeight;
+                    });
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

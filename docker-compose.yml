@@ -1,0 +1,36 @@
+
+services:
+  homepage:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: teslongxiao-homepage
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      - NODE_ENV=production
+      - PORT=8081
+      - MX_SPACE_API=http://172.20.0.10:2333
+      - BLOG_URL=https://teslongxiao.cn
+    networks:
+      default:
+        ipv4_address: 172.20.0.60
+    volumes:
+      - /app/backend/node_modules
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  default:
+    name: core_mx-space
+    external: true
