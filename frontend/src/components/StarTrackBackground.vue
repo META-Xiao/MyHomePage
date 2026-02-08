@@ -15,7 +15,12 @@ let animationId = null
 
 // 监听滚动
 const handleScroll = () => {
-  isScrolled.value = window.scrollY > 100
+  isScrolled.value = window.scrollY > 50
+}
+
+// 初始化时检查滚动位置
+const checkInitialScroll = () => {
+  isScrolled.value = window.scrollY > 50
 }
 
 class StarTrack {
@@ -177,6 +182,9 @@ onMounted(() => {
     const handleResize = () => {
       starTrack.init()
     }
+    
+    // 初始化时检查滚动位置
+    checkInitialScroll()
     
     window.addEventListener('resize', handleResize)
     window.addEventListener('scroll', handleScroll)
