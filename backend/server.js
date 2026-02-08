@@ -17,7 +17,9 @@ const BLOG_URL = process.env.BLOG_URL || 'https://teslongxiao.cn'
 // 中间件
 app.use(cors())
 app.use(express.json())
-app.use(express.static(path.join(__dirname, '../frontend')))
+
+// ★★★ 指向编译后的 dist 目录 ★★★
+app.use(express.static(path.join(__dirname, '../frontend/dist')))
 
 // 创建 MX-Space API 客户端
 const mxClient = axios.create({
@@ -256,12 +258,18 @@ app.use((err, req, res, next) => {
   })
 })
 
-// 404 处理
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: '接口不存在'
-  })
+// SPA 回退路由 - 所有非 API 请求返回 index.html
+app.get('*', (req, res) => {
+  // 如果是 API 请求，返回 404
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({
+      success: false,
+      message: '接口不存在'
+    })
+  }
+  
+  // ★★★ SPA 路由回退到 dist/index.html ★★★
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
 })
 
 // 启动服务器

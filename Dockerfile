@@ -1,27 +1,47 @@
-# 使用 Node.js 20 Alpine 作为基础镜像（节省内存）
+# ============================================
+# 阶段一：构建环境 (Builder)
+# ============================================
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+#复制依赖文件（利用 Docker 缓存）
+COPY frontend/package*.json ./frontend/
+COPY backend/package*.json ./backend/
+
+# 安装依赖
+RUN cd frontend && npm ci --only=production=false
+RUN cd backend && npm ci --only=production
+
+#复制源代码
+COPY frontend/ ./frontend/
+COPY backend/ ./backend/
+
+# 编译 Vue
+# 这会生成 /app/frontend/dist 目录
+RUN cd frontend && npm run build
+
+# ============================================
+# 阶段二：生产环境 (Runner)
+# ============================================
 FROM node:20-alpine
 
 # 安装 wget 用于健康检查
 RUN apk add --no-cache wget
 
-# 设置工作目录
 WORKDIR /app
 
-# 复制 backend 的 package.json
-COPY backend/package*.json ./backend/
+# 环境变量
+ENV NODE_ENV=production
+ENV PORT=8081
 
-# 安装后端依赖
-WORKDIR /app/backend
-RUN npm install --omit=dev && npm cache clean --force
+# 只复制后端运行需要的
+COPY --from=builder /app/backend ./backend
 
-# 复制后端代码
-COPY backend/ ./
 
-# 复制前端代码
-WORKDIR /app
-COPY frontend/ ./frontend/
+COPY --from=builder /app/frontend/dist ./frontend/dist
 
-# 设置工作目录回到 backend
+# 设置工作目录到 backend
 WORKDIR /app/backend
 
 # 暴露端口 8081
