@@ -84,15 +84,15 @@ onMounted(() => {
   min-height: 100vh;
 }
 
-/* 灰色背景从第二屏开始 */
+/* 灰色背景从黄金分割点开始 */
 .gray-background {
   position: fixed;
-  top: 100vh;
+  top: 38.2vh;  /* 黄金分割比 */
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 61.8vh;  /* 剩余部分 */
   background: #202020;
-  z-index: 1;  /* 在星空之上，在内容之下 */
+  z-index: 0;
   pointer-events: none;
 }
 

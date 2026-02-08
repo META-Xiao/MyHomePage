@@ -26,7 +26,7 @@ class StarTrack {
   
   init() {
     this.canvas.width = window.innerWidth
-    this.canvas.height = window.innerHeight * 1.4
+    this.canvas.height = window.innerHeight * 0.382  // 黄金分割比
     this.createStars()
   }
   
@@ -184,27 +184,29 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 完全复刻 xcnya.cn 的星轨背景 */
 .star-track-background {
   position: fixed;
-  top: -60%;
+  top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 38.2vh;  /* 黄金分割比（小的部分） */
   z-index: 0;
+  overflow: hidden;
 }
 
 #startrack {
-  height: 140%;
+  height: 100%;
   width: 100%;
 }
 
 .cover {
   position: absolute;
-  bottom: -42%;
+  bottom: 0;
   left: 0;
-  height: 100%;
+  height: 30%;
   width: 100%;
-  background: linear-gradient(0deg, #202020 30%, rgba(32, 32, 32, 0));
+  background: linear-gradient(0deg, #202020 0%, rgba(32, 32, 32, 0) 100%);
   pointer-events: none;
 }
 </style>
