@@ -1,18 +1,15 @@
 <template>
-  <div class="star-track-background fixed top-0 left-0 w-full z-0" :style="{ height: canvasHeight }">
-    <canvas ref="canvasRef" class="w-full h-full"></canvas>
-    <!-- 渐变遮罩：星空到灰色的过渡 -->
-    <div class="cover absolute bottom-0 left-0 h-[30%] w-full pointer-events-none" 
-         style="background: linear-gradient(to top, #1a1a1a 0%, rgba(26, 26, 26, 0.95) 20%, rgba(26, 26, 26, 0.7) 50%, transparent 100%);">
-    </div>
+  <div class="star-track-background">
+    <canvas ref="canvasRef" id="startrack"></canvas>
+    <!-- 渐变遮罩：完全复刻 xcnya.cn -->
+    <div class="cover"></div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const canvasRef = ref(null)
-const canvasHeight = ref('200vh')
 let animationId = null
 
 class StarTrack {
@@ -29,7 +26,7 @@ class StarTrack {
   
   init() {
     this.canvas.width = window.innerWidth
-    this.canvas.height = window.innerHeight * 2
+    this.canvas.height = window.innerHeight * 1.4
     this.createStars()
   }
   
@@ -188,7 +185,27 @@ onMounted(() => {
 
 <style scoped>
 .star-track-background {
+  position: fixed;
+  top: -60%;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 0;
+}
+
+#startrack {
+  height: 140%;
+  width: 100%;
+}
+
+.cover {
+  position: absolute;
+  bottom: -42%;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(0deg, #202020 30%, rgba(32, 32, 32, 0));
+  pointer-events: none;
 }
 </style>
 

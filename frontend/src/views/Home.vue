@@ -84,14 +84,14 @@ onMounted(() => {
   min-height: 100vh;
 }
 
-/* 灰色背景从 75vh 开始，覆盖剩余所有内容 */
+/* 灰色背景从 100vh 开始 */
 .gray-background {
   position: absolute;
-  top: 75vh;
+  top: 100vh;
   left: 0;
   width: 100%;
-  min-height: calc(100% - 75vh);
-  background: #1a1a1a;
+  min-height: calc(100% - 100vh);
+  background: #202020;
   z-index: 1;
 }
 
