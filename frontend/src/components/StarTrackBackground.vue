@@ -1,5 +1,5 @@
 <template>
-  <div class="star-track-background" :style="{ height: starHeight }">
+  <div class="star-track-background" :style="{ transform: starTransform }">
     <canvas ref="canvasRef" id="startrack"></canvas>
     <!-- 渐变遮罩-->
     <div class="cover" :style="{ opacity: coverOpacity }"></div>
@@ -13,12 +13,11 @@ const canvasRef = ref(null)
 const scrollProgress = ref(0)
 let animationId = null
 
-// 计算星空高度（从 100vh 到 38.2vh）
-const starHeight = computed(() => {
-  const start = 100
-  const end = 38.2
-  const height = start - (start - end) * scrollProgress.value
-  return `${height}vh`
+// 计算星空位移（向上移动 61.8vh）
+const starTransform = computed(() => {
+  const maxMove = -61.8  // 向上移动到只剩 38.2vh 可见
+  const translateY = maxMove * scrollProgress.value
+  return `translateY(${translateY}vh)`
 })
 
 // 计算遮罩透明度
@@ -29,7 +28,7 @@ const coverOpacity = computed(() => {
 // 监听滚动 - 根据滚动距离计算进度
 const handleScroll = () => {
   const scrollY = window.scrollY
-  const triggerDistance = window.innerHeight * 0.5  // 滚动半屏才完全收缩
+  const triggerDistance = window.innerHeight * 0.6  // 滚动 60vh 才完全上移
   
   // 计算进度 (0 到 1)
   scrollProgress.value = Math.min(scrollY / triggerDistance, 1)
@@ -213,15 +212,17 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 星空背景 - 动态高度 */
+/* 星空背景 - 线性向上移动 */
 .star-track-background {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
+  height: 100vh;
   z-index: 0;
   overflow: hidden;
-  transition: height 0.1s linear;  /* 线性过渡，跟随滚动 */
+  transition: transform 0.1s linear;  /* 线性过渡，跟随滚动 */
+  will-change: transform;
 }
 
 #startrack {
@@ -233,7 +234,7 @@ onMounted(() => {
   position: absolute;
   bottom: 0;
   left: 0;
-  height: 30%;
+  height: 40%;
   width: 100%;
   background: linear-gradient(0deg, #202020 0%, rgba(32, 32, 32, 0) 100%);
   pointer-events: none;

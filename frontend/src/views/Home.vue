@@ -76,7 +76,7 @@ const grayBgHeight = computed(() => {
 
 const handleScroll = () => {
   const scrollY = window.scrollY
-  const triggerDistance = window.innerHeight * 0.5  // 滚动半屏才完全收缩
+  const triggerDistance = window.innerHeight * 0.6  // 滚动 60vh 才完全上移
   
   // 计算进度 (0 到 1)
   scrollProgress.value = Math.min(scrollY / triggerDistance, 1)
@@ -84,16 +84,19 @@ const handleScroll = () => {
 }
 
 onMounted(() => {
-  // 初始化滚动动画观察器
+  // 初始化滚动动画观察器 - 更早触发，更有力量感
   const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
+    threshold: 0.15,  // 元素露出 15% 就触发
+    rootMargin: '0px 0px -100px 0px'  // 提前 100px 触发
   }
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('animate-fade-in-up')
+        entry.target.classList.add('animate-bounce-in')
+      } else if (entry.boundingClientRect.top > 0) {
+        // 向上滚动离开视口时移除动画，可以重新触发
+        entry.target.classList.remove('animate-bounce-in')
       }
     })
   }, observerOptions)
@@ -104,7 +107,7 @@ onMounted(() => {
   })
   
   // 监听滚动
-  window.addEventListener('scroll', handleScroll)
+  window.addEventListener('scroll', handleScroll, { passive: true })
   handleScroll() // 初始检查
 })
 </script>
@@ -140,17 +143,27 @@ onMounted(() => {
   z-index: 2;
   padding: 120px 0;
   opacity: 0;
-  transform: translateY(50px);
+  transform: translateY(80px) scale(0.95);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
 }
 
-.section-wrapper.animate-fade-in-up {
-  animation: fadeInUp 1s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+/* 弹性进入动画 - 有力量感 */
+.section-wrapper.animate-bounce-in {
+  animation: bounceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-@keyframes fadeInUp {
-  to {
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: translateY(80px) scale(0.95);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-10px) scale(1.02);
+  }
+  100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
