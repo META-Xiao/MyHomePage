@@ -6,10 +6,8 @@
     :style="cardStyle()"
     class="link-item glass-effect rounded-xl p-5 flex items-center group"
   >
-    <div class="avatar w-16 h-16 rounded-full flex items-center justify-center text-3xl mr-4 flex-shrink-0 transition-transform duration-300 group-hover:scale-110"
-         :style="{ background: link.gradient }">
-      <span v-if="link.icon">{{ link.icon }}</span>
-      <img v-else-if="link.avatar" :src="link.avatar" :alt="link.name" class="w-full h-full rounded-full object-cover">
+    <div class="avatar w-16 h-16 flex items-center justify-center mr-4 flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
+      <Icon :icon="link.icon" width="48" height="48" />
     </div>
     <div class="link-info flex-1 overflow-hidden">
       <h5 class="link-name text-base font-medium mb-1 transition-colors group-hover:text-accent">{{ link.name }}</h5>
@@ -19,6 +17,7 @@
 </template>
 
 <script setup>
+import { Icon } from '@iconify/vue'
 import { use3DCard } from '@/composables/use3DCard'
 
 const props = defineProps({

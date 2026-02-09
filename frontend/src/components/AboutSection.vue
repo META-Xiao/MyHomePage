@@ -41,40 +41,34 @@ import TechCard from './cards/TechCard.vue'
 
 const techStack = [
   {
-    icon: '🚀',
+    icon: 'skill-icons:vuejs-light',
     name: '前端开发',
-    desc: 'Vue / React / TypeScript',
-    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    desc: 'Vue / React / TypeScript'
   },
   {
-    icon: '⚙️',
+    icon: 'skill-icons:nodejs-light',
     name: '后端开发',
-    desc: 'Node.js / Python / Go',
-    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+    desc: 'Node.js / Python / Go'
   },
   {
-    icon: '🐳',
+    icon: 'skill-icons:docker',
     name: '容器化',
-    desc: 'Docker / Kubernetes',
-    gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+    desc: 'Docker / Kubernetes'
   },
   {
-    icon: '☁️',
+    icon: 'skill-icons:linux-light',
     name: '云服务',
-    desc: 'Linux / Nginx / CI/CD',
-    gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
+    desc: 'Linux / Nginx / CI/CD'
   },
   {
-    icon: '📊',
+    icon: 'skill-icons:mongodb',
     name: '数据库',
-    desc: 'MySQL / MongoDB / Redis',
-    gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+    desc: 'MySQL / MongoDB / Redis'
   },
   {
-    icon: '🎨',
+    icon: 'skill-icons:figma-light',
     name: '设计工具',
-    desc: 'Figma / Photoshop',
-    gradient: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)'
+    desc: 'Figma / Photoshop'
   }
 ]
 </script>

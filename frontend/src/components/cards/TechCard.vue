@@ -4,11 +4,8 @@
     :style="cardStyle()"
     class="tech-item glass-effect rounded-2xl p-6 text-center group cursor-pointer"
   >
-    <div 
-      class="tech-icon w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center text-4xl shadow-lg transition-all duration-500 group-hover:scale-125 group-hover:rotate-12"
-      :style="{ background: tech.gradient }"
-    >
-      {{ tech.icon }}
+    <div class="tech-icon w-20 h-20 mx-auto mb-5 flex items-center justify-center transition-all duration-500 group-hover:scale-125 group-hover:rotate-12">
+      <Icon :icon="tech.icon" width="64" height="64" />
     </div>
     <div class="tech-name text-base font-medium mb-2 tracking-wide transition-colors group-hover:text-accent">
       {{ tech.name }}
@@ -20,6 +17,7 @@
 </template>
 
 <script setup>
+import { Icon } from '@iconify/vue'
 import { use3DCard } from '@/composables/use3DCard'
 
 const props = defineProps({

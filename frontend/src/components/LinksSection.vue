@@ -22,43 +22,37 @@ const links = [
     name: 'GitHub',
     description: '代码托管平台',
     url: 'https://github.com',
-    icon: '🐙',
-    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    icon: 'skill-icons:github-light'
   },
   {
     name: 'MX-Space',
     description: '开源博客系统',
     url: 'https://mx-space.js.org/',
-    icon: '📝',
-    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+    icon: 'skill-icons:nextjs-light'
   },
   {
     name: 'Vue.js',
     description: '渐进式 JavaScript 框架',
     url: 'https://vuejs.org/',
-    icon: '💚',
-    gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
+    icon: 'skill-icons:vuejs-light'
   },
   {
     name: 'Tailwind CSS',
     description: '实用优先的 CSS 框架',
     url: 'https://tailwindcss.com/',
-    icon: '🎨',
-    gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+    icon: 'skill-icons:tailwindcss-light'
   },
   {
     name: 'Node.js',
     description: 'JavaScript 运行时',
     url: 'https://nodejs.org/',
-    icon: '🟢',
-    gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+    icon: 'skill-icons:nodejs-light'
   },
   {
     name: 'Docker',
     description: '容器化平台',
     url: 'https://www.docker.com/',
-    icon: '🐳',
-    gradient: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)'
+    icon: 'skill-icons:docker'
   }
 ]
 </script>

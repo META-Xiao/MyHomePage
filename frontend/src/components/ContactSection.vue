@@ -19,25 +19,22 @@ import ContactCard from './cards/ContactCard.vue'
 
 const contacts = [
   {
-    icon: '📧',
+    icon: 'skill-icons:gmail-light',
     title: '邮箱',
     value: 'your@email.com',
-    link: 'mailto:your@email.com',
-    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    link: 'mailto:your@email.com'
   },
   {
-    icon: '🐙',
+    icon: 'skill-icons:github-light',
     title: 'GitHub',
     value: '@yourusername',
-    link: 'https://github.com/yourusername',
-    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+    link: 'https://github.com/yourusername'
   },
   {
-    icon: '🐦',
+    icon: 'skill-icons:twitter',
     title: 'Twitter',
     value: '@yourusername',
-    link: 'https://twitter.com/yourusername',
-    gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+    link: 'https://twitter.com/yourusername'
   }
 ]
 </script>
