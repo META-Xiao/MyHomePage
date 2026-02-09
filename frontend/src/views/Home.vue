@@ -4,7 +4,7 @@
     <StarTrackBackground />
     
     <!-- 灰色背景 - 滚动后才显示 -->
-    <div class="gray-background" :class="{ visible: isScrolled }"></div>
+    <div class="gray-background" :style="{ top: grayBgTop, height: grayBgHeight, opacity: scrollProgress }"></div>
     
     <!-- 侧边导航 -->
     <SideNavigation />
@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import StarTrackBackground from '@/components/StarTrackBackground.vue'
 import SideNavigation from '@/components/SideNavigation.vue'
 import HeroSection from '@/components/HeroSection.vue'
@@ -57,9 +57,30 @@ import ContactSection from '@/components/ContactSection.vue'
 import FooterSection from '@/components/FooterSection.vue'
 
 const isScrolled = ref(false)
+const scrollProgress = ref(0)
+
+// 计算灰色背景的位置和高度
+const grayBgTop = computed(() => {
+  const start = 100
+  const end = 38.2
+  const top = start - (start - end) * scrollProgress.value
+  return `${top}vh`
+})
+
+const grayBgHeight = computed(() => {
+  const start = 0
+  const end = 61.8
+  const height = start + end * scrollProgress.value
+  return `${height}vh`
+})
 
 const handleScroll = () => {
-  isScrolled.value = window.scrollY > 50
+  const scrollY = window.scrollY
+  const triggerDistance = window.innerHeight * 0.5  // 滚动半屏才完全收缩
+  
+  // 计算进度 (0 到 1)
+  scrollProgress.value = Math.min(scrollY / triggerDistance, 1)
+  isScrolled.value = scrollProgress.value > 0
 }
 
 onMounted(() => {
@@ -94,23 +115,15 @@ onMounted(() => {
   min-height: 100vh;
 }
 
-/* 灰色背景从黄金分割点开始 */
+/* 灰色背景 - 动态调整 */
 .gray-background {
   position: fixed;
-  top: 38.2vh; 
   left: 0;
   width: 100%;
-  height: 61.8vh; 
   background: #202020;
   z-index: 0;
   pointer-events: none;
-  opacity: 0;  /* 初始隐藏 */
-  transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-/* 滚动后显示灰色背景 */
-.gray-background.visible {
-  opacity: 1;
+  transition: all 0.1s linear;  /* 线性过渡，跟随滚动 */
 }
 
 .intro-section {

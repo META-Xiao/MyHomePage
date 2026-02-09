@@ -1,26 +1,38 @@
 <template>
-  <div class="star-track-background" :class="{ shrink: isScrolled }">
+  <div class="star-track-background" :style="{ height: starHeight }">
     <canvas ref="canvasRef" id="startrack"></canvas>
     <!-- 渐变遮罩-->
-    <div class="cover"></div>
+    <div class="cover" :style="{ opacity: coverOpacity }"></div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 
 const canvasRef = ref(null)
-const isScrolled = ref(false)
+const scrollProgress = ref(0)
 let animationId = null
 
-// 监听滚动
-const handleScroll = () => {
-  isScrolled.value = window.scrollY > 50
-}
+// 计算星空高度（从 100vh 到 38.2vh）
+const starHeight = computed(() => {
+  const start = 100
+  const end = 38.2
+  const height = start - (start - end) * scrollProgress.value
+  return `${height}vh`
+})
 
-// 初始化时检查滚动位置
-const checkInitialScroll = () => {
-  isScrolled.value = window.scrollY > 50
+// 计算遮罩透明度
+const coverOpacity = computed(() => {
+  return scrollProgress.value
+})
+
+// 监听滚动 - 根据滚动距离计算进度
+const handleScroll = () => {
+  const scrollY = window.scrollY
+  const triggerDistance = window.innerHeight * 0.5  // 滚动半屏才完全收缩
+  
+  // 计算进度 (0 到 1)
+  scrollProgress.value = Math.min(scrollY / triggerDistance, 1)
 }
 
 class StarTrack {
@@ -184,10 +196,10 @@ onMounted(() => {
     }
     
     // 初始化时检查滚动位置
-    checkInitialScroll()
+    handleScroll()
     
     window.addEventListener('resize', handleResize)
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     
     onUnmounted(() => {
       window.removeEventListener('resize', handleResize)
@@ -201,21 +213,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 星空背景 - 带滚动动画 */
+/* 星空背景 - 动态高度 */
 .star-track-background {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;  /* 初始全屏 */
   z-index: 0;
   overflow: hidden;
-  transition: height 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-/* 滚动后收缩到黄金分割比 */
-.star-track-background.shrink {
-  height: 38.2vh;
+  transition: height 0.1s linear;  /* 线性过渡，跟随滚动 */
 }
 
 #startrack {
@@ -231,13 +237,7 @@ onMounted(() => {
   width: 100%;
   background: linear-gradient(0deg, #202020 0%, rgba(32, 32, 32, 0) 100%);
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-/* 滚动后显示渐变遮罩 */
-.star-track-background.shrink .cover {
-  opacity: 1;
+  transition: opacity 0.1s linear;  /* 线性过渡，跟随滚动 */
 }
 </style>
 
