@@ -30,10 +30,21 @@ const starTransform = computed(() => {
 
 // 计算 Canvas 视差效果（只在未滚动时生效）
 const canvasTransform = computed(() => {
-  // 移除旋转效果，只保留缩放
+  if (scrollProgress.value > 0.1) {
+    // 滚动后关闭互动效果
+    return {
+      transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1.1)',
+      transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
+    }
+  }
+  
+  // 鼠标位置转换为相机旋转角度（最大 ±5 度）
+  const rotateY = mouseX.value * 5  // 水平旋转
+  const rotateX = -mouseY.value * 5  // 垂直旋转（反向）
+  
   return {
-    transform: 'scale(1.1)',
-    transition: 'none'
+    transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.1)`,
+    transition: 'transform 0.15s ease-out'
   }
 })
 
