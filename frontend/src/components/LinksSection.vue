@@ -5,28 +5,18 @@
     </h2>
     
     <div class="links-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <a 
+      <LinkCard 
         v-for="(link, index) in links" 
         :key="index"
-        :href="link.url"
-        target="_blank"
-        class="link-item glass-effect rounded-xl p-5 flex items-center card-hover"
-      >
-        <div class="avatar w-16 h-16 rounded-full flex items-center justify-center text-3xl mr-4 flex-shrink-0"
-             :style="{ background: link.gradient }">
-          <span v-if="link.icon">{{ link.icon }}</span>
-          <img v-else-if="link.avatar" :src="link.avatar" :alt="link.name" class="w-full h-full rounded-full object-cover">
-        </div>
-        <div class="link-info flex-1 overflow-hidden">
-          <h5 class="link-name text-base font-medium mb-1">{{ link.name }}</h5>
-          <p class="link-desc text-xs text-white/60 truncate">{{ link.description }}</p>
-        </div>
-      </a>
+        :link="link"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
+import LinkCard from './cards/LinkCard.vue'
+
 const links = [
   {
     name: 'GitHub',

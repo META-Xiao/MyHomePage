@@ -50,18 +50,7 @@
   /* 玻璃态效果 */
   .glass-effect {
     @apply bg-white/5 backdrop-blur-md border border-white/10;
-    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-  }
-
-  /* 卡片悬停效果 */
-  .card-hover {
-    @apply transition-all duration-500;
-    transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
-  }
-  
-  .card-hover:hover {
-    @apply bg-white/10 -translate-y-3 shadow-2xl;
-    box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2), 0 0 40px rgba(0, 212, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
   }
 
   /* 按钮样式 */

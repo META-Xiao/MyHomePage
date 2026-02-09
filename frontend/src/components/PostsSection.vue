@@ -14,41 +14,11 @@
     </div>
     
     <div v-else class="posts-grid grid grid-cols-1 md:grid-cols-2 gap-8">
-      <a 
+      <PostCard 
         v-for="(post, index) in posts" 
         :key="index"
-        :href="post.link"
-        target="_blank"
-        class="post-card glass-effect rounded-2xl p-8 card-hover block"
-      >
-        <div class="post-header mb-4">
-          <h3 class="post-title text-lg font-medium mb-3 leading-relaxed">{{ post.title }}</h3>
-          <div class="post-meta text-xs text-white/40 flex items-center gap-2">
-            <span class="post-category text-accent/70">{{ post.category }}</span>
-            <span>·</span>
-            <span>{{ post.date }}</span>
-          </div>
-        </div>
-        
-        <p class="post-excerpt text-sm text-white/70 leading-relaxed mb-6 line-clamp-3">
-          {{ post.excerpt }}
-        </p>
-        
-        <div class="post-footer flex justify-between items-center pt-4 border-t border-white/10">
-          <div class="post-tags flex gap-2 flex-wrap">
-            <span 
-              v-for="(tag, i) in post.tags" 
-              :key="i"
-              class="tag text-xs text-white/50 bg-white/5 px-2 py-1 rounded"
-            >
-              {{ tag }}
-            </span>
-          </div>
-          <div class="post-stats text-xs text-white/40 flex items-center gap-2">
-            <span>👁 {{ post.views }}</span>
-          </div>
-        </div>
-      </a>
+        :post="post"
+      />
     </div>
     
     <div class="view-more-container text-center mt-12">
@@ -62,6 +32,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { fetchPosts } from '@/utils/api'
+import PostCard from './cards/PostCard.vue'
 
 const loading = ref(true)
 const posts = ref([])
