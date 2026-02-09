@@ -6,9 +6,6 @@
   >
     <canvas ref="canvasRef" id="startrack" :style="canvasTransform"></canvas>
     
-    <!-- 三体星系前景 -->
-    <canvas ref="starsCanvasRef" id="triple-stars" :style="canvasTransform"></canvas>
-    
     <!-- 渐变遮罩-->
     <div class="cover" :style="{ opacity: coverOpacity }"></div>
   </div>
@@ -16,19 +13,13 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import Matter from 'matter-js'
 
 const canvasRef = ref(null)
-const starsCanvasRef = ref(null)
 const containerRef = ref(null)
 const scrollProgress = ref(0)
 const mouseX = ref(0)
 const mouseY = ref(0)
 let animationId = null
-let starsAnimationId = null
-let engine, runner
-let trails = []
-const maxTrailLength = 150
 
 // 计算星空位移（向上移动 61.8vh）
 const starTransform = computed(() => {
@@ -259,192 +250,7 @@ onMounted(() => {
       }
     })
   }
-  
-  // 初始化三体星系
-  if (starsCanvasRef.value) {
-    initTripleStars()
-  }
 })
-
-// 初始化三体星系
-function initTripleStars() {
-  const canvas = starsCanvasRef.value
-  const width = window.innerWidth
-  const height = window.innerHeight
-  canvas.width = width
-  canvas.height = height
-
-  // 创建 Matter.js 引擎
-  engine = Matter.Engine.create({
-    gravity: { x: 0, y: 0, scale: 0 }
-  })
-
-  // 三颗恒星位置（屏幕中心偏右上）
-  const centerX = width * 0.6
-  const centerY = height * 0.4
-
-  // 主星 A - 橙黄色
-  const starA = Matter.Bodies.circle(centerX - 100, centerY, 25, {
-    isStatic: false,
-    mass: 120,
-    frictionAir: 0,
-    render: {
-      fillStyle: '#FFA500',
-      strokeStyle: '#FFD700',
-      lineWidth: 3
-    }
-  })
-  Matter.Body.setVelocity(starA, { x: 0, y: 1.8 })
-
-  // 主星 B - 橙红色
-  const starB = Matter.Bodies.circle(centerX + 100, centerY, 22, {
-    isStatic: false,
-    mass: 110,
-    frictionAir: 0,
-    render: {
-      fillStyle: '#FF6B35',
-      strokeStyle: '#FF8C42',
-      lineWidth: 3
-    }
-  })
-  Matter.Body.setVelocity(starB, { x: 0, y: -2 })
-
-  // 伴星 Proxima - 红色小星
-  const starC = Matter.Bodies.circle(centerX, centerY - 150, 15, {
-    isStatic: false,
-    mass: 50,
-    frictionAir: 0,
-    render: {
-      fillStyle: '#DC143C',
-      strokeStyle: '#FF1744',
-      lineWidth: 2
-    }
-  })
-  Matter.Body.setVelocity(starC, { x: 1.3, y: 0 })
-
-  // 添加到世界
-  Matter.World.add(engine.world, [starA, starB, starC])
-
-  // 初始化轨迹
-  trails = [
-    { points: [], color: '#FFA500' },
-    { points: [], color: '#FF6B35' },
-    { points: [], color: '#DC143C' }
-  ]
-
-  const ctx = canvas.getContext('2d')
-  const bodies = [starA, starB, starC]
-
-  // 引力计算
-  Matter.Events.on(engine, 'beforeUpdate', () => {
-    const G = 0.4 // 引力常数
-
-    for (let i = 0; i < bodies.length; i++) {
-      for (let j = i + 1; j < bodies.length; j++) {
-        const bodyA = bodies[i]
-        const bodyB = bodies[j]
-
-        const dx = bodyB.position.x - bodyA.position.x
-        const dy = bodyB.position.y - bodyA.position.y
-        const distance = Math.sqrt(dx * dx + dy * dy)
-
-        if (distance > 0) {
-          const force = (G * bodyA.mass * bodyB.mass) / (distance * distance)
-          const fx = (force * dx) / distance
-          const fy = (force * dy) / distance
-
-          Matter.Body.applyForce(bodyA, bodyA.position, { x: fx / bodyA.mass, y: fy / bodyA.mass })
-          Matter.Body.applyForce(bodyB, bodyB.position, { x: -fx / bodyB.mass, y: -fy / bodyB.mass })
-        }
-      }
-    }
-  })
-
-  // 自定义渲染循环
-  function renderTripleStars() {
-    if (scrollProgress.value > 0.1) {
-      // 滚动后停止渲染
-      ctx.clearRect(0, 0, width, height)
-      return
-    }
-
-    ctx.clearRect(0, 0, width, height)
-
-    // 绘制轨迹
-    bodies.forEach((body, index) => {
-      const trail = trails[index]
-      trail.points.push({ x: body.position.x, y: body.position.y })
-      
-      if (trail.points.length > maxTrailLength) {
-        trail.points.shift()
-      }
-
-      // 绘制轨迹线
-      if (trail.points.length > 1) {
-        for (let i = 1; i < trail.points.length; i++) {
-          const alpha = (i / trail.points.length * 0.6).toFixed(2)
-          ctx.strokeStyle = trail.color + Math.floor(alpha * 255).toString(16).padStart(2, '0')
-          ctx.lineWidth = 2
-          ctx.beginPath()
-          ctx.moveTo(trail.points[i - 1].x, trail.points[i - 1].y)
-          ctx.lineTo(trail.points[i].x, trail.points[i].y)
-          ctx.stroke()
-        }
-      }
-    })
-
-    // 绘制恒星（带发光效果）
-    bodies.forEach((body) => {
-      const pos = body.position
-      const radius = body.circleRadius
-      const color = body.render.fillStyle
-
-      // 外层光晕（Bloom效果）
-      const gradient = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, radius * 4)
-      gradient.addColorStop(0, color + 'AA')
-      gradient.addColorStop(0.3, color + '40')
-      gradient.addColorStop(1, color + '00')
-      
-      ctx.fillStyle = gradient
-      ctx.beginPath()
-      ctx.arc(pos.x, pos.y, radius * 4, 0, Math.PI * 2)
-      ctx.fill()
-
-      // 中层光晕
-      const gradient2 = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, radius * 2)
-      gradient2.addColorStop(0, color + 'FF')
-      gradient2.addColorStop(0.5, color + '80')
-      gradient2.addColorStop(1, color + '00')
-      
-      ctx.fillStyle = gradient2
-      ctx.beginPath()
-      ctx.arc(pos.x, pos.y, radius * 2, 0, Math.PI * 2)
-      ctx.fill()
-
-      // 恒星本体
-      ctx.fillStyle = color
-      ctx.strokeStyle = body.render.strokeStyle
-      ctx.lineWidth = body.render.lineWidth
-      ctx.beginPath()
-      ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.stroke()
-    })
-
-    starsAnimationId = requestAnimationFrame(renderTripleStars)
-  }
-
-  // 启动引擎
-  runner = Matter.Runner.create()
-  Matter.Runner.run(runner, engine)
-  renderTripleStars()
-  
-  onUnmounted(() => {
-    if (runner) Matter.Runner.stop(runner)
-    if (engine) Matter.Engine.clear(engine)
-    if (starsAnimationId) cancelAnimationFrame(starsAnimationId)
-  })
-}
 </script>
 
 <style scoped>
@@ -469,19 +275,6 @@ function initTripleStars() {
   width: 100%;
   will-change: transform;
   transform-origin: center center;
-  z-index: 1;
-}
-
-#triple-stars {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  will-change: transform;
-  transform-origin: center center;
-  z-index: 2;
-  pointer-events: none;
 }
 
 .cover {
@@ -493,7 +286,6 @@ function initTripleStars() {
   background: linear-gradient(0deg, #202020 0%, rgba(32, 32, 32, 0) 100%);
   pointer-events: none;
   transition: opacity 0.1s linear;  /* 线性过渡，跟随滚动 */
-  z-index: 3;
 }
 </style>
 

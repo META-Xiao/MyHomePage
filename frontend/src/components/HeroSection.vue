@@ -125,9 +125,9 @@ onMounted(() => {
 /* 标题样式 */
 .hero-title {
   font-weight: 400;
-  font-size: 42px;
+  font-size: 32px;
   line-height: 1.5em;
-  letter-spacing: 0.5em;
+  letter-spacing: 0.3em;
   color: #fff;
   margin-bottom: 0.6em;
   animation: float 6s ease-in-out infinite;
@@ -135,7 +135,7 @@ onMounted(() => {
 
 .hero-subtitle {
   font-weight: 400;
-  font-size: 22px;
+  font-size: 18px;
   line-height: 1.5em;
   letter-spacing: 0.2em;
   color: #fff;
@@ -220,7 +220,7 @@ onMounted(() => {
   }
   
   .hero-title {
-    font-size: 26px;
+    font-size: 22px;
   }
   
   .hero-subtitle {
@@ -235,11 +235,11 @@ onMounted(() => {
 /* 大屏幕适配 */
 @media screen and (min-width: 1400px) {
   .hero-title {
-    font-size: 52px;
+    font-size: 42px;
   }
   
   .hero-subtitle {
-    font-size: 28px;
+    font-size: 24px;
   }
 }
 </style>
