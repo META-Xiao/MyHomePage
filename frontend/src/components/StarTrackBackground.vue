@@ -1,6 +1,10 @@
 <template>
-  <div class="star-track-background" :style="{ transform: starTransform }">
-    <canvas ref="canvasRef" id="startrack"></canvas>
+  <div 
+    ref="containerRef"
+    class="star-track-background" 
+    :style="{ transform: starTransform }"
+  >
+    <canvas ref="canvasRef" id="startrack" :style="canvasTransform"></canvas>
     <!-- 渐变遮罩-->
     <div class="cover" :style="{ opacity: coverOpacity }"></div>
   </div>
@@ -10,7 +14,10 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 
 const canvasRef = ref(null)
+const containerRef = ref(null)
 const scrollProgress = ref(0)
+const mouseX = ref(0)
+const mouseY = ref(0)
 let animationId = null
 
 // 计算星空位移（向上移动 61.8vh）
@@ -18,6 +25,26 @@ const starTransform = computed(() => {
   const maxMove = -61.8  // 向上移动到只剩 38.2vh 可见
   const translateY = maxMove * scrollProgress.value
   return `translateY(${translateY}vh)`
+})
+
+// 计算 Canvas 视差效果（只在未滚动时生效）
+const canvasTransform = computed(() => {
+  if (scrollProgress.value > 0.1) {
+    // 滚动后关闭互动效果
+    return {
+      transform: 'translate(0, 0)',
+      transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
+    }
+  }
+  
+  // 鼠标位置转换为视差偏移（-1 到 1）
+  const offsetX = mouseX.value * 30  // 最大偏移 30px
+  const offsetY = mouseY.value * 30
+  
+  return {
+    transform: `translate(${offsetX}px, ${offsetY}px) scale(1.05)`,
+    transition: 'transform 0.2s ease-out'
+  }
 })
 
 // 计算遮罩透明度
@@ -32,6 +59,18 @@ const handleScroll = () => {
   
   // 计算进度 (0 到 1)
   scrollProgress.value = Math.min(scrollY / triggerDistance, 1)
+}
+
+// 监听鼠标移动 - 视差效果
+const handleMouseMove = (e) => {
+  if (scrollProgress.value > 0.1) return  // 滚动后不响应
+  
+  const { clientX, clientY } = e
+  const { innerWidth, innerHeight } = window
+  
+  // 将鼠标位置转换为 -1 到 1 的范围
+  mouseX.value = (clientX / innerWidth - 0.5) * 2
+  mouseY.value = (clientY / innerHeight - 0.5) * 2
 }
 
 class StarTrack {
@@ -199,10 +238,12 @@ onMounted(() => {
     
     window.addEventListener('resize', handleResize)
     window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('mousemove', handleMouseMove, { passive: true })
     
     onUnmounted(() => {
       window.removeEventListener('resize', handleResize)
       window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('mousemove', handleMouseMove)
       if (animationId) {
         cancelAnimationFrame(animationId)
       }
@@ -228,6 +269,8 @@ onMounted(() => {
 #startrack {
   height: 100%;
   width: 100%;
+  will-change: transform;
+  transform-origin: center center;
 }
 
 .cover {
