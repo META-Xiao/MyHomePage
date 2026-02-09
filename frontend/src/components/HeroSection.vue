@@ -11,11 +11,11 @@
       
       <div class="hero-text-group animate-fade-in-up">
         <h1 class="hero-title">
-          {{ displayedTitle }}<span class="cursor" :class="{ 'typing': isTyping }">|</span>
+          {{ displayedTitle }}<span class="cursor" v-show="currentCursor === 'title'" :class="{ 'fade-out-cursor': fadeCursor }">|</span>
         </h1>
         
         <h2 class="hero-subtitle" id="slogan">
-          {{ displayedSlogan }}<span class="cursor" :class="{ 'typing': isTyping }">|</span>
+          {{ displayedSlogan }}<span class="cursor" v-show="currentCursor === 'slogan'" :class="{ 'fade-out-cursor': fadeCursor }">|</span>
         </h2>
       </div>
       
@@ -40,7 +40,8 @@ const mainTitle = ref('')
 const currentSlogan = ref('')
 const displayedTitle = ref('')
 const displayedSlogan = ref('')
-const isTyping = ref(false)
+const currentCursor = ref('') // 'title', 'slogan', 或 ''
+const fadeCursor = ref(false)
 
 let typingTimer = null
 let rotateTimer = null
@@ -64,34 +65,39 @@ const fetchHitokoto = async () => {
 }
 
 // 打字机效果
-const typeWriter = async (text, target, speed = 80) => {
-  isTyping.value = true
+const typeWriter = async (text, target, cursorPosition, speed = 80) => {
+  currentCursor.value = cursorPosition
+  fadeCursor.value = false
+  
   for (let i = 0; i <= text.length; i++) {
     target.value = text.substring(0, i)
     await new Promise(resolve => setTimeout(resolve, speed))
   }
-  isTyping.value = false
 }
 
 // Backspace 删除效果
-const backspace = async (target, speed = 30) => {
-  isTyping.value = true
+const backspace = async (target, cursorPosition, speed = 30) => {
+  currentCursor.value = cursorPosition
+  fadeCursor.value = false
+  
   const text = target.value
   for (let i = text.length; i >= 0; i--) {
     target.value = text.substring(0, i)
     await new Promise(resolve => setTimeout(resolve, speed))
   }
-  isTyping.value = false
 }
 
 // 完整的打字循环
 const typewriterCycle = async () => {
-  // 等待一段时间
-  await new Promise(resolve => setTimeout(resolve, 3000))
+  // 等待10秒
+  await new Promise(resolve => setTimeout(resolve, 10000))
   
   // 删除当前内容
-  await backspace(displayedSlogan, 30)
-  await backspace(displayedTitle, 30)
+  await backspace(displayedSlogan, 'slogan', 30)
+  await backspace(displayedTitle, 'title', 30)
+  
+  // 隐藏光标
+  currentCursor.value = ''
   
   // 等待一小段时间
   await new Promise(resolve => setTimeout(resolve, 500))
@@ -102,9 +108,17 @@ const typewriterCycle = async () => {
   currentSlogan.value = newContent.slogan
   
   // 打字显示新内容
-  await typeWriter(newContent.title, displayedTitle, 80)
+  await typeWriter(newContent.title, displayedTitle, 'title', 80)
   await new Promise(resolve => setTimeout(resolve, 300))
-  await typeWriter(newContent.slogan, displayedSlogan, 60)
+  await typeWriter(newContent.slogan, displayedSlogan, 'slogan', 60)
+  
+  // 打完字后等待3秒，然后淡出光标
+  await new Promise(resolve => setTimeout(resolve, 3000))
+  fadeCursor.value = true
+  
+  // 淡出动画完成后隐藏光标
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  currentCursor.value = ''
 }
 
 // 启动循环
@@ -114,9 +128,19 @@ const startTypingLoop = async () => {
   mainTitle.value = initialContent.title
   currentSlogan.value = initialContent.slogan
   
-  await typeWriter(initialContent.title, displayedTitle, 80)
+  // 先打 title
+  await typeWriter(initialContent.title, displayedTitle, 'title', 80)
   await new Promise(resolve => setTimeout(resolve, 300))
-  await typeWriter(initialContent.slogan, displayedSlogan, 60)
+  // 再打 slogan
+  await typeWriter(initialContent.slogan, displayedSlogan, 'slogan', 60)
+  
+  // 打完字后等待3秒，然后淡出光标
+  await new Promise(resolve => setTimeout(resolve, 3000))
+  fadeCursor.value = true
+  
+  // 淡出动画完成后隐藏光标
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  currentCursor.value = ''
   
   // 设置循环
   const loop = async () => {
@@ -124,7 +148,7 @@ const startTypingLoop = async () => {
     rotateTimer = setTimeout(loop, 0)
   }
   
-  rotateTimer = setTimeout(loop, 12000) // 12秒后开始循环
+  rotateTimer = setTimeout(loop, 0)
 }
 
 onMounted(() => {
@@ -218,13 +242,14 @@ onUnmounted(() => {
   display: inline-block;
   width: 2px;
   margin-left: 4px;
-  color: #00ff37;
+  color: #ffffff;
   font-weight: 300;
-  animation: blink 1s step-end infinite;
+  animation: blink 0.7s step-end infinite;
+  transition: opacity 1s ease-out;
 }
 
-.cursor.typing {
-  animation: blink 0.7s step-end infinite;
+.cursor.fade-out-cursor {
+  opacity: 0;
 }
 
 @keyframes blink {
