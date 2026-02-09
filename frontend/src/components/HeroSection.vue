@@ -23,7 +23,7 @@
           <span></span>
           <span></span>
         </div>
-        <span class="signature">libxcnya.so の Catnest</span>
+        <span class="signature">teslongxiao.cn の デジタル空間</span>
       </div>
     </div>
   </div>
