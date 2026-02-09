@@ -128,6 +128,8 @@ onMounted(() => {
   margin: 0 10px;
   opacity: 1;
   vertical-align: middle;
+  font-family: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
+  font-style: italic;
 }
 
 /* 移动端适配 */

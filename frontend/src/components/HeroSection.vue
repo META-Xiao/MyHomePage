@@ -34,41 +34,52 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import axios from 'axios'
 
-const mainTitle = ref('即使是最小的 margin')
-const currentSlogan = ref('也值得被认真对待')
+const mainTitle = ref('加载中...')
+const currentSlogan = ref('')
 
-const titles = [
-  { main: '即使是最小的 margin', sub: '也值得被认真对待' },
-  { main: '在 git push 之前', sub: '记得先 pull 一下吧' },
-  { main: '代码如诗', sub: '每一行都是艺术' },
-  { main: '折腾是态度', sub: '创造是信仰' }
-]
+// 获取一言
+const fetchHitokoto = async () => {
+  try {
+    const response = await axios.get('https://v1.hitokoto.cn/?c=a&c=b&c=d&c=i')
+    const data = response.data
+    mainTitle.value = data.hitokoto
+    currentSlogan.value = data.from ? `—— ${data.from}` : ''
+  } catch (error) {
+    console.error('获取一言失败:', error)
+    mainTitle.value = '即使是最小的 margin'
+    currentSlogan.value = '也值得被认真对待'
+  }
+}
 
-let titleIndex = 0
-
-const rotateTitle = () => {
+const rotateHitokoto = () => {
   const slogan = document.getElementById('slogan')
-  if (slogan) {
+  const title = document.querySelector('.hero-title')
+  
+  if (slogan && title) {
     slogan.classList.add('fade-out')
+    title.classList.add('fade-out')
     
-    setTimeout(() => {
-      titleIndex = (titleIndex + 1) % titles.length
-      mainTitle.value = titles[titleIndex].main
-      currentSlogan.value = titles[titleIndex].sub
+    setTimeout(async () => {
+      await fetchHitokoto()
       
       slogan.classList.remove('fade-out')
       slogan.classList.add('fade-in')
+      title.classList.remove('fade-out')
+      title.classList.add('fade-in')
       
       setTimeout(() => {
         slogan.classList.remove('fade-in')
+        title.classList.remove('fade-in')
       }, 500)
     }, 500)
   }
 }
 
 onMounted(() => {
-  setInterval(rotateTitle, 10000)
+  fetchHitokoto()
+  setInterval(rotateHitokoto, 15000) // 每15秒切换一次
 })
 </script>
 
@@ -124,13 +135,15 @@ onMounted(() => {
 
 /* 标题样式 */
 .hero-title {
-  font-weight: 400;
+  font-weight: 700;
   font-size: 32px;
   line-height: 1.5em;
   letter-spacing: 0.3em;
   color: #fff;
   margin-bottom: 0.6em;
   animation: float 6s ease-in-out infinite;
+  font-family: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
 .hero-subtitle {
@@ -138,9 +151,10 @@ onMounted(() => {
   font-size: 18px;
   line-height: 1.5em;
   letter-spacing: 0.2em;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.8);
   animation: float 6s ease-in-out infinite;
   animation-delay: 0.5s;
+  font-family: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
 }
 
 @keyframes float {
@@ -157,12 +171,14 @@ onMounted(() => {
   transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
-#slogan.fade-in {
+#slogan.fade-in,
+.hero-title.fade-in {
   opacity: 1;
   transform: translateY(0);
 }
 
-#slogan.fade-out {
+#slogan.fade-out,
+.hero-title.fade-out {
   opacity: 0;
   transform: translateY(-10px);
 }
