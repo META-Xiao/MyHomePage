@@ -1,39 +1,32 @@
 <template>
   <div class="hero-section container-custom">
-    <div class="hero-layout">
-      <!-- 左侧：三体星系 -->
-      <div class="star-system-container animate-fade-in-up">
-        <TripleStarSystem />
+    <!-- 左下角：文字内容 -->
+    <div class="hero-content">
+      <!-- 三色圆点 -->
+      <div class="circle">
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
       
-      <!-- 右下角：文字内容 -->
-      <div class="hero-content">
-        <!-- 三色圆点 -->
-        <div class="circle">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+      <div class="hero-text-group animate-fade-in-up">
+        <h1 class="hero-title">
+          {{ mainTitle }}
+        </h1>
         
-        <div class="hero-text-group animate-fade-in-up">
-          <h1 class="hero-title">
-            {{ mainTitle }}
-          </h1>
-          
-          <h2 class="hero-subtitle" id="slogan">
-            {{ currentSlogan }}
-          </h2>
+        <h2 class="hero-subtitle" id="slogan">
+          {{ currentSlogan }}
+        </h2>
+      </div>
+      
+      <!-- 底部签名 -->
+      <div class="hero-footer animate-fade-in-up">
+        <div class="circle-inline">
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
-        
-        <!-- 底部签名 -->
-        <div class="hero-footer animate-fade-in-up">
-          <div class="circle-inline">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <span class="signature">teslongxiao.cn の デジタル空間</span>
-        </div>
+        <span class="signature">teslongxiao.cn の デジタル空間</span>
       </div>
     </div>
   </div>
@@ -41,7 +34,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import TripleStarSystem from './TripleStarSystem.vue'
 
 const mainTitle = ref('即使是最小的 margin')
 const currentSlogan = ref('也值得被认真对待')
@@ -86,42 +78,25 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding-bottom: 80px;
 }
 
-.hero-layout {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 1200px;
-  gap: 60px;
-}
-
-/* 左侧：三体星系 */
-.star-system-container {
-  flex: 0 0 500px;
-  animation-delay: 0.2s;
-}
-
-/* 右侧：文字内容 */
+/* 左下角：文字内容 */
 .hero-content {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-end;
-  min-height: 400px;
-  padding-bottom: 40px;
+  max-width: 800px;
 }
 
 .hero-text-group {
-  margin-bottom: 40px;
-  animation-delay: 0.4s;
+  margin-bottom: 30px;
+  animation-delay: 0.2s;
 }
 
-/* 三色圆点 - 顶部 */
+/* 三色圆点 */
 .circle {
   margin-bottom: 20px;
 }
@@ -200,7 +175,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 10px;
-  animation-delay: 0.6s;
+  animation-delay: 0.4s;
 }
 
 .circle-inline {
@@ -232,38 +207,16 @@ onMounted(() => {
 }
 
 /* 移动端适配 */
-@media (max-width: 1024px) {
-  .hero-layout {
-    flex-direction: column;
-    gap: 40px;
-  }
-  
-  .star-system-container {
-    flex: 0 0 auto;
+@media (max-width: 768px) {
+  .hero-section {
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 40px;
   }
   
   .hero-content {
     align-items: center;
     text-align: center;
-    padding-bottom: 0;
-  }
-  
-  .circle {
-    text-align: center;
-  }
-  
-  .hero-title {
-    font-size: 32px;
-  }
-  
-  .hero-subtitle {
-    font-size: 18px;
-  }
-}
-
-@media (max-width: 768px) {
-  .star-system-container {
-    transform: scale(0.8);
   }
   
   .hero-title {
