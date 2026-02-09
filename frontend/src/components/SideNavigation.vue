@@ -135,21 +135,30 @@ onMounted(() => {
 /* 移动端适配 */
 @media (max-width: 768px) {
   .side-navigation {
-    padding: 15px 5%;
+    padding: 15px 0;
     overflow: auto;
     font-size: 13px;
     left: 0;
+    right: 0;
     top: inherit;
     bottom: 0;
     transform: rotate(0) translateZ(0);
     transform-origin: 0 100%;
     white-space: nowrap;
-    width: 90%;
+    width: 100%;
     background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.8));
   }
   
   .nav-content {
     overflow-x: auto;
+    padding: 0 5%;
+    /* 隐藏滚动条但保持可滚动 */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  
+  .nav-content::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Opera */
   }
 }
 
