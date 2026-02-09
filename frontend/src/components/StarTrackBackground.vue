@@ -75,7 +75,7 @@ const handleMouseMove = (e) => {
 }
 
 class StarTrack {
-  constructor(canvas, getMousePosition) {
+  constructor(canvas) {
     this.canvas = canvas
     this.ctx = canvas.getContext('2d')
     this.stars = []
@@ -84,7 +84,6 @@ class StarTrack {
     this.maxStars = 200
     this.maxShootingStars = 3
     this.maxFloatingParticles = 50
-    this.getMousePosition = getMousePosition 
     
     // 真实恒星颜色（根据温度）
     this.starColors = [
@@ -137,33 +136,17 @@ class StarTrack {
     for (let i = 0; i < this.maxStars; i++) {
       const isPermanent = Math.random() > 0.3  // 70% 是恒星（不消失）
       
-      // 深度值：0.3（远）到 1.0（近）
-      const depth = Math.random() * 0.7 + 0.3
-      
-      // 根据深度计算尺寸和亮度
-      const baseRadius = Math.random() * 2
-      const radius = baseRadius * (0.5 + depth * 0.5)  // 近处的星星更大
-      const opacity = (Math.random() * 0.5 + 0.5) * (0.6 + depth * 0.4)  // 近处的星星更亮
-      
       this.stars.push({
         x: Math.random() * this.canvas.width,
         y: Math.random() * this.canvas.height,
-        baseX: 0,  // 存储基础位置（用于视差计算）
-        baseY: 0,
-        radius: radius,
-        opacity: opacity,
-        baseOpacity: opacity,  // 存储基础亮度
+        radius: Math.random() * 2,
+        opacity: Math.random() * 0.5 + 0.5,
         twinkleSpeed: Math.random() * 0.02 + 0.01,
         twinkleDirection: Math.random() > 0.5 ? 1 : -1,
         color: this.getRandomStarColor(),
         isPermanent: isPermanent,  // 是否是恒星
-        driftSpeed: isPermanent ? 1 : 0.3,  // 恒星漂移慢，粒子漂移快
-        depth: depth  // 深度值（0.3-1.0）
+        driftSpeed: isPermanent ? 1 : 0.3  // 恒星漂移慢，粒子漂移快
       })
-      
-      // 初始化基础位置
-      this.stars[i].baseX = this.stars[i].x
-      this.stars[i].baseY = this.stars[i].y
     }
   }
   
@@ -302,38 +285,24 @@ class StarTrack {
   }
   
   update() {
-    // 获取鼠标位置（用于视差效果）
-    const mouse = this.getMousePosition()
-    
-    // 更新恒星闪烁和视差
+    // 更新恒星闪烁
     this.stars.forEach(star => {
       // 闪烁效果
       star.opacity += star.twinkleSpeed * star.twinkleDirection
-      const maxOpacity = star.baseOpacity
-      const minOpacity = star.baseOpacity * 0.5
-      if (star.opacity <= minOpacity || star.opacity >= maxOpacity) {
+      if (star.opacity <= 0.3 || star.opacity >= 1) {
         star.twinkleDirection *= -1
       }
       
       // 地球自转带来的漂移（从右向左）
-      star.baseX += this.driftVelocity.x * star.driftSpeed
-      star.baseY += this.driftVelocity.y * star.driftSpeed
-      
-      // 视差效果：根据深度和鼠标位置偏移
-      // 近处的星星（depth=1）移动幅度大，远处的星星（depth=0.3）移动幅度小
-      const parallaxStrength = 30  // 视差强度
-      const offsetX = mouse.x * parallaxStrength * star.depth
-      const offsetY = mouse.y * parallaxStrength * star.depth
-      
-      star.x = star.baseX + offsetX
-      star.y = star.baseY + offsetY
+      star.x += this.driftVelocity.x * star.driftSpeed
+      star.y += this.driftVelocity.y * star.driftSpeed
       
       // 边界循环（从左边消失，从右边出现）
-      if (star.baseX < -10) {
-        star.baseX = this.canvas.width + 10
+      if (star.x < -10) {
+        star.x = this.canvas.width + 10
       }
-      if (star.baseX > this.canvas.width + 10) {
-        star.baseX = -10
+      if (star.x > this.canvas.width + 10) {
+        star.x = -10
       }
     })
     
@@ -399,15 +368,7 @@ class StarTrack {
 
 onMounted(() => {
   if (canvasRef.value) {
-    // 创建获取鼠标位置的函数
-    const getMousePosition = () => {
-      if (scrollProgress.value > 0.1) {
-        return { x: 0, y: 0 }  // 滚动后不响应
-      }
-      return { x: mouseX.value, y: mouseY.value }
-    }
-    
-    const starTrack = new StarTrack(canvasRef.value, getMousePosition)
+    const starTrack = new StarTrack(canvasRef.value)
     
     const animate = () => {
       starTrack.animate()
