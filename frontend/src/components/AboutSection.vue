@@ -26,26 +26,19 @@
 
     <!-- 技术栈 -->
     <div class="tech-stack grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mt-16">
-      <div 
+      <TechCard 
         v-for="(tech, index) in techStack" 
         :key="index"
-        class="tech-item glass-effect rounded-2xl p-6 text-center card-hover group cursor-pointer"
-        :style="{ transitionDelay: `${index * 50}ms` }"
-      >
-        <div 
-          class="tech-icon w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center text-4xl shadow-lg transition-all duration-500 group-hover:scale-125 group-hover:rotate-12"
-          :style="{ background: tech.gradient }"
-        >
-          {{ tech.icon }}
-        </div>
-        <div class="tech-name text-base font-medium mb-2 tracking-wide transition-colors group-hover:text-accent">{{ tech.name }}</div>
-        <div class="tech-desc text-xs text-white/60 leading-relaxed">{{ tech.desc }}</div>
-      </div>
+        :tech="tech"
+        :index="index"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
+import TechCard from './cards/TechCard.vue'
+
 const techStack = [
   {
     icon: '🚀',
