@@ -80,8 +80,27 @@ class StarTrack {
     this.ctx = canvas.getContext('2d')
     this.stars = []
     this.shootingStars = []
+    this.floatingParticles = []  // 漂浮粒子
     this.maxStars = 200
     this.maxShootingStars = 3
+    this.maxFloatingParticles = 50
+    
+    // 真实恒星颜色（根据温度）
+    this.starColors = [
+      { color: 'rgba(155, 176, 255, 1)', name: '蓝巨星', weight: 0.05 },      // O型星 - 最热
+      { color: 'rgba(170, 191, 255, 1)', name: '蓝白星', weight: 0.08 },      // B型星
+      { color: 'rgba(202, 215, 255, 1)', name: '白星', weight: 0.12 },        // A型星
+      { color: 'rgba(248, 247, 255, 1)', name: '黄白星', weight: 0.25 },      // F型星
+      { color: 'rgba(255, 244, 234, 1)', name: '黄矮星', weight: 0.30 },      // G型星（太阳）
+      { color: 'rgba(255, 210, 161, 1)', name: '橙矮星', weight: 0.15 },      // K型星
+      { color: 'rgba(255, 204, 111, 1)', name: '红巨星', weight: 0.05 }       // M型星 - 最冷
+    ]
+    
+    // 地球自转方向（从西向东，画面上从右向左）
+    this.driftVelocity = {
+      x: -0.05,  // 向左漂移（很慢）
+      y: 0
+    }
     
     this.init()
   }
@@ -92,16 +111,56 @@ class StarTrack {
     this.createStars()
   }
   
+  // 根据权重随机选择恒星颜色
+  getRandomStarColor() {
+    const random = Math.random()
+    let cumulative = 0
+    
+    for (const star of this.starColors) {
+      cumulative += star.weight
+      if (random <= cumulative) {
+        return star.color
+      }
+    }
+    
+    return this.starColors[4].color  // 默认黄矮星
+  }
+  
   createStars() {
     this.stars = []
     for (let i = 0; i < this.maxStars; i++) {
+      const isPermanent = Math.random() > 0.3  // 70% 是恒星（不消失）
+      
       this.stars.push({
         x: Math.random() * this.canvas.width,
         y: Math.random() * this.canvas.height,
         radius: Math.random() * 2,
-        opacity: Math.random(),
+        opacity: Math.random() * 0.5 + 0.5,
         twinkleSpeed: Math.random() * 0.02 + 0.01,
-        twinkleDirection: Math.random() > 0.5 ? 1 : -1
+        twinkleDirection: Math.random() > 0.5 ? 1 : -1,
+        color: this.getRandomStarColor(),
+        isPermanent: isPermanent,  // 是否是恒星
+        driftSpeed: isPermanent ? 1 : 0.3  // 恒星漂移慢，粒子漂移快
+      })
+    }
+  }
+  
+  // 创建漂浮粒子（大气流动效果）
+  createFloatingParticle() {
+    if (this.floatingParticles.length < this.maxFloatingParticles && Math.random() < 0.05) {
+      this.floatingParticles.push({
+        x: Math.random() * this.canvas.width,
+        y: this.canvas.height + 20,  // 从底部生成
+        radius: Math.random() * 1.5 + 0.5,
+        opacity: Math.random() * 0.6 + 0.2,
+        color: this.getRandomStarColor(),
+        // 上浮速度
+        floatSpeed: Math.random() * 0.5 + 0.3,
+        // 横向漂移（模拟大气流动）
+        driftX: (Math.random() - 0.5) * 0.3,
+        // 生命周期
+        life: 1,
+        fadeSpeed: Math.random() * 0.003 + 0.002
       })
     }
   }
@@ -122,21 +181,45 @@ class StarTrack {
   drawStar(star) {
     this.ctx.beginPath()
     this.ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2)
-    this.ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`
+    this.ctx.fillStyle = star.color.replace('1)', `${star.opacity})`)
     this.ctx.fill()
     
+    // 较大的恒星有光晕
     if (star.radius > 1) {
       const gradient = this.ctx.createRadialGradient(
         star.x, star.y, 0,
         star.x, star.y, star.radius * 3
       )
-      gradient.addColorStop(0, `rgba(0, 212, 255, ${star.opacity * 0.3})`)
-      gradient.addColorStop(1, 'rgba(0, 212, 255, 0)')
+      // 使用恒星本身的颜色作为光晕
+      const glowColor = star.color.replace('rgba(', '').replace(')', '').split(',')
+      gradient.addColorStop(0, `rgba(${glowColor[0]}, ${glowColor[1]}, ${glowColor[2]}, ${star.opacity * 0.3})`)
+      gradient.addColorStop(1, `rgba(${glowColor[0]}, ${glowColor[1]}, ${glowColor[2]}, 0)`)
       this.ctx.fillStyle = gradient
       this.ctx.beginPath()
       this.ctx.arc(star.x, star.y, star.radius * 3, 0, Math.PI * 2)
       this.ctx.fill()
     }
+  }
+  
+  // 绘制漂浮粒子
+  drawFloatingParticle(particle) {
+    this.ctx.beginPath()
+    this.ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2)
+    this.ctx.fillStyle = particle.color.replace('1)', `${particle.opacity * particle.life})`)
+    this.ctx.fill()
+    
+    // 小光晕
+    const gradient = this.ctx.createRadialGradient(
+      particle.x, particle.y, 0,
+      particle.x, particle.y, particle.radius * 2
+    )
+    const glowColor = particle.color.replace('rgba(', '').replace(')', '').split(',')
+    gradient.addColorStop(0, `rgba(${glowColor[0]}, ${glowColor[1]}, ${glowColor[2]}, ${particle.opacity * particle.life * 0.4})`)
+    gradient.addColorStop(1, `rgba(${glowColor[0]}, ${glowColor[1]}, ${glowColor[2]}, 0)`)
+    this.ctx.fillStyle = gradient
+    this.ctx.beginPath()
+    this.ctx.arc(particle.x, particle.y, particle.radius * 2, 0, Math.PI * 2)
+    this.ctx.fill()
   }
   
   drawShootingStar(star) {
@@ -165,11 +248,15 @@ class StarTrack {
   }
   
   drawConstellation() {
-    this.ctx.strokeStyle = 'rgba(0, 212, 255, 0.1)'
-    this.ctx.lineWidth = 1
+    this.ctx.strokeStyle = 'rgba(155, 176, 255, 0.08)'  // 使用蓝色调，更真实
+    this.ctx.lineWidth = 0.5
     
     for (let i = 0; i < this.stars.length; i++) {
+      if (!this.stars[i].isPermanent) continue  // 只连接恒星
+      
       for (let j = i + 1; j < this.stars.length; j++) {
+        if (!this.stars[j].isPermanent) continue
+        
         const dx = this.stars[i].x - this.stars[j].x
         const dy = this.stars[i].y - this.stars[j].y
         const distance = Math.sqrt(dx * dx + dy * dy)
@@ -178,7 +265,7 @@ class StarTrack {
           this.ctx.beginPath()
           this.ctx.moveTo(this.stars[i].x, this.stars[i].y)
           this.ctx.lineTo(this.stars[j].x, this.stars[j].y)
-          this.ctx.globalAlpha = (150 - distance) / 150 * 0.3
+          this.ctx.globalAlpha = (150 - distance) / 150 * 0.2
           this.ctx.stroke()
           this.ctx.globalAlpha = 1
         }
@@ -187,18 +274,57 @@ class StarTrack {
   }
   
   update() {
+    // 更新恒星闪烁
     this.stars.forEach(star => {
+      // 闪烁效果
       star.opacity += star.twinkleSpeed * star.twinkleDirection
-      if (star.opacity <= 0.2 || star.opacity >= 1) {
+      if (star.opacity <= 0.3 || star.opacity >= 1) {
         star.twinkleDirection *= -1
+      }
+      
+      // 地球自转带来的漂移（从右向左）
+      star.x += this.driftVelocity.x * star.driftSpeed
+      star.y += this.driftVelocity.y * star.driftSpeed
+      
+      // 边界循环（从左边消失，从右边出现）
+      if (star.x < -10) {
+        star.x = this.canvas.width + 10
+      }
+      if (star.x > this.canvas.width + 10) {
+        star.x = -10
       }
     })
     
+    // 更新流星
     this.shootingStars = this.shootingStars.filter(star => {
       star.x += Math.cos(star.angle) * star.speed
       star.y += Math.sin(star.angle) * star.speed
       star.opacity -= 0.01
       return star.opacity > 0 && star.x < this.canvas.width + 100 && star.y < this.canvas.height + 100
+    })
+    
+    // 更新漂浮粒子
+    this.floatingParticles = this.floatingParticles.filter(particle => {
+      // 上浮
+      particle.y -= particle.floatSpeed
+      // 横向漂移（大气流动）
+      particle.x += particle.driftX
+      // 地球自转漂移
+      particle.x += this.driftVelocity.x * 2  // 粒子漂移更快
+      
+      // 生命周期衰减
+      particle.life -= particle.fadeSpeed
+      
+      // 边界循环
+      if (particle.x < -10) {
+        particle.x = this.canvas.width + 10
+      }
+      if (particle.x > this.canvas.width + 10) {
+        particle.x = -10
+      }
+      
+      // 移除消失的粒子
+      return particle.life > 0 && particle.y > -20
     })
   }
   
@@ -217,6 +343,10 @@ class StarTrack {
     this.stars.forEach(star => this.drawStar(star))
     this.createShootingStar()
     this.shootingStars.forEach(star => this.drawShootingStar(star))
+    
+    // 绘制漂浮粒子
+    this.createFloatingParticle()
+    this.floatingParticles.forEach(particle => this.drawFloatingParticle(particle))
   }
 }
 
