@@ -46,7 +46,7 @@ export function use3DCard() {
       ? 'transform 0.1s ease-out, box-shadow 0.3s ease-out' 
       : 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease-out',
     boxShadow: isHovered.value 
-      ? '0 20px 40px rgba(0, 212, 255, 0.15), 0 0 0 1px rgba(0, 212, 255, 0.1)' 
+      ? '0 8px 24px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 212, 255, 0.15)' 
       : '0 4px 12px rgba(0, 0, 0, 0.1)'
   })
 
