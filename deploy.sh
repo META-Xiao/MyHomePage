@@ -63,13 +63,9 @@ fi
 echo "[INFO] 停止旧容器..."
 docker-compose down 2>/dev/null || docker compose down 2>/dev/null
 
-# 构建镜像
-echo "[INFO] 构建 Docker 镜像..."
-docker-compose build --no-cache || docker compose build --no-cache
-
-# 启动服务
-echo "[INFO] 启动服务..."
-docker-compose up -d || docker compose up -d
+# 构建并启动服务
+echo "[INFO] 构建并启动服务..."
+docker-compose up -d --build || docker compose up -d --build
 
 # 等待服务启动
 echo "[INFO] 等待服务启动..."
@@ -96,6 +92,12 @@ if curl -s http://localhost:8081/health > /dev/null 2>&1; then
 else
     echo "[WARNING] 健康检查失败，请查看日志"
 fi
+
+# 自动清理构建残余，保持系统清爽
+echo ""
+echo "[INFO] 正在清理构建残余..."
+docker image prune -f
+docker builder prune -f --filter "until=24h" 
 
 echo ""
 echo "=========================================="
