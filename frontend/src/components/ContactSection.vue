@@ -5,29 +5,18 @@
     </h2>
     
     <div class="contact-grid grid grid-cols-1 md:grid-cols-3 gap-6">
-      <a 
+      <ContactCard 
         v-for="(contact, index) in contacts" 
         :key="index"
-        :href="contact.link"
-        target="_blank"
-        class="contact-item glass-effect rounded-xl p-6 flex items-center card-hover"
-      >
-        <div 
-          class="contact-icon w-16 h-16 rounded-full flex items-center justify-center text-3xl mr-5 flex-shrink-0"
-          :style="{ background: contact.gradient }"
-        >
-          {{ contact.icon }}
-        </div>
-        <div class="contact-info">
-          <h4 class="text-base font-medium mb-1">{{ contact.title }}</h4>
-          <p class="text-sm text-white/60">{{ contact.value }}</p>
-        </div>
-      </a>
+        :contact="contact"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
+import ContactCard from './cards/ContactCard.vue'
+
 const contacts = [
   {
     icon: '📧',
