@@ -11,11 +11,11 @@
       
       <div class="hero-text-group animate-fade-in-up">
         <h1 class="hero-title">
-          {{ mainTitle }}
+          {{ displayedTitle }}<span class="cursor" :class="{ 'typing': isTyping }">|</span>
         </h1>
         
         <h2 class="hero-subtitle" id="slogan">
-          {{ currentSlogan }}
+          {{ displayedSlogan }}<span class="cursor" :class="{ 'typing': isTyping }">|</span>
         </h2>
       </div>
       
@@ -33,53 +33,107 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import axios from 'axios'
 
-const mainTitle = ref('加载中...')
+const mainTitle = ref('')
 const currentSlogan = ref('')
+const displayedTitle = ref('')
+const displayedSlogan = ref('')
+const isTyping = ref(false)
+
+let typingTimer = null
+let rotateTimer = null
 
 // 获取一言
 const fetchHitokoto = async () => {
   try {
     const response = await axios.get('https://v1.hitokoto.cn/?c=a&c=b&c=d&c=i')
     const data = response.data
-    mainTitle.value = data.hitokoto
-    currentSlogan.value = data.from ? `—— ${data.from}` : ''
+    return {
+      title: data.hitokoto,
+      slogan: data.from ? `—— ${data.from}` : ''
+    }
   } catch (error) {
     console.error('获取一言失败:', error)
-    mainTitle.value = '即使是最小的 margin'
-    currentSlogan.value = '也值得被认真对待'
+    return {
+      title: '即使是最小的 margin',
+      slogan: '也值得被认真对待'
+    }
   }
 }
 
-const rotateHitokoto = () => {
-  const slogan = document.getElementById('slogan')
-  const title = document.querySelector('.hero-title')
-  
-  if (slogan && title) {
-    slogan.classList.add('fade-out')
-    title.classList.add('fade-out')
-    
-    setTimeout(async () => {
-      await fetchHitokoto()
-      
-      slogan.classList.remove('fade-out')
-      slogan.classList.add('fade-in')
-      title.classList.remove('fade-out')
-      title.classList.add('fade-in')
-      
-      setTimeout(() => {
-        slogan.classList.remove('fade-in')
-        title.classList.remove('fade-in')
-      }, 500)
-    }, 500)
+// 打字机效果
+const typeWriter = async (text, target, speed = 80) => {
+  isTyping.value = true
+  for (let i = 0; i <= text.length; i++) {
+    target.value = text.substring(0, i)
+    await new Promise(resolve => setTimeout(resolve, speed))
   }
+  isTyping.value = false
+}
+
+// Backspace 删除效果
+const backspace = async (target, speed = 30) => {
+  isTyping.value = true
+  const text = target.value
+  for (let i = text.length; i >= 0; i--) {
+    target.value = text.substring(0, i)
+    await new Promise(resolve => setTimeout(resolve, speed))
+  }
+  isTyping.value = false
+}
+
+// 完整的打字循环
+const typewriterCycle = async () => {
+  // 等待一段时间
+  await new Promise(resolve => setTimeout(resolve, 3000))
+  
+  // 删除当前内容
+  await backspace(displayedSlogan, 30)
+  await backspace(displayedTitle, 30)
+  
+  // 等待一小段时间
+  await new Promise(resolve => setTimeout(resolve, 500))
+  
+  // 获取新内容
+  const newContent = await fetchHitokoto()
+  mainTitle.value = newContent.title
+  currentSlogan.value = newContent.slogan
+  
+  // 打字显示新内容
+  await typeWriter(newContent.title, displayedTitle, 80)
+  await new Promise(resolve => setTimeout(resolve, 300))
+  await typeWriter(newContent.slogan, displayedSlogan, 60)
+}
+
+// 启动循环
+const startTypingLoop = async () => {
+  // 首次加载
+  const initialContent = await fetchHitokoto()
+  mainTitle.value = initialContent.title
+  currentSlogan.value = initialContent.slogan
+  
+  await typeWriter(initialContent.title, displayedTitle, 80)
+  await new Promise(resolve => setTimeout(resolve, 300))
+  await typeWriter(initialContent.slogan, displayedSlogan, 60)
+  
+  // 设置循环
+  const loop = async () => {
+    await typewriterCycle()
+    rotateTimer = setTimeout(loop, 0)
+  }
+  
+  rotateTimer = setTimeout(loop, 12000) // 12秒后开始循环
 }
 
 onMounted(() => {
-  fetchHitokoto()
-  setInterval(rotateHitokoto, 15000) // 每15秒切换一次
+  startTypingLoop()
+})
+
+onUnmounted(() => {
+  if (typingTimer) clearTimeout(typingTimer)
+  if (rotateTimer) clearTimeout(rotateTimer)
 })
 </script>
 
@@ -144,6 +198,7 @@ onMounted(() => {
   animation: float 6s ease-in-out infinite;
   font-family: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
   transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  min-height: 1.5em;
 }
 
 .hero-subtitle {
@@ -155,6 +210,30 @@ onMounted(() => {
   animation: float 6s ease-in-out infinite;
   animation-delay: 0.5s;
   font-family: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+  min-height: 1.5em;
+}
+
+/* 光标样式 */
+.cursor {
+  display: inline-block;
+  width: 2px;
+  margin-left: 4px;
+  color: #00ff37;
+  font-weight: 300;
+  animation: blink 1s step-end infinite;
+}
+
+.cursor.typing {
+  animation: blink 0.7s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
 }
 
 @keyframes float {
