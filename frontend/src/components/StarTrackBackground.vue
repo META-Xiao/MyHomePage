@@ -98,9 +98,14 @@ class StarTrack {
     
     // 地球自转方向（从西向东，画面上从右向左）
     this.driftVelocity = {
-      x: -0.05,  // 向左漂移（很慢）
+      x: -0.015,  // 向左漂移（非常慢）
       y: 0
     }
+    
+    // 星座连线闪烁
+    this.constellationOpacity = 0.3
+    this.constellationDirection = 1
+    this.constellationTwinkleSpeed = 0.003
     
     this.init()
   }
@@ -145,22 +150,21 @@ class StarTrack {
     }
   }
   
-  // 创建漂浮粒子（大气流动效果）
+  // 创建漂浮粒子（随机位置生成，不从底部上浮）
   createFloatingParticle() {
-    if (this.floatingParticles.length < this.maxFloatingParticles && Math.random() < 0.05) {
+    if (this.floatingParticles.length < this.maxFloatingParticles && Math.random() < 0.02) {
       this.floatingParticles.push({
         x: Math.random() * this.canvas.width,
-        y: this.canvas.height + 20,  // 从底部生成
+        y: Math.random() * this.canvas.height,  // 随机位置
         radius: Math.random() * 1.5 + 0.5,
         opacity: Math.random() * 0.6 + 0.2,
         color: this.getRandomStarColor(),
-        // 上浮速度
-        floatSpeed: Math.random() * 0.5 + 0.3,
         // 横向漂移（模拟大气流动）
-        driftX: (Math.random() - 0.5) * 0.3,
+        driftX: (Math.random() - 0.5) * 0.1,
+        driftY: (Math.random() - 0.5) * 0.1,
         // 生命周期
         life: 1,
-        fadeSpeed: Math.random() * 0.003 + 0.002
+        fadeSpeed: Math.random() * 0.002 + 0.001
       })
     }
   }
@@ -248,8 +252,9 @@ class StarTrack {
   }
   
   drawConstellation() {
-    this.ctx.strokeStyle = 'rgba(155, 176, 255, 0.08)'  // 使用蓝色调，更真实
-    this.ctx.lineWidth = 0.5
+    // 星座连线闪烁效果
+    this.ctx.strokeStyle = `rgba(155, 176, 255, ${this.constellationOpacity * 0.3})`
+    this.ctx.lineWidth = 0.8
     
     for (let i = 0; i < this.stars.length; i++) {
       if (!this.stars[i].isPermanent) continue  // 只连接恒星
@@ -265,11 +270,17 @@ class StarTrack {
           this.ctx.beginPath()
           this.ctx.moveTo(this.stars[i].x, this.stars[i].y)
           this.ctx.lineTo(this.stars[j].x, this.stars[j].y)
-          this.ctx.globalAlpha = (150 - distance) / 150 * 0.2
+          this.ctx.globalAlpha = (150 - distance) / 150 * this.constellationOpacity
           this.ctx.stroke()
           this.ctx.globalAlpha = 1
         }
       }
+    }
+    
+    // 更新星座连线闪烁
+    this.constellationOpacity += this.constellationTwinkleSpeed * this.constellationDirection
+    if (this.constellationOpacity <= 0.2 || this.constellationOpacity >= 0.5) {
+      this.constellationDirection *= -1
     }
   }
   
@@ -305,12 +316,11 @@ class StarTrack {
     
     // 更新漂浮粒子
     this.floatingParticles = this.floatingParticles.filter(particle => {
-      // 上浮
-      particle.y -= particle.floatSpeed
       // 横向漂移（大气流动）
       particle.x += particle.driftX
-      // 地球自转漂移
-      particle.x += this.driftVelocity.x * 2  // 粒子漂移更快
+      particle.y += particle.driftY
+      // 地球自转漂移（慢速）
+      particle.x += this.driftVelocity.x * 0.8
       
       // 生命周期衰减
       particle.life -= particle.fadeSpeed
@@ -322,9 +332,15 @@ class StarTrack {
       if (particle.x > this.canvas.width + 10) {
         particle.x = -10
       }
+      if (particle.y < -10) {
+        particle.y = this.canvas.height + 10
+      }
+      if (particle.y > this.canvas.height + 10) {
+        particle.y = -10
+      }
       
       // 移除消失的粒子
-      return particle.life > 0 && particle.y > -20
+      return particle.life > 0
     })
   }
   
