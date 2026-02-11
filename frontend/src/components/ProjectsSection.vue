@@ -10,7 +10,6 @@
         :href="mainLink.link"
         target="_blank"
         class="main-card glass-card"
-        :style="{ transform: `rotate(${mainLink.rotation}deg)` }"
       >
         <div class="card-glow" :style="{ background: mainLink.glowColor }"></div>
         <div class="card-content">
@@ -31,10 +30,7 @@
           target="_blank"
           class="secondary-card glass-card"
           :class="`card-${index + 1}`"
-          :style="{ 
-            transform: `rotate(${item.rotation}deg)`,
-            gridArea: item.gridArea 
-          }"
+          :style="{ gridArea: item.gridArea }"
         >
           <div class="card-glow" :style="{ background: item.glowColor }"></div>
           <div class="card-content">
@@ -54,7 +50,6 @@ const mainLink = {
   desc: '写代码、写 Bug、写人生',
   icon: 'ri:quill-pen-line',
   link: 'https://teslongxiao.cn',
-  rotation: -2,
   glowColor: 'radial-gradient(circle at 30% 50%, rgba(6, 182, 212, 0.15), transparent 70%)'
 }
 
@@ -63,7 +58,6 @@ const secondaryLinks = [
     title: 'GitHub',
     icon: 'ri:github-fill',
     link: 'https://github.com',
-    rotation: 1.5,
     glowColor: 'radial-gradient(circle at 50% 50%, rgba(100, 100, 100, 0.12), transparent 70%)',
     statusColor: 'linear-gradient(90deg, rgba(100, 100, 100, 0.3), rgba(150, 150, 150, 0.2))',
     gridArea: 'a'
@@ -72,7 +66,6 @@ const secondaryLinks = [
     title: '服务器监控',
     icon: 'ri:server-line',
     link: '#',
-    rotation: -1,
     glowColor: 'radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.12), transparent 70%)',
     statusColor: 'linear-gradient(90deg, rgba(16, 185, 129, 0.3), rgba(52, 211, 153, 0.2))',
     gridArea: 'b'
@@ -81,7 +74,6 @@ const secondaryLinks = [
     title: 'Telegram',
     icon: 'ri:telegram-line',
     link: '#',
-    rotation: 2,
     glowColor: 'radial-gradient(circle at 50% 50%, rgba(0, 136, 204, 0.12), transparent 70%)',
     statusColor: 'linear-gradient(90deg, rgba(0, 136, 204, 0.3), rgba(41, 171, 226, 0.2))',
     gridArea: 'c'
@@ -90,7 +82,6 @@ const secondaryLinks = [
     title: 'Twitter',
     icon: 'ri:twitter-x-line',
     link: '#',
-    rotation: -1.5,
     glowColor: 'radial-gradient(circle at 50% 50%, rgba(29, 161, 242, 0.12), transparent 70%)',
     statusColor: 'linear-gradient(90deg, rgba(29, 161, 242, 0.3), rgba(85, 172, 238, 0.2))',
     gridArea: 'd'
@@ -99,7 +90,6 @@ const secondaryLinks = [
     title: 'Bilibili',
     icon: 'ri:bilibili-line',
     link: '#',
-    rotation: 1,
     glowColor: 'radial-gradient(circle at 50% 50%, rgba(251, 114, 153, 0.12), transparent 70%)',
     statusColor: 'linear-gradient(90deg, rgba(251, 114, 153, 0.3), rgba(252, 165, 165, 0.2))',
     gridArea: 'e'
@@ -108,7 +98,6 @@ const secondaryLinks = [
     title: '网易云',
     icon: 'ri:netease-cloud-music-line',
     link: '#',
-    rotation: -2,
     glowColor: 'radial-gradient(circle at 50% 50%, rgba(194, 12, 12, 0.12), transparent 70%)',
     statusColor: 'linear-gradient(90deg, rgba(194, 12, 12, 0.3), rgba(220, 38, 38, 0.2))',
     gridArea: 'f'
@@ -162,7 +151,7 @@ const secondaryLinks = [
 }
 
 .main-card:hover {
-  transform: rotate(0deg) scale(1.05) !important;
+  transform: scale(1.05);
 }
 
 .main-card .icon-wrapper {
@@ -223,7 +212,7 @@ const secondaryLinks = [
 }
 
 .secondary-card:hover {
-  transform: rotate(0deg) scale(1.08) translateY(-8px) !important;
+  transform: scale(1.08) translateY(-8px);
   z-index: 10;
 }
 
