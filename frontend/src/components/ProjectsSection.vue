@@ -1,90 +1,264 @@
 <template>
-  <div class="projects-section container-custom">
+  <div class="find-section container-custom">
     <h2 class="section-title">
-      项目 <span class="gradient-text">PROJECTS</span>
+      我会在哪儿？
     </h2>
     
-    <div class="projects-grid grid grid-cols-1 md:grid-cols-2 gap-8">
-      <ProjectCard 
-        v-for="(project, index) in projects" 
-        :key="index"
-        :project="project"
-        :index="index"
-      />
+    <div class="links">
+      <div class="col-3">
+        <a 
+          v-for="(item, index) in topLinks" 
+          :key="index"
+          :href="item.link"
+          target="_blank"
+          class="item scroll-animate"
+          :class="{ visible: isVisible }"
+        >
+          <div class="inner">
+            <i :class="item.icon"></i>
+            <span>{{ item.name }}</span>
+          </div>
+          <div class="bg" :style="{ backgroundColor: item.color }"></div>
+        </a>
+      </div>
+      
+      <div class="links-grid">
+        <a 
+          v-for="(item, index) in bottomLinks" 
+          :key="index"
+          :href="item.link"
+          target="_blank"
+          class="item scroll-animate"
+          :class="{ visible: isVisible }"
+        >
+          <div class="inner">
+            <i :class="item.icon"></i>
+            <span>{{ item.name }}</span>
+          </div>
+          <div class="bg" :style="{ backgroundColor: item.color }"></div>
+        </a>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import ProjectCard from './cards/ProjectCard.vue'
+import { ref, onMounted } from 'vue'
 
-const projects = [
+const isVisible = ref(false)
+
+const topLinks = [
   {
-    title: 'MX-Space 博客系统',
-    status: '运行中',
-    statusClass: 'status-running',
-    description: '基于 MX-Space 搭建的个人博客系统，使用 Shiro 作为前端主题，记录技术成长和生活感悟。',
-    tags: ['Next.js', 'TypeScript', 'NestJS'],
+    name: '我的博客！',
+    icon: '📖',
     link: 'https://teslongxiao.cn',
-    bgGradient: 'linear-gradient(135deg, rgba(30, 58, 138, 0.12), rgba(49, 46, 129, 0.08), rgba(30, 27, 75, 0.12))',
-    borderGradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.25))',
-    rotation: -1.5
+    color: '#3b82f6'
   },
   {
-    title: '服务器监控',
-    status: '在线',
-    statusClass: 'status-online',
-    description: '使用哪吒监控实时监控服务器状态，保障服务稳定运行，及时发现和处理问题。',
-    tags: ['监控', '运维', 'Docker'],
+    name: '网站统计',
+    icon: '📊',
     link: '#',
-    bgGradient: 'linear-gradient(135deg, rgba(22, 78, 99, 0.12), rgba(21, 94, 117, 0.08), rgba(15, 23, 42, 0.12))',
-    borderGradient: 'linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(20, 184, 166, 0.15), rgba(16, 185, 129, 0.25))',
-    rotation: 2
+    color: '#f59e0b'
   },
   {
-    title: '个人主页',
-    status: '开发中',
-    statusClass: 'status-dev',
-    description: '使用 Vue 3 和现代化 UI 框架打造的个人主页，展示项目和技术栈。',
-    tags: ['Vue 3', 'Tailwind CSS', 'Canvas'],
+    name: '服务器状态',
+    icon: '💻',
     link: '#',
-    bgGradient: 'linear-gradient(135deg, rgba(76, 29, 149, 0.12), rgba(91, 33, 182, 0.08), rgba(55, 48, 163, 0.12))',
-    borderGradient: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(124, 58, 237, 0.15), rgba(109, 40, 217, 0.25))',
-    rotation: -2
-  },
-  {
-    title: 'API 服务',
-    status: '规划中',
-    statusClass: 'status-plan',
-    description: '基于 Node.js 的 RESTful API 服务，为前端应用提供数据支持和业务逻辑。',
-    tags: ['Node.js', 'Express', 'MongoDB'],
-    link: '#',
-    bgGradient: 'linear-gradient(135deg, rgba(30, 64, 175, 0.12), rgba(55, 48, 163, 0.08), rgba(49, 46, 129, 0.12))',
-    borderGradient: 'linear-gradient(135deg, rgba(79, 70, 229, 0.25), rgba(99, 102, 241, 0.15), rgba(67, 56, 202, 0.25))',
-    rotation: 1.5
+    color: '#10b981'
   }
 ]
+
+const bottomLinks = [
+  {
+    name: 'Telegram',
+    icon: '✈️',
+    link: '#',
+    color: '#0088cc'
+  },
+  {
+    name: 'Twitter',
+    icon: '🐦',
+    link: '#',
+    color: '#1da1f2'
+  },
+  {
+    name: 'CloudMusic',
+    icon: '🎵',
+    link: '#',
+    color: '#c20c0c'
+  },
+  {
+    name: 'Bilibili',
+    icon: '📺',
+    link: '#',
+    color: '#fb7299'
+  },
+  {
+    name: 'Github',
+    icon: '🐙',
+    link: 'https://github.com',
+    color: '#333'
+  }
+]
+
+onMounted(() => {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          isVisible.value = true
+        }
+      })
+    },
+    { threshold: 0.2 }
+  )
+  
+  const section = document.querySelector('.find-section')
+  if (section) {
+    observer.observe(section)
+  }
+})
 </script>
 
 <style scoped>
+.find-section {
+  padding: 80px 0;
+}
+
 .section-title {
-  @apply text-3xl md:text-4xl font-light tracking-[0.3em] text-white/50 pb-10 mb-12;
-  position: relative;
-  font-family: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
-  font-weight: 500;
-}
-
-.section-title .gradient-text {
-  font-family: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', 'Pacifico', cursive;
-  font-style: italic;
+  font-size: 26px;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.5);
+  padding-bottom: 30px;
   font-weight: 400;
-  letter-spacing: 0.1em;
+  position: relative;
 }
 
-.section-title::after {
+.section-title:after {
   content: '';
-  @apply block w-20 h-1 mt-8 rounded-full;
-  background: linear-gradient(90deg, theme('colors.accent.DEFAULT'), theme('colors.accent.secondary'));
+  display: block;
+  width: 10%;
+  height: 5px;
+  background-color: rgba(255, 255, 255, 0.5);
+  margin-top: 30px;
+}
+
+.links {
+  width: 100%;
+}
+
+.col-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+}
+
+.item {
+  position: relative;
+  height: 80px;
+  line-height: 80px;
+  padding: 5px 0;
+  text-align: center;
+  transition: all 0.2s;
+  opacity: 0.9;
+  text-decoration: none;
+  color: #fff;
+  overflow: hidden;
+}
+
+.item:hover {
+  opacity: 1;
+  transform: translateY(-10px);
+}
+
+.item .inner {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.item i {
+  font-size: 24px;
+  font-style: normal;
+  margin-bottom: 5px;
+}
+
+.item span {
+  display: block;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+}
+
+.item .bg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1.8%;
+  z-index: 0;
+  transition: all 0.15s;
+}
+
+.item:hover .bg {
+  height: 100%;
+  width: 100%;
+  border-radius: 5px;
+  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.28);
+}
+
+/* 滚动动画 */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-animate.visible {
+  opacity: 0.9;
+  transform: translateY(0);
+}
+
+.scroll-animate:hover.visible {
+  opacity: 1;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .col-3 {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .links-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .item {
+    height: 60px;
+    line-height: 60px;
+    font-size: 13px;
+    padding: 5px 0;
+  }
+  
+  .item i {
+    font-size: 20px;
+  }
+  
+  .item span {
+    font-size: 12px;
+  }
 }
 </style>
-

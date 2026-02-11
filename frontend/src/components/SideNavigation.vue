@@ -22,7 +22,6 @@ import { ref, onMounted, onUnmounted } from 'vue'
 const navItems = [
   { id: 'intro', label: '首页' },
   { id: 'about', label: '关于' },
-  { id: 'projects', label: '项目' },
   { id: 'posts', label: '文章' },
   { id: 'links', label: '友链' },
   { id: 'contact', label: '联系' }
