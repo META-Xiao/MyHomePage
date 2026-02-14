@@ -291,6 +291,21 @@ const secondaryLinks = [
 
 /* 响应式 */
 @media (max-width: 768px) {
+  .find-section {
+    padding: 80px 0;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .section-title::after {
+    margin-top: 20px;
+  }
+  
   .links-container {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -298,7 +313,21 @@ const secondaryLinks = [
   
   .main-card {
     padding: 2rem 1.5rem;
-    min-height: 240px;
+    min-height: 200px;
+  }
+  
+  .main-card .icon-wrapper {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 1rem;
+  }
+  
+  .main-card h3 {
+    font-size: 1.5rem;
+  }
+  
+  .main-card p {
+    font-size: 0.875rem;
   }
   
   .secondary-grid {
@@ -308,11 +337,50 @@ const secondaryLinks = [
       "b c"
       "d e"
       "f f";
+    gap: 0.75rem;
   }
   
   .secondary-card {
     min-height: 100px;
-    padding: 1.25rem;
+    padding: 1rem;
+  }
+  
+  .secondary-card span {
+    font-size: 0.8rem;
+  }
+}
+
+/* 超窄屏优化 */
+@media (max-width: 480px) {
+  .find-section {
+    padding: 60px 0;
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+  }
+  
+  .main-card {
+    padding: 1.5rem;
+    min-height: 180px;
+  }
+  
+  .main-card .icon-wrapper {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .main-card h3 {
+    font-size: 1.25rem;
+  }
+  
+  .secondary-grid {
+    gap: 0.5rem;
+  }
+  
+  .secondary-card {
+    min-height: 90px;
+    padding: 0.75rem;
   }
 }
 </style>
