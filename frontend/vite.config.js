@@ -26,10 +26,10 @@ export default defineConfig({
     port: 5173,
     host: true,
     proxy: {
-      '/api': {
+      '/api/v2': {
         target: 'https://api.teslongxiao.cn',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/api/v2')
+        secure: false
       }
     }
   }

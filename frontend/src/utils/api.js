@@ -1,15 +1,13 @@
 import axios from 'axios'
 
-// 创建 axios 实例 
 const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: '/api/v2',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
   }
 })
 
-// 请求拦截器
 apiClient.interceptors.request.use(
   config => {
     return config
@@ -19,7 +17,6 @@ apiClient.interceptors.request.use(
   }
 )
 
-// 响应拦截器
 apiClient.interceptors.response.use(
   response => {
     return response.data
@@ -30,7 +27,7 @@ apiClient.interceptors.response.use(
   }
 )
 
-// 获取文章列表 - 适配 Mix Space API
+// 获取文章列表
 export const fetchPosts = async (page = 1, size = 10) => {
   try {
     const response = await apiClient.get('/posts', {
@@ -40,7 +37,6 @@ export const fetchPosts = async (page = 1, size = 10) => {
       }
     })
     
-    // Mix Space API 返回格式: { data: [...], pagination: {...} }
     const posts = response.data || []
     return posts.map(post => ({
       title: post.title,
@@ -57,7 +53,6 @@ export const fetchPosts = async (page = 1, size = 10) => {
   }
 }
 
-// 获取文章详情
 export const fetchPostDetail = async (id) => {
   try {
     const response = await apiClient.get(`/posts/${id}`)
