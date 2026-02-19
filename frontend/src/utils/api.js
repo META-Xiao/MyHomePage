@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-// 创建 axios 实例 - 通过 Vite 代理连接到你的 Mix Space API
+// 创建 axios 实例 
 const apiClient = axios.create({
   baseURL: '/api',
   timeout: 10000,
@@ -36,19 +36,17 @@ export const fetchPosts = async (page = 1, size = 10) => {
     const response = await apiClient.get('/posts', {
       params: { 
         page, 
-        size,
-        sortBy: 'created',
-        sortOrder: -1
+        size
       }
     })
     
-    // 适配 Mix Space API 数据格式
+    // Mix Space API 返回格式: { data: [...], pagination: {...} }
     const posts = response.data || []
     return posts.map(post => ({
       title: post.title,
       category: post.category?.name || '未分类',
       date: new Date(post.created).toLocaleDateString('zh-CN'),
-      excerpt: post.text?.substring(0, 120) + '...' || post.summary || '暂无摘要',
+      excerpt: post.text?.substring(0, 120) || post.summary || '暂无摘要',
       tags: post.tags || [],
       views: post.count?.read || 0,
       link: `https://teslongxiao.cn/posts/${post.category?.slug || 'post'}/${post.slug}`
@@ -70,7 +68,6 @@ export const fetchPostDetail = async (id) => {
   }
 }
 
-// 获取友链列表
 export const fetchLinks = async () => {
   try {
     const response = await apiClient.get('/links')
@@ -81,7 +78,6 @@ export const fetchLinks = async () => {
   }
 }
 
-// 获取项目列表
 export const fetchProjects = async () => {
   try {
     const response = await apiClient.get('/projects')
@@ -92,7 +88,6 @@ export const fetchProjects = async () => {
   }
 }
 
-// 获取站点统计信息
 export const fetchSiteStats = async () => {
   try {
     const response = await apiClient.get('/stats')
