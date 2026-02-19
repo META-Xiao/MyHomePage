@@ -71,19 +71,19 @@ const secondaryLinks = [
     gridArea: 'b'
   },
   {
-    title: 'Telegram',
-    icon: 'ri:telegram-line',
-    link: '#',
-    glowColor: 'radial-gradient(circle at 50% 50%, rgba(0, 136, 204, 0.12), transparent 70%)',
-    statusColor: 'linear-gradient(90deg, rgba(0, 136, 204, 0.3), rgba(41, 171, 226, 0.2))',
+    title: 'Codeforces',
+    icon: 'simple-icons:codeforces',
+    link: 'https://codeforces.com/profile/HooowTOdoTHIS',
+    glowColor: 'radial-gradient(circle at 50% 50%, rgba(31, 120, 180, 0.12), transparent 70%)',
+    statusColor: 'linear-gradient(90deg, rgba(31, 120, 180, 0.3), rgba(49, 130, 189, 0.2))',
     gridArea: 'c'
   },
   {
-    title: 'Twitter',
-    icon: 'ri:twitter-x-line',
-    link: '#',
-    glowColor: 'radial-gradient(circle at 50% 50%, rgba(29, 161, 242, 0.12), transparent 70%)',
-    statusColor: 'linear-gradient(90deg, rgba(29, 161, 242, 0.3), rgba(85, 172, 238, 0.2))',
+    title: 'AtCoder',
+    icon: 'simple-icons:atcoder',
+    link: 'https://atcoder.jp/users/Zelong_Xiao',
+    glowColor: 'radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.12), transparent 70%)',
+    statusColor: 'linear-gradient(90deg, rgba(92, 92, 92, 0.3), rgba(120, 120, 120, 0.2))',
     gridArea: 'd'
   },
   {
@@ -95,12 +95,20 @@ const secondaryLinks = [
     gridArea: 'e'
   },
   {
+    title: '牛客竞赛',
+    icon: 'mdi:code-braces',
+    link: 'https://ac.nowcoder.com/acm/contest/profile/545624599',
+    glowColor: 'radial-gradient(circle at 50% 50%, rgba(46, 204, 113, 0.12), transparent 70%)',
+    statusColor: 'linear-gradient(90deg, rgba(46, 204, 113, 0.3), rgba(39, 174, 96, 0.2))',
+    gridArea: 'f'
+  },
+  {
     title: '网易云',
     icon: 'ri:netease-cloud-music-line',
     link: '#',
     glowColor: 'radial-gradient(circle at 50% 50%, rgba(194, 12, 12, 0.12), transparent 70%)',
     statusColor: 'linear-gradient(90deg, rgba(194, 12, 12, 0.3), rgba(220, 38, 38, 0.2))',
-    gridArea: 'f'
+    gridArea: 'g'
   }
 ]
 </script>
@@ -189,11 +197,11 @@ const secondaryLinks = [
 .secondary-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   grid-template-areas:
     "a a b"
     "c d e"
-    "c f f";
+    "f g g";
   gap: 1rem;
 }
 
@@ -336,7 +344,8 @@ const secondaryLinks = [
       "a a"
       "b c"
       "d e"
-      "f f";
+      "f f"
+      "g g";
     gap: 0.75rem;
   }
   
@@ -375,6 +384,13 @@ const secondaryLinks = [
   }
   
   .secondary-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+      "a a"
+      "b c"
+      "d e"
+      "f f"
+      "g g";
     gap: 0.5rem;
   }
   
