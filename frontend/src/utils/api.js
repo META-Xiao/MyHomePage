@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-// 创建 axios 实例
+// 创建 axios 实例 - 通过 Vite 代理连接到你的 Mix Space API
 const apiClient = axios.create({
-  baseURL: 'https://api.teslongxiao.cn/api/v2',
+  baseURL: '/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'

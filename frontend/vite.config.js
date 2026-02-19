@@ -24,7 +24,14 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    host: true
+    host: true,
+    proxy: {
+      '/api': {
+        target: 'https://api.teslongxiao.cn',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/api/v2')
+      }
+    }
   }
 })
 
