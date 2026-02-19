@@ -11,8 +11,10 @@ const app = express()
 const PORT = process.env.PORT || 8081
 
 // MX-Space API 配置
-const MX_SPACE_API = process.env.MX_SPACE_API || 'https://api.teslongxiao.cn/api/v2'
+const MX_SPACE_API = process.env.MX_SPACE_API || 'http://172.20.0.10:2333'
 const BLOG_URL = process.env.BLOG_URL || 'https://teslongxiao.cn'
+
+console.log('[INFO] MX-Space API 地址:', MX_SPACE_API)
 
 app.use(cors())
 app.use(express.json())
