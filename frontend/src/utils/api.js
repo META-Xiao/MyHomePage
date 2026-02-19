@@ -1,7 +1,8 @@
 import axios from 'axios'
 
+// 创建 axios 实例 - 通过后端代理访问 Mix Space API
 const apiClient = axios.create({
-  baseURL: import.meta.env.PROD ? 'https://api.teslongxiao.cn/api/v2' : '/api/v2',
+  baseURL: '/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -27,7 +28,7 @@ apiClient.interceptors.response.use(
   }
 )
 
-// 获取文章列表
+// 获取文章列表 - 后端已经处理好数据格式
 export const fetchPosts = async (page = 1, size = 10) => {
   try {
     const response = await apiClient.get('/posts', {
@@ -37,16 +38,8 @@ export const fetchPosts = async (page = 1, size = 10) => {
       }
     })
     
-    const posts = response.data || []
-    return posts.map(post => ({
-      title: post.title,
-      category: post.category?.name || '未分类',
-      date: new Date(post.created).toLocaleDateString('zh-CN'),
-      excerpt: post.text?.substring(0, 120) || post.summary || '暂无摘要',
-      tags: post.tags || [],
-      views: post.count?.read || 0,
-      link: `https://teslongxiao.cn/posts/${post.category?.slug || 'post'}/${post.slug}`
-    }))
+    // 后端返回格式: { success: true, data: [...] }
+    return response.data || []
   } catch (error) {
     console.error('Failed to fetch posts:', error)
     return []
