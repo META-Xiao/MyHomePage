@@ -1,13 +1,19 @@
 <template>
-  <div 
-    ref="containerRef"
-    class="star-track-background" 
-    :style="{ transform: starTransform }"
-  >
-    <canvas ref="canvasRef" id="startrack" :style="canvasTransform"></canvas>
+  <div>
+    <!-- 星空背景容器 - 会向上移动 -->
+    <div 
+      ref="containerRef"
+      class="star-track-background" 
+      :style="{ transform: starTransform }"
+    >
+      <canvas ref="canvasRef" id="startrack" :style="canvasTransform"></canvas>
+      
+      <!-- 渐变遮罩 - 跟随星空移动 -->
+      <div class="cover" :style="{ opacity: coverOpacity }"></div>
+    </div>
     
-    <!-- 波浪形遮罩 -->
-    <svg class="wave-mask" viewBox="0 0 1440 120" preserveAspectRatio="none">
+    <!-- 波浪形遮罩 - 固定在 38.2vh 位置 -->
+    <svg class="wave-mask-fixed" viewBox="0 0 1440 120" preserveAspectRatio="none">
       <defs>
         <linearGradient id="waveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" style="stop-color:#202020;stop-opacity:0" />
@@ -19,9 +25,6 @@
         fill="url(#waveGradient)"
       />
     </svg>
-    
-    <!-- 渐变遮罩 -->
-    <div class="cover" :style="{ opacity: coverOpacity }"></div>
   </div>
 </template>
 
@@ -448,9 +451,10 @@ onMounted(() => {
   transition: opacity 0.1s linear;
 }
 
-.wave-mask {
-  position: absolute;
-  bottom: -1px;
+/* 波浪形遮罩 - 固定在 38.2vh 位置，不跟随星空移动 */
+.wave-mask-fixed {
+  position: fixed;
+  top: calc(38.2vh - 120px);  /* 波浪高度是120px，所以要减去 */
   left: 0;
   width: 100%;
   height: 120px;

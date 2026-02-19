@@ -32,42 +32,42 @@
       <div class="content-layer">
         <div class="project-header">
           <h3 class="project-title">
-            {{ project.title }}
-          </h3>
-          <span 
+        {{ project.title }}
+      </h3>
+      <span 
             :class="['project-status', project.statusClass]"
-          >
+      >
             <span class="status-dot"></span>
-            {{ project.status }}
-          </span>
-        </div>
-        
+        {{ project.status }}
+      </span>
+    </div>
+    
         <p class="project-desc">
-          {{ project.description }}
-        </p>
-        
+      {{ project.description }}
+    </p>
+    
         <div class="project-footer">
           <div class="project-tags">
-            <span 
-              v-for="(tag, i) in project.tags" 
-              :key="i"
+        <span 
+          v-for="(tag, i) in project.tags" 
+          :key="i"
               class="tag"
-            >
-              {{ tag }}
-            </span>
-          </div>
-          <a 
+        >
+          {{ tag }}
+        </span>
+      </div>
+      <a 
             v-if="project.link !== '#'"
-            :href="project.link" 
-            target="_blank"
+        :href="project.link" 
+        target="_blank"
             class="project-link"
-            @click.stop
-          >
+        @click.stop
+      >
             <span>访问</span>
             <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </a>
+      </a>
         </div>
       </div>
     </div>
