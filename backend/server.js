@@ -11,17 +11,14 @@ const app = express()
 const PORT = process.env.PORT || 8081
 
 // MX-Space API 配置
-const MX_SPACE_API = process.env.MX_SPACE_API || 'http://172.20.0.10:2333'
+const MX_SPACE_API = process.env.MX_SPACE_API || 'https://api.teslongxiao.cn/api/v2'
 const BLOG_URL = process.env.BLOG_URL || 'https://teslongxiao.cn'
 
-// 中间件
 app.use(cors())
 app.use(express.json())
 
-// ★★★ 指向编译后的 dist 目录 ★★★
 app.use(express.static(path.join(__dirname, '../frontend/dist')))
 
-// 创建 MX-Space API 客户端
 const mxClient = axios.create({
   baseURL: MX_SPACE_API,
   timeout: 10000,
@@ -30,7 +27,6 @@ const mxClient = axios.create({
   }
 })
 
-// 健康检查
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'ok', 
@@ -39,7 +35,6 @@ app.get('/health', (req, res) => {
   })
 })
 
-// 获取文章列表
 app.get('/api/posts', async (req, res) => {
   try {
     const { page = 1, size = 10 } = req.query
@@ -50,8 +45,6 @@ app.get('/api/posts', async (req, res) => {
         select: 'title text category created modified slug tags'
       }
     })
-    
-    // 转换数据格式
     const posts = response.data.data.map(post => ({
       id: post._id || post.id,
       title: post.title,
@@ -83,7 +76,6 @@ app.get('/api/posts', async (req, res) => {
   }
 })
 
-// 获取最新文章
 app.get('/api/posts/latest', async (req, res) => {
   try {
     const { size = 6 } = req.query
@@ -114,7 +106,6 @@ app.get('/api/posts/latest', async (req, res) => {
   }
 })
 
-// 获取文章详情
 app.get('/api/posts/:id', async (req, res) => {
   try {
     const { id } = req.params
@@ -134,7 +125,6 @@ app.get('/api/posts/:id', async (req, res) => {
   }
 })
 
-// 获取分类列表
 app.get('/api/categories', async (req, res) => {
   try {
     const response = await mxClient.get('/categories')
@@ -153,7 +143,6 @@ app.get('/api/categories', async (req, res) => {
   }
 })
 
-// 获取友链列表
 app.get('/api/links', async (req, res) => {
   try {
     const response = await mxClient.get('/links')
@@ -180,7 +169,6 @@ app.get('/api/links', async (req, res) => {
   }
 })
 
-// 获取站点统计
 app.get('/api/stats', async (req, res) => {
   try {
     const response = await mxClient.get('/aggregate/stat')
@@ -205,7 +193,6 @@ app.get('/api/stats', async (req, res) => {
   }
 })
 
-// 获取最新说说
 app.get('/api/says', async (req, res) => {
   try {
     const { size = 5 } = req.query
@@ -227,7 +214,6 @@ app.get('/api/says', async (req, res) => {
   }
 })
 
-// 获取最近动态
 app.get('/api/recently', async (req, res) => {
   try {
     const response = await mxClient.get('/aggregate/timeline', {
@@ -248,7 +234,6 @@ app.get('/api/recently', async (req, res) => {
   }
 })
 
-// 错误处理中间件
 app.use((err, req, res, next) => {
   console.error('[ERROR] 服务器错误:', err)
   res.status(500).json({
@@ -258,21 +243,20 @@ app.use((err, req, res, next) => {
   })
 })
 
-// SPA 回退路由 - 所有非 API 请求返回 index.html
+
 app.get('*', (req, res) => {
-  // 如果是 API 请求，返回 404
+
   if (req.path.startsWith('/api')) {
     return res.status(404).json({
       success: false,
       message: '接口不存在'
     })
   }
-  
-  // ★★★ SPA 路由回退到 dist/index.html ★★★
+
   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
 })
 
-// 启动服务器
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`[INFO] ========================================`)
   console.log(`[INFO] Server is running on http://0.0.0.0:${PORT}`)
