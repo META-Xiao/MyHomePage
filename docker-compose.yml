@@ -11,7 +11,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=8081
-      - MX_SPACE_API=http://172.20.0.10:2333
+      - MX_SPACE_API=http://172.20.0.10:2333/api/v2
       - BLOG_URL=https://teslongxiao.cn
     networks:
       default:
