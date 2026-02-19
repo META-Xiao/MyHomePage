@@ -1,30 +1,26 @@
 <template>
-  <div>
-    <!-- 星空背景容器 - 会向上移动 -->
-    <div 
-      ref="containerRef"
-      class="star-track-background" 
-      :style="{ transform: starTransform }"
-    >
-      <canvas ref="canvasRef" id="startrack" :style="canvasTransform"></canvas>
-      
-      <!-- 渐变遮罩 - 跟随星空移动 -->
-      <div class="cover" :style="{ opacity: coverOpacity }"></div>
-    </div>
+  <div 
+    ref="containerRef"
+    class="star-track-background" 
+    :style="{ transform: starTransform }"
+  >
+    <canvas ref="canvasRef" id="startrack" :style="canvasTransform"></canvas>
     
-    <!-- 波浪形遮罩 - 固定在 38.2vh 位置 -->
-    <svg class="wave-mask-fixed" viewBox="0 0 1440 120" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="waveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style="stop-color:#202020;stop-opacity:0" />
-          <stop offset="100%" style="stop-color:#202020;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-      <path 
-        d="M0,60 C240,20 480,100 720,60 C960,20 1200,100 1440,60 L1440,120 L0,120 Z" 
-        fill="url(#waveGradient)"
-      />
-    </svg>
+    <!-- 波浪形渐变遮罩 -->
+    <div class="cover" :style="{ opacity: coverOpacity }">
+      <svg class="wave-mask" viewBox="0 0 1440 120" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="waveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#202020;stop-opacity:0" />
+            <stop offset="100%" style="stop-color:#202020;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <path 
+          d="M0,40 C240,10 480,70 720,40 C960,10 1200,70 1440,40 L1440,120 L0,120 Z" 
+          fill="url(#waveGradient)"
+        />
+      </svg>
+    </div>
   </div>
 </template>
 
@@ -444,22 +440,29 @@ onMounted(() => {
   position: absolute;
   bottom: 0;
   left: 0;
-  height: 40%;
+  height: 50%;
   width: 100%;
-  background: linear-gradient(0deg, #202020 0%, rgba(32, 32, 32, 0) 100%);
   pointer-events: none;
   transition: opacity 0.1s linear;
 }
 
-/* 波浪形遮罩 - 固定在 38.2vh 位置，不跟随星空移动 */
-.wave-mask-fixed {
-  position: fixed;
-  top: calc(38.2vh - 120px);  /* 波浪高度是120px，所以要减去 */
+.wave-mask {
+  position: absolute;
+  bottom: 0;
   left: 0;
   width: 100%;
   height: 120px;
-  pointer-events: none;
-  z-index: 1;
+  transform: translateY(-1px);
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 120px);
+  background: linear-gradient(0deg, #202020 0%, rgba(32, 32, 32, 0) 100%);
 }
 </style>
 
