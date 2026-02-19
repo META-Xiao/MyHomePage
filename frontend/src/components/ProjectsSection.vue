@@ -80,11 +80,11 @@ const secondaryLinks = [
     gridArea: 'c'
   },
   {
-    title: 'AtCoder',
-    customIcon: 'https://img.atcoder.jp/assets/logo.png',
-    link: 'https://atcoder.jp/users/Zelong_Xiao',
-    glowColor: 'radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.12), transparent 70%)',
-    statusColor: 'linear-gradient(90deg, rgba(92, 92, 92, 0.3), rgba(120, 120, 120, 0.2))',
+    title: 'CLIST',
+    customIcon: 'https://clist.by/static/img/clist-logo.png',
+    link: 'https://clist.by/',
+    glowColor: 'radial-gradient(circle at 50% 50%, rgba(66, 133, 244, 0.12), transparent 70%)',
+    statusColor: 'linear-gradient(90deg, rgba(66, 133, 244, 0.3), rgba(52, 168, 83, 0.2))',
     gridArea: 'd'
   },
   {
