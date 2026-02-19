@@ -6,7 +6,21 @@
   >
     <canvas ref="canvasRef" id="startrack" :style="canvasTransform"></canvas>
     
-    <!-- 渐变遮罩-->
+    <!-- 波浪形遮罩 -->
+    <svg class="wave-mask" viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="waveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#202020;stop-opacity:0" />
+          <stop offset="100%" style="stop-color:#202020;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <path 
+        d="M0,60 C240,20 480,100 720,60 C960,20 1200,100 1440,60 L1440,120 L0,120 Z" 
+        fill="url(#waveGradient)"
+      />
+    </svg>
+    
+    <!-- 渐变遮罩 -->
     <div class="cover" :style="{ opacity: coverOpacity }"></div>
   </div>
 </template>
@@ -431,7 +445,17 @@ onMounted(() => {
   width: 100%;
   background: linear-gradient(0deg, #202020 0%, rgba(32, 32, 32, 0) 100%);
   pointer-events: none;
-  transition: opacity 0.1s linear;  /* 线性过渡，跟随滚动 */
+  transition: opacity 0.1s linear;
+}
+
+.wave-mask {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  pointer-events: none;
+  z-index: 1;
 }
 </style>
 
