@@ -34,7 +34,8 @@
         >
           <div class="card-glow" :style="{ background: item.glowColor }"></div>
           <div class="card-content">
-            <iconify-icon :icon="item.icon" width="32"></iconify-icon>
+            <iconify-icon v-if="!item.customIcon" :icon="item.icon" width="32"></iconify-icon>
+            <img v-else :src="item.customIcon" :alt="item.title" class="custom-icon" />
             <span>{{ item.title }}</span>
           </div>
           <div class="status-bar" :style="{ background: item.statusColor }"></div>
@@ -58,8 +59,8 @@ const secondaryLinks = [
     title: 'GitHub',
     icon: 'ri:github-fill',
     link: 'https://github.com',
-    glowColor: 'radial-gradient(circle at 50% 50%, rgba(100, 100, 100, 0.12), transparent 70%)',
-    statusColor: 'linear-gradient(90deg, rgba(100, 100, 100, 0.3), rgba(150, 150, 150, 0.2))',
+    glowColor: 'radial-gradient(circle at 50% 50%, rgba(61, 68, 77, 0.12), transparent 70%)',
+    statusColor: 'linear-gradient(90deg, rgba(61, 68, 77, 0.3), rgba(88, 96, 105, 0.2))',
     gridArea: 'a'
   },
   {
@@ -80,7 +81,7 @@ const secondaryLinks = [
   },
   {
     title: 'AtCoder',
-    icon: 'simple-icons:atcoder',
+    customIcon: 'https://img.atcoder.jp/assets/logo.png',
     link: 'https://atcoder.jp/users/Zelong_Xiao',
     glowColor: 'radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.12), transparent 70%)',
     statusColor: 'linear-gradient(90deg, rgba(92, 92, 92, 0.3), rgba(120, 120, 120, 0.2))',
@@ -237,6 +238,18 @@ const secondaryLinks = [
   font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 0.05em;
+}
+
+.custom-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  transition: filter 0.3s ease;
+}
+
+.secondary-card:hover .custom-icon {
+  filter: brightness(1) invert(0);
 }
 
 .secondary-card .status-bar {
