@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-  baseURL: '/api/v2',
+  baseURL: import.meta.env.PROD ? 'https://api.teslongxiao.cn/api/v2' : '/api/v2',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
