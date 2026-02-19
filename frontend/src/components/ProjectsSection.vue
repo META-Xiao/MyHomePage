@@ -81,7 +81,7 @@ const secondaryLinks = [
   },
   {
     title: 'CLIST',
-    customIcon: 'https://clist.by/static/img/clist-logo.png',
+    icon: 'mdi:chart-line',
     link: 'https://clist.by/',
     glowColor: 'radial-gradient(circle at 50% 50%, rgba(66, 133, 244, 0.12), transparent 70%)',
     statusColor: 'linear-gradient(90deg, rgba(66, 133, 244, 0.3), rgba(52, 168, 83, 0.2))',
