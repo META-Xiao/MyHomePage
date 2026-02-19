@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // 创建 axios 实例
 const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: 'https://api.teslongxiao.cn/api/v2',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -30,13 +30,29 @@ apiClient.interceptors.response.use(
   }
 )
 
-// 获取文章列表
-export const fetchPosts = async (page = 1, size = 4) => {
+// 获取文章列表 - 适配 Mix Space API
+export const fetchPosts = async (page = 1, size = 10) => {
   try {
     const response = await apiClient.get('/posts', {
-      params: { page, size }
+      params: { 
+        page, 
+        size,
+        sortBy: 'created',
+        sortOrder: -1
+      }
     })
-    return response.data || []
+    
+    // 适配 Mix Space API 数据格式
+    const posts = response.data || []
+    return posts.map(post => ({
+      title: post.title,
+      category: post.category?.name || '未分类',
+      date: new Date(post.created).toLocaleDateString('zh-CN'),
+      excerpt: post.text?.substring(0, 120) + '...' || post.summary || '暂无摘要',
+      tags: post.tags || [],
+      views: post.count?.read || 0,
+      link: `https://teslongxiao.cn/posts/${post.category?.slug || 'post'}/${post.slug}`
+    }))
   } catch (error) {
     console.error('Failed to fetch posts:', error)
     return []
