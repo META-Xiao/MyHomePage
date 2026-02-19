@@ -40,13 +40,21 @@ app.get('/health', (req, res) => {
 app.get('/api/posts', async (req, res) => {
   try {
     const { page = 1, size = 10 } = req.query
-    const response = await mxClient.get('/posts', {
+    const url = '/posts'
+    console.log(`[DEBUG] 请求 URL: ${MX_SPACE_API}${url}`)
+    console.log(`[DEBUG] 请求参数:`, { page, size })
+    
+    const response = await mxClient.get(url, {
       params: {
         page,
         size,
         select: 'title text category created modified slug tags'
       }
     })
+    
+    console.log(`[DEBUG] 响应状态: ${response.status}`)
+    console.log(`[DEBUG] 响应数据结构:`, Object.keys(response.data))
+    
     const posts = response.data.data.map(post => ({
       id: post._id || post.id,
       title: post.title,
@@ -70,6 +78,11 @@ app.get('/api/posts', async (req, res) => {
     })
   } catch (error) {
     console.error('[ERROR] 获取文章列表失败:', error.message)
+    if (error.response) {
+      console.error('[ERROR] 响应状态:', error.response.status)
+      console.error('[ERROR] 响应数据:', JSON.stringify(error.response.data))
+      console.error('[ERROR] 响应头:', JSON.stringify(error.response.headers))
+    }
     res.status(500).json({
       success: false,
       message: '获取文章列表失败',
