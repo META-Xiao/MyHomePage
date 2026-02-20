@@ -72,64 +72,57 @@
 └── README.md          # 项目说明
 ```
 
-## 快速开始
+## 部署方式
 
-### 1. 检查网络配置（必做！）
+### 方式一：使用 Docker Hub 镜像（推荐）
 
-```bash
-# 查看网络列表
-docker network ls
+项目已配置 GitHub Actions，每次推送到 main 分支会自动构建并推送镜像到 Docker Hub。
 
-# 检查 core_mx-space 网络
-docker network inspect core_mx-space | grep Subnet
+#### 1. 配置 GitHub Secrets
 
-# 查看已占用的 IP
-docker network inspect core_mx-space | grep -A 10 "Containers"
-```
+在 GitHub 仓库设置中添加：
+- `DOCKER_USERNAME`: 你的 Docker Hub 用户名
+- `DOCKER_PASSWORD`: 你的 Docker Hub 密码或 Access Token
 
-**确认信息**：
-- 网络名称: `core_mx-space`
-- 子网: `172.20.0.0/16`
-- 可用 IP: `172.20.0.60`（确保未被占用）
-
-### 2. 配置环境
-
-编辑 `backend/.env`：
-
-```env
-NODE_ENV=production
-PORT=8081
-MX_SPACE_API=http://172.20.0.10:2333
-BLOG_URL=https://teslongxiao.cn
-```
-
-### 3. 启动服务
+#### 2. 服务器部署
 
 ```bash
 cd /opt/mxspace/homepage
 
-# 方式一：使用部署脚本（推荐）
-./deploy.sh
+# 拉取最新镜像并启动
+./deploy-docker.sh
 
-# 方式二：手动部署
+# 或手动执行
+docker compose pull
 docker compose up -d
 ```
 
-**注意**：
-- 不要运行 `docker network create`，网络已经存在
-- IP 地址 `172.20.0.60` 不要与其他容器冲突
+#### 3. 自动更新
 
-### 4. 验证部署
+每次推送代码到 GitHub，GitHub Actions 会自动构建新镜像。在服务器上运行：
+
+```bash
+cd /opt/mxspace/homepage
+docker compose pull && docker compose up -d
+```
+
+### 方式二：本地构建（开发测试）
+
+```bash
+cd /opt/mxspace/homepage
+
+# 使用开发配置文件
+docker compose -f docker-compose.dev.yml up -d --build
+```
+
+### 验证部署
 
 ```bash
 # 检查容器状态
-docker ps | grep teslongxiao-homepage
+docker compose ps
 
 # 测试健康检查
 curl http://localhost:8081/health
-
-# 查看容器 IP
-docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' teslongxiao-homepage
 
 # 查看日志
 docker compose logs -f homepage

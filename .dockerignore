@@ -1,13 +1,38 @@
-node_modules
-npm-debug.log
-.env
-.env.local
+# Git
 .git
 .gitignore
-README.md
-.DS_Store
-*.log
-dist
+.github
+
+# Node modules
+node_modules
+npm-debug.log
+yarn-error.log
+
+# 开发文件
+*.md
+!README.md
+.env.local
+.env.development
 .vscode
 .idea
 
+# 部署脚本
+deploy.sh
+deploy-docker.sh
+docker-compose.dev.yml
+
+# 文档
+DEPLOY.md
+docs/
+
+# 测试
+test/
+tests/
+*.test.js
+*.spec.js
+
+# 临时文件
+*.log
+*.tmp
+.DS_Store
+Thumbs.db

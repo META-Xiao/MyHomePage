@@ -1,8 +1,9 @@
-
 services:
   homepage:
-    image: metaxiao/homepage:latest
-    container_name: teslongxiao-homepage
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: teslongxiao-homepage-dev
     restart: unless-stopped
     ports:
       - "8081:8081"
@@ -31,3 +32,4 @@ networks:
   default:
     name: core_mx-space
     external: true
+
