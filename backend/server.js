@@ -11,10 +11,12 @@ const app = express()
 const PORT = process.env.PORT || 8081
 
 // MX-Space API 配置
-const MX_SPACE_API = process.env.MX_SPACE_API || 'http://172.20.0.10:2333/api/v2'
-const BLOG_URL = process.env.BLOG_URL || 'https://teslongxiao.cn'
+const MX_SPACE_API = process.env.MX_SPACE_API || 'https://api.teslongxiao.cn/api/v2'
+const MX_SPACE_TOKEN = process.env.MX_SPACE_TOKEN || 'txoo508lo5rf9g46mo93pkgvj0y586x2uhbkocz0t3e'
+const BLOG_URL = process.env.BLOG_URL || 'https://blog.teslongxiao.cn'
 
 console.log('[INFO] MX-Space API 地址:', MX_SPACE_API)
+console.log('[INFO] MX-Space Token 已配置:', MX_SPACE_TOKEN ? '是' : '否')
 
 app.use(cors())
 app.use(express.json())
@@ -26,7 +28,8 @@ const mxClient = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Authorization': `Bearer ${MX_SPACE_TOKEN}`
   }
 })
 

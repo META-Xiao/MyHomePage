@@ -50,7 +50,7 @@ const mainLink = {
   title: '我的博客',
   desc: '写代码、写 Bug、写人生',
   icon: 'ri:quill-pen-line',
-  link: 'https://teslongxiao.cn',
+  link: 'https://blog.teslongxiao.cn',
   glowColor: 'radial-gradient(circle at 30% 50%, rgba(6, 182, 212, 0.15), transparent 70%)'
 }
 
@@ -66,7 +66,7 @@ const secondaryLinks = [
   {
     title: '服务器监控',
     icon: 'ri:server-line',
-    link: '#',
+    link: 'https://status.teslongxiao.cn',
     glowColor: 'radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.12), transparent 70%)',
     statusColor: 'linear-gradient(90deg, rgba(16, 185, 129, 0.3), rgba(52, 211, 153, 0.2))',
     gridArea: 'b'

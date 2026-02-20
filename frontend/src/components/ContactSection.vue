@@ -25,16 +25,16 @@ const contacts = [
     link: 'https://github.com/META-Xiao'
   },
   {
-    icon: 'ri:article-line',
-    title: '博客',
-    value: 'blog.teslongxiao.cn',
-    link: 'https://blog.teslongxiao.cn/'
+    icon: 'ri:mail-line',
+    title: 'Email',
+    value: '2040426884@qq.com',
+    link: 'mailto:2040426884@qq.com'
   },
   {
-    icon: 'ri:dashboard-line',
-    title: '监控',
-    value: 'status.teslongxiao.cn',
-    link: 'https://status.teslongxiao.cn/'
+    icon: 'ri:qq-line',
+    title: 'QQ',
+    value: '2040426884',
+    link: 'https://qm.qq.com/cgi-bin/qm/qr?k=2040426884'
   }
 ]
 </script>
