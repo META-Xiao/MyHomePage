@@ -20,6 +20,13 @@
 2. **VPS 公网**: `http://<你的VPS公网IP>:8081` (需要防火墙放行 8081 端口)
 3. **域名访问**: 通过 Nginx Proxy Manager 配置反向代理
 
+### 相关链接
+
+- **个人主页**: https://www.teslongxiao.cn
+- **博客**: https://blog.teslongxiao.cn
+- **监控**: https://status.teslongxiao.cn
+- **GitHub**: https://github.com/META-Xiao
+
 ## 设计理念
 
 - **反主流美学** - 拒绝千篇一律的 SaaS 模板
@@ -296,3 +303,18 @@ MIT License
 ---
 
 Made with Love by TesLongXiao
+
+  shiro:
+    image: innei/shiro:latest
+    container_name: shiro
+    restart: unless-stopped
+    ports:
+      - "2323:2323"
+    environment:
+      - NEXT_PUBLIC_API_URL=https://api.teslongxiao.cn/api/v2
+      - NEXT_PUBLIC_GATEWAY_URL=https://api.teslongxiao.cn
+      - API_URL=http://172.20.0.10:2333/api/v2
+      - NODE_OPTIONS=--max-old-space-size=512
+    networks:
+      mx-space:
+        ipv4_address: 172.20.0.20  

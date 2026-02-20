@@ -7,6 +7,11 @@
       <p class="text-sm tracking-wider opacity-50 mb-2">
         探索 · 创造 · 分享
       </p>
+      <div class="footer-links flex justify-center gap-6 mb-4 text-sm opacity-50">
+        <a href="https://blog.teslongxiao.cn/" target="_blank" class="hover:text-accent transition-colors">博客</a>
+        <a href="https://status.teslongxiao.cn/" target="_blank" class="hover:text-accent transition-colors">监控</a>
+        <a href="https://github.com/META-Xiao" target="_blank" class="hover:text-accent transition-colors">GitHub</a>
+      </div>
       <p class="text-xs tracking-wider opacity-30 mt-8">
         © 2024 MetaXiao | Powered by 
         <a href="https://mx-space.js.org/" target="_blank" class="text-accent hover:underline">

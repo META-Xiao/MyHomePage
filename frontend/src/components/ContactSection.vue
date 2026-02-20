@@ -19,22 +19,22 @@ import ContactCard from './cards/ContactCard.vue'
 
 const contacts = [
   {
-    icon: 'skill-icons:gmail-light',
-    title: '邮箱',
-    value: 'your@email.com',
-    link: 'mailto:your@email.com'
-  },
-  {
     icon: 'skill-icons:github-light',
     title: 'GitHub',
-    value: '@yourusername',
-    link: 'https://github.com/yourusername'
+    value: '@META-Xiao',
+    link: 'https://github.com/META-Xiao'
   },
   {
-    icon: 'skill-icons:twitter',
-    title: 'Twitter',
-    value: '@yourusername',
-    link: 'https://twitter.com/yourusername'
+    icon: 'mdi:web',
+    title: '博客',
+    value: 'blog.teslongxiao.cn',
+    link: 'https://blog.teslongxiao.cn/'
+  },
+  {
+    icon: 'mdi:monitor-dashboard',
+    title: '监控',
+    value: 'status.teslongxiao.cn',
+    link: 'https://status.teslongxiao.cn/'
   }
 ]
 </script>

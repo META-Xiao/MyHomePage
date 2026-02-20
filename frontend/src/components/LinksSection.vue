@@ -4,7 +4,15 @@
       友链 <span class="gradient-text">LINKS</span>
     </h2>
     
-    <div class="links-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div v-if="loading" class="text-center text-white/50 py-10">
+      加载中...
+    </div>
+    
+    <div v-else-if="links.length === 0" class="text-center text-white/50 py-10">
+      暂无友链
+    </div>
+    
+    <div v-else class="links-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <LinkCard 
         v-for="(link, index) in links" 
         :key="index"
@@ -15,46 +23,22 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import LinkCard from './cards/LinkCard.vue'
+import { fetchLinks } from '../utils/api'
 
-const links = [
-  {
-    name: 'GitHub',
-    description: '代码托管平台',
-    url: 'https://github.com',
-    icon: 'skill-icons:github-light'
-  },
-  {
-    name: 'MX-Space',
-    description: '开源博客系统',
-    url: 'https://mx-space.js.org/',
-    icon: 'skill-icons:nextjs-light'
-  },
-  {
-    name: 'Vue.js',
-    description: '渐进式 JavaScript 框架',
-    url: 'https://vuejs.org/',
-    icon: 'skill-icons:vuejs-light'
-  },
-  {
-    name: 'Tailwind CSS',
-    description: '实用优先的 CSS 框架',
-    url: 'https://tailwindcss.com/',
-    icon: 'skill-icons:tailwindcss-light'
-  },
-  {
-    name: 'Node.js',
-    description: 'JavaScript 运行时',
-    url: 'https://nodejs.org/',
-    icon: 'skill-icons:nodejs-light'
-  },
-  {
-    name: 'Docker',
-    description: '容器化平台',
-    url: 'https://www.docker.com/',
-    icon: 'skill-icons:docker'
+const links = ref([])
+const loading = ref(true)
+
+onMounted(async () => {
+  try {
+    links.value = await fetchLinks()
+  } catch (error) {
+    console.error('获取友链失败:', error)
+  } finally {
+    loading.value = false
   }
-]
+})
 </script>
 
 <style scoped>

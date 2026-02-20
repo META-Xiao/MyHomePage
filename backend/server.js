@@ -163,12 +163,17 @@ app.get('/api/links', async (req, res) => {
   try {
     const response = await mxClient.get('/links')
     
-    const links = response.data.map(link => ({
+    console.log('[DEBUG] 友链原始数据:', JSON.stringify(response.data).substring(0, 200))
+    
+    // MX-Space 返回的友链数据结构
+    const linksData = Array.isArray(response.data) ? response.data : response.data.data || []
+    
+    const links = linksData.map(link => ({
       name: link.name,
       url: link.url,
-      description: link.description,
-      avatar: link.avatar,
-      type: link.type
+      description: link.description || link.desc || '',
+      icon: link.avatar || link.icon || 'mdi:link-variant',
+      type: link.type || 'friend'
     }))
     
     res.json({
@@ -177,6 +182,10 @@ app.get('/api/links', async (req, res) => {
     })
   } catch (error) {
     console.error('[ERROR] 获取友链列表失败:', error.message)
+    if (error.response) {
+      console.error('[ERROR] 响应状态:', error.response.status)
+      console.error('[ERROR] 响应数据:', JSON.stringify(error.response.data))
+    }
     res.status(500).json({
       success: false,
       message: '获取友链列表失败',
