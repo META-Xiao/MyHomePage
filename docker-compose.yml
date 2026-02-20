@@ -1,7 +1,7 @@
 
 services:
   homepage:
-    image: metaxiao/homepage:latest
+    image: illyaa/homepage:latest
     container_name: teslongxiao-homepage
     restart: unless-stopped
     ports:

@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  DOCKER_IMAGE: metaxiao/homepage
+  DOCKER_IMAGE: illyaa/homepage
   DOCKER_TAG: latest
 
 jobs:
