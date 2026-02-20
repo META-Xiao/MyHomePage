@@ -56,13 +56,16 @@ app.get('/api/posts', async (req, res) => {
     console.log(`[DEBUG] 响应状态: ${response.status}`)
     console.log(`[DEBUG] 响应数据结构:`, Object.keys(response.data))
     
-    const posts = response.data.data.map(post => ({
+    // 处理不同的数据结构
+    const postsData = response.data.data || response.data || []
+    
+    const posts = postsData.map(post => ({
       id: post._id || post.id,
-      title: post.title,
+      title: post.title || '无标题',
       excerpt: post.text ? post.text.substring(0, 150).replace(/<[^>]*>/g, '') + '...' : '',
       category: post.category?.name || '未分类',
       categorySlug: post.category?.slug || 'default',
-      date: new Date(post.created).toLocaleDateString('zh-CN'),
+      date: post.created ? new Date(post.created).toLocaleDateString('zh-CN') : '',
       tags: post.tags || [],
       views: post.count?.read || 0,
       link: `${BLOG_URL}/posts/${post.category?.slug || 'default'}/${post.slug}`
@@ -74,7 +77,7 @@ app.get('/api/posts', async (req, res) => {
       pagination: {
         page: parseInt(page),
         size: parseInt(size),
-        total: response.data.pagination?.total || 0
+        total: response.data.pagination?.total || posts.length
       }
     })
   } catch (error) {

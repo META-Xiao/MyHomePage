@@ -19,19 +19,19 @@ import ContactCard from './cards/ContactCard.vue'
 
 const contacts = [
   {
-    icon: 'skill-icons:github-light',
+    icon: 'ri:github-fill',
     title: 'GitHub',
     value: '@META-Xiao',
     link: 'https://github.com/META-Xiao'
   },
   {
-    icon: 'mdi:web',
+    icon: 'ri:article-line',
     title: '博客',
     value: 'blog.teslongxiao.cn',
     link: 'https://blog.teslongxiao.cn/'
   },
   {
-    icon: 'mdi:monitor-dashboard',
+    icon: 'ri:dashboard-line',
     title: '监控',
     value: 'status.teslongxiao.cn',
     link: 'https://status.teslongxiao.cn/'
