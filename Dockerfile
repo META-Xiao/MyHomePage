@@ -5,7 +5,7 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-#复制依赖文件（利用 Docker 缓存）
+# 复制依赖文件
 COPY frontend/package*.json ./frontend/
 COPY backend/package*.json ./backend/
 
@@ -13,12 +13,11 @@ COPY backend/package*.json ./backend/
 RUN cd frontend && npm install
 RUN cd backend && npm install --omit=dev
 
-#复制源代码
+# 复制源代码
 COPY frontend/ ./frontend/
 COPY backend/ ./backend/
 
 # 编译 Vue
-# 这会生成 /app/frontend/dist 目录
 RUN cd frontend && npm run build
 
 # ============================================
@@ -35,10 +34,12 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=8081
 
-# 只复制后端运行需要的
-COPY --from=builder /app/backend ./backend
+# 复制后端代码和依赖
+COPY --from=builder /app/backend/package*.json ./backend/
+COPY --from=builder /app/backend/node_modules ./backend/node_modules
+COPY --from=builder /app/backend/*.js ./backend/
 
-
+# 复制前端构建产物
 COPY --from=builder /app/frontend/dist ./frontend/dist
 
 # 设置工作目录到 backend
