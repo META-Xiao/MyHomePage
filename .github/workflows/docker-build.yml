@@ -17,41 +17,35 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout 代码
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 设置 Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: 登录 Docker Hub
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: 提取元数据
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.DOCKER_IMAGE }}
-          tags: |
-            type=raw,value=latest
-            type=sha,prefix={{branch}}-
+      - name: Get short SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-      - name: 构建并推送 Docker 镜像
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_IMAGE }}:buildcache
-          cache-to: type=registry,ref=${{ env.DOCKER_IMAGE }}:buildcache,mode=max
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ env.DOCKER_IMAGE }}:${{ steps.vars.outputs.sha_short }} .
 
-      - name: 触发服务器更新 (可选)
+      - name: Push Docker Image with SHA tag
+        run: |
+          docker push ${{ env.DOCKER_IMAGE }}:${{ steps.vars.outputs.sha_short }}
+
+      - name: Tag and Push as latest
+        run: |
+          docker tag ${{ env.DOCKER_IMAGE }}:${{ steps.vars.outputs.sha_short }} ${{ env.DOCKER_IMAGE }}:latest
+          docker push ${{ env.DOCKER_IMAGE }}:latest
+
+      - name: Build complete
         if: github.ref == 'refs/heads/main'
         run: |
-          echo "镜像已推送到 Docker Hub"
-          echo "请在服务器上运行: docker compose pull && docker compose up -d"
+          echo "Image pushed to Docker Hub"
+          echo "Run on server: docker compose pull && docker compose up -d"
 
