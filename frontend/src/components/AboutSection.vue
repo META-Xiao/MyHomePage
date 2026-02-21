@@ -62,10 +62,14 @@
           <a 
             v-for="(social, index) in socialLinks" 
             :key="social.name"
+            :ref="el => setSocialCardRef(el, index)"
             :href="social.link"
             target="_blank"
             class="social-card"
             :class="[social.name, index < 3 ? 'first-row' : 'second-row']"
+            :style="socialCardStyles[index]"
+            @mousemove="e => handleSocialMouseMove(e, index)"
+            @mouseleave="() => handleSocialMouseLeave(index)"
           >
             <Icon :icon="social.icon" />
           </a>
@@ -84,7 +88,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import TechCard from './cards/TechCard.vue'
 import ProjectCard from './cards/ProjectCard.vue'
@@ -142,6 +146,52 @@ const projects = [
     link: 'https://github.com/META-Xiao'
   }
 ]
+
+// 社交卡片 3D 效果
+const socialCardRefs = ref([])
+const socialCardStyles = ref([])
+
+const handleSocialMouseMove = (e, index) => {
+  const card = socialCardRefs.value[index]
+  if (!card) return
+
+  const rect = card.getBoundingClientRect()
+  const x = (e.clientX - rect.left) / rect.width - 0.5
+  const y = (e.clientY - rect.top) / rect.height - 0.5
+
+  const rotateY = x * 8
+  const rotateX = -y * 8
+
+  socialCardStyles.value[index] = {
+    transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05) translateZ(10px)`,
+    transition: 'transform 0.1s ease-out'
+  }
+}
+
+const handleSocialMouseLeave = (index) => {
+  socialCardStyles.value[index] = {
+    transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1) translateZ(0)',
+    transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
+  }
+}
+
+const setSocialCardRef = (el, index) => {
+  if (el) {
+    socialCardRefs.value[index] = el
+  }
+}
+
+onMounted(() => {
+  // 初始化样式数组
+  socialCardStyles.value = new Array(socialLinks.length).fill({
+    transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1) translateZ(0)',
+    transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
+  })
+})
+
+onUnmounted(() => {
+  socialCardRefs.value = []
+})
 </script>
 
 <style scoped>
@@ -356,7 +406,7 @@ const projects = [
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  transition: opacity 0.5s ease-in-out, background 0.3s ease-in-out, transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  transition: opacity 0.5s ease-in-out, background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -366,6 +416,8 @@ const projects = [
   text-decoration: none;
   overflow: hidden;
   isolation: isolate;
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .social-card::before {
@@ -383,17 +435,15 @@ const projects = [
 }
 
 .social-main .social-card.first-row:hover {
-  transform: translateY(4px) scale(1.05);
   background: rgba(255, 255, 255, 0.22);
   border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 212, 255, 0.15);
 }
 
 .social-main .social-card.second-row:hover {
-  transform: translateY(-4px) scale(1.05);
   background: rgba(255, 255, 255, 0.22);
   border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 212, 255, 0.15);
 }
 
 .social-card .iconify {
@@ -405,7 +455,7 @@ const projects = [
   color: #333;
 }
 .social-card.github:hover {
-  background: rgba(51, 51, 51, 0.9);
+  background: rgba(51, 51, 51, 0.9) !important;
   color: white;
 }
 
@@ -413,7 +463,7 @@ const projects = [
   color: #fb7299;
 }
 .social-card.bilibili:hover {
-  background: rgba(251, 114, 153, 0.9);
+  background: rgba(251, 114, 153, 0.9) !important;
   color: white;
 }
 
@@ -421,7 +471,7 @@ const projects = [
   color: #000;
 }
 .social-card.twitter:hover {
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.9) !important;
   color: white;
 }
 
@@ -429,7 +479,7 @@ const projects = [
   color: #ea4335;
 }
 .social-card.email:hover {
-  background: rgba(234, 67, 53, 0.9);
+  background: rgba(234, 67, 53, 0.9) !important;
   color: white;
 }
 
@@ -437,7 +487,7 @@ const projects = [
   color: #07c160;
 }
 .social-card.wechat:hover {
-  background: rgba(7, 193, 96, 0.9);
+  background: rgba(7, 193, 96, 0.9) !important;
   color: white;
 }
 
@@ -445,7 +495,7 @@ const projects = [
   color: #12b7f5;
 }
 .social-card.qq:hover {
-  background: rgba(18, 183, 245, 0.9);
+  background: rgba(18, 183, 245, 0.9) !important;
   color: white;
 }
 

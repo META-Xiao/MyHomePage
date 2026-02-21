@@ -1,5 +1,8 @@
 <template>
-  <div class="music-player glass-effect">
+  <div class="music-player glass-effect" :style="{ backgroundImage: `url(${currentSong.cover})` }">
+    <!-- 背景遮罩 -->
+    <div class="background-overlay"></div>
+    
     <!-- 音频可视化画布 -->
     <canvas ref="canvasRef" class="visualizer-canvas"></canvas>
     
@@ -268,7 +271,10 @@ defineExpose({
   loadPlaylist,
   togglePlay,
   nextSong,
-  prevSong
+  prevSong,
+  currentSong,
+  playlist,
+  currentIndex
 })
 </script>
 
@@ -280,13 +286,32 @@ defineExpose({
   min-height: 200px;
   padding: 0;
   border-radius: 12px;
-  background: rgba(18, 18, 18, 0.6);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 0 3px 8px 6px rgba(7, 17, 27, 0.05);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  transition: background-image 0.5s ease;
+}
+
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0.35) 50%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
 }
 
 .visualizer-canvas {
@@ -295,57 +320,64 @@ defineExpose({
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.6;
+  opacity: 0.7;
+  z-index: 2;
+  mix-blend-mode: screen;
+  pointer-events: none;
 }
 
 .player-overlay {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  padding: 1rem 1.5rem;
-  background: linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.4) 100%);
+  padding: 0;
 }
 
 .song-info {
   text-align: center;
   margin-top: 0;
   flex-shrink: 0;
+  padding: 1rem 1.5rem 0;
 }
 
 .song-title {
   font-size: 1rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 1);
   margin-bottom: 0.25rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
 .song-artist {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.85);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
 .bottom-controls {
   flex-shrink: 0;
+  padding: 0 1.5rem 1rem;
 }
 
 .progress-bar {
   width: 100%;
   height: 6px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
   overflow: hidden;
   margin-bottom: 0.25rem;
   cursor: pointer;
   transition: height 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .progress-bar:hover {
@@ -358,14 +390,17 @@ defineExpose({
   border-radius: 3px;
   transition: width 0.1s linear;
   pointer-events: none;
+  box-shadow: 0 0 10px rgba(255, 114, 66, 0.5);
 }
 
 .time-display {
   display: flex;
   justify-content: space-between;
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.8);
   margin-bottom: 0.5rem;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  font-weight: 500;
 }
 
 .controls {
@@ -379,44 +414,47 @@ defineExpose({
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.95);
   font-size: 1.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .control-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.25);
   transform: scale(1.1);
   color: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 .play-btn {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 1);
   font-size: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
 }
 
 .play-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.3);
   transform: scale(1.1);
-  box-shadow: 0 4px 20px rgba(255, 114, 66, 0.3);
+  box-shadow: 0 4px 20px rgba(255, 114, 66, 0.5);
 }
 </style>
 
