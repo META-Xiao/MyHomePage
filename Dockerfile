@@ -3,14 +3,18 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# 使用淘宝镜像加速
+RUN npm config set registry https://registry.npmmirror.com
+
 # 复制 package.json
 COPY backend/package*.json ./backend/
 COPY frontend/package*.json ./frontend/
 
-# 安装依赖
+# 安装后端依赖
 WORKDIR /app/backend
-RUN npm install --production
+RUN npm install --omit=dev
 
+# 安装前端依赖
 WORKDIR /app/frontend
 RUN npm install
 
@@ -31,7 +35,7 @@ RUN apk add --no-cache wget
 
 WORKDIR /app
 
-# 复制后端
+# 复制后端（包括 node_modules）
 COPY --from=builder /app/backend /app/backend
 
 # 复制前端构建产物
