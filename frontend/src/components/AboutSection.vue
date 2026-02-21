@@ -54,11 +54,8 @@
       
       <!-- 右侧区域 -->
       <div class="right-section">
-        <!-- 音乐播放器占位 -->
-        <div class="music-player-placeholder glass-effect">
-          <div class="music-placeholder-text">音乐播放器</div>
-          <div class="music-placeholder-subtitle">敬请期待</div>
-        </div>
+        <!-- 音乐播放器 -->
+        <MusicPlayer class="music-player-wrapper" />
         
         <!-- 社交媒体卡片 -->
         <div class="social-main">
@@ -91,6 +88,7 @@ import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import TechCard from './cards/TechCard.vue'
 import ProjectCard from './cards/ProjectCard.vue'
+import MusicPlayer from './MusicPlayer.vue'
 
 const socialLinks = [
   { name: 'github', icon: 'ri:github-fill', link: 'https://github.com/META-Xiao', color: '#333' },
@@ -268,38 +266,9 @@ const projects = [
   }
 }
 
-/* 音乐播放器占位 */
-.music-player-placeholder {
-  padding: 2rem;
-  border-radius: 12px;
-  background: rgba(18, 18, 18, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 3px 8px 6px rgba(7, 17, 27, 0.05);
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+/* 音乐播放器 */
+.music-player-wrapper {
   min-height: 200px;
-}
-
-.music-player-placeholder:hover {
-  box-shadow: 0 3px 8px 6px rgba(7, 17, 27, 0.09);
-}
-
-.music-placeholder-text {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
-  letter-spacing: 0.1em;
-}
-
-.music-placeholder-subtitle {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.4);
-  letter-spacing: 0.05em;
 }
 
 /* 社交媒体卡片 */

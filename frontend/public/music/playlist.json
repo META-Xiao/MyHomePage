@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "pinKing",
+    "artist": "ChiliChill、陈Z-STUDIO",
+    "url": "/music/1.mp3",
+    "cover": "/img/1.jpg"
+  },
+  {
+    "id": 2,
+    "name": "不及",
+    "artist": "蔡诗芸、陈Z-STUDIO、HOYO-MiX",
+    "url": "/music/2.mp3",
+    "cover": "/img/2.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Automaton Waltz",
+    "artist": "PLUM",
+    "url": "/music/3.mp3",
+    "cover": "/img/3.jpg"
+  }
+]
