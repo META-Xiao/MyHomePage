@@ -19,7 +19,7 @@ WORKDIR /app/backend
 
 # Copy and install backend dependencies
 COPY backend/package*.json ./
-RUN npm install -g npm@9.9.3 && npm install
+RUN corepack enable && yarn install --production
 RUN test -f node_modules/express/package.json || (echo "Express installation failed!" && exit 1)
 
 # Copy backend source
