@@ -19,7 +19,8 @@ WORKDIR /app/backend
 
 # Copy and install backend dependencies
 COPY backend/package*.json ./
-RUN npm install && test -f node_modules/express/package.json || (echo "Express installation failed!" && exit 1)
+RUN npm install || npm install || npm install
+RUN test -f node_modules/express/package.json || (echo "Express installation failed!" && exit 1)
 
 # Copy backend source
 COPY backend/*.js ./
