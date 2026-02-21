@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "=========================================="
-echo "  TesLongXiao Homepage - Docker 部署"
+echo "  Logos Homepage - Docker 部署"
 echo "=========================================="
 echo ""
 

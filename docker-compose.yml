@@ -2,7 +2,7 @@
 services:
   homepage:
     image: illyaa/homepage:latest
-    container_name: teslongxiao-homepage
+    container_name: logos-homepage
     restart: unless-stopped
     ports:
       - "8081:8081"

@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: teslongxiao-homepage-dev
+    container_name: logos-homepage-dev
     restart: unless-stopped
     ports:
       - "8081:8081"
