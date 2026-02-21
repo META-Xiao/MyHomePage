@@ -14,16 +14,73 @@
 - 📱 完全响应式设计
 - ⚡ 轻量级，性能优异
 
-## 快速开始
+## 快速部署
 
-### 1. 克隆项目
+### 方式一：直接部署（推荐）
+
+在服务器上直接创建配置文件并启动：
+
+```bash
+# 1. 创建目录
+mkdir -p /opt/homepage
+cd /opt/homepage
+
+# 2. 创建 docker-compose.yml
+cat > docker-compose.yml << 'EOF'
+services:
+  homepage:
+    image: illyaa/homepage:latest
+    container_name: logos-homepage
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      - NODE_ENV=production
+      - PORT=8081
+      - MX_SPACE_API=https://your-api.com/api/v2
+      - MX_SPACE_TOKEN=your_token_here
+      - BLOG_URL=https://your-blog.com
+    networks:
+      mx-net:
+        ipv4_address: 172.20.0.60
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  mx-net:
+    external: true
+    name: core_mx-space
+EOF
+
+# 3. 修改环境变量（重要！）
+nano docker-compose.yml
+
+# 4. 启动服务
+docker compose up -d
+
+# 5. 查看日志
+docker compose logs -f homepage
+```
+
+### 方式二：克隆项目
 
 ```bash
 git clone https://github.com/META-Xiao/MyHomePage.git
 cd MyHomePage
+# 修改 docker-compose.yml 中的环境变量
+./deploy-docker.sh
 ```
 
-### 2. 配置个人信息
+### 自定义配置
 
 查看 [配置指南 (CONFIG.md)](./CONFIG.md) 了解如何自定义：
 - 个人信息（名字、头像、介绍）
@@ -31,17 +88,7 @@ cd MyHomePage
 - 社交链接
 - 配色和样式
 
-### 3. 部署
-
-查看 [部署文档 (DEPLOY.md)](./DEPLOY.md) 了解详细部署步骤。
-
-**快速部署：**
-
-```bash
-# 修改 docker-compose.yml 中的环境变量
-# 然后运行
-./deploy-docker.sh
-```
+详细部署步骤请查看 [部署文档 (DEPLOY.md)](./DEPLOY.md)
 
 ## 文档
 
@@ -65,14 +112,6 @@ cd MyHomePage
 - GitHub Actions 自动构建
 - 支持 Nginx Proxy Manager
 
-## 设计理念
-
-- **反主流美学** - 拒绝千篇一律的模板
-- **不对称布局** - 追求自然感
-- **噪点纹理** - 背景有温度
-- **口语化文案** - 像朋友聊天
-- **弹性动画** - 使用 cubic-bezier
-- **个性配色** - 青色 + 蓝绿，拒绝紫色
 
 ## 项目结构
 
