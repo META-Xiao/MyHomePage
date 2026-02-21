@@ -3,15 +3,16 @@
 .gitignore
 .github
 
-# Node modules (本地的，Docker 内会重新安装)
-**/node_modules
+# Node modules (only local, not from build stage)
+node_modules
+frontend/node_modules
 
-# 日志文件
+# Logs
 npm-debug.log
 yarn-error.log
 *.log
 
-# 开发文件
+# Development files
 *.md
 !README.md
 .env.local
@@ -19,25 +20,25 @@ yarn-error.log
 .vscode
 .idea
 
-# 部署脚本
+# Deploy scripts
 deploy.sh
 deploy-docker.sh
 docker-compose.dev.yml
 
-# 文档
+# Documentation
 DEPLOY.md
 docs/
 
-# 测试
+# Tests
 test/
 tests/
 *.test.js
 *.spec.js
 
-# 临时文件
+# Temp files
 *.tmp
 .DS_Store
 Thumbs.db
 
-# 构建产物（前端的 dist 会在 Docker 内生成）
+# Build output
 frontend/dist
