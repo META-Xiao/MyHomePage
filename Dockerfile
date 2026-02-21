@@ -1,56 +1,55 @@
-# ============================================
-# 阶段一：构建环境 (Builder)
-# ============================================
+# 构建阶段
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# 复制依赖文件
-COPY frontend/package*.json ./frontend/
+# 复制 package.json
 COPY backend/package*.json ./backend/
+COPY frontend/package*.json ./frontend/
 
 # 安装依赖
-RUN cd frontend && npm install
-RUN cd backend && npm install --omit=dev
+WORKDIR /app/backend
+RUN npm install --production
+
+WORKDIR /app/frontend
+RUN npm install
 
 # 复制源代码
-COPY frontend/ ./frontend/
+WORKDIR /app
 COPY backend/ ./backend/
+COPY frontend/ ./frontend/
 
-# 编译 Vue
-RUN cd frontend && npm run build
+# 构建前端
+WORKDIR /app/frontend
+RUN npm run build
 
-# ============================================
-# 阶段二：生产环境 (Runner)
-# ============================================
+# 生产阶段
 FROM node:20-alpine
 
-# 安装 wget 用于健康检查
+# 安装 wget
 RUN apk add --no-cache wget
 
 WORKDIR /app
+
+# 复制后端
+COPY --from=builder /app/backend /app/backend
+
+# 复制前端构建产物
+COPY --from=builder /app/frontend/dist /app/frontend/dist
+
+# 设置工作目录
+WORKDIR /app/backend
 
 # 环境变量
 ENV NODE_ENV=production
 ENV PORT=8081
 
-# 复制后端代码和依赖
-COPY --from=builder /app/backend/package*.json ./backend/
-COPY --from=builder /app/backend/node_modules ./backend/node_modules
-COPY --from=builder /app/backend/*.js ./backend/
-
-# 复制前端构建产物
-COPY --from=builder /app/frontend/dist ./frontend/dist
-
-# 设置工作目录到 backend
-WORKDIR /app/backend
-
-# 暴露端口 8081
+# 暴露端口
 EXPOSE 8081
 
 # 健康检查
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:8081/health || exit 1
 
-# 启动命令
+# 启动
 CMD ["node", "server.js"]
