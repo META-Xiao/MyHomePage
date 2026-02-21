@@ -3,10 +3,13 @@
 .gitignore
 .github
 
-# Node modules
-node_modules
+# Node modules (本地的，Docker 内会重新安装)
+**/node_modules
+
+# 日志文件
 npm-debug.log
 yarn-error.log
+*.log
 
 # 开发文件
 *.md
@@ -32,7 +35,9 @@ tests/
 *.spec.js
 
 # 临时文件
-*.log
 *.tmp
 .DS_Store
 Thumbs.db
+
+# 构建产物（前端的 dist 会在 Docker 内生成）
+frontend/dist
