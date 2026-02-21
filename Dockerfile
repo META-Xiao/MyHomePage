@@ -3,13 +3,7 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy backend and install dependencies
-COPY backend/package*.json ./backend/
-WORKDIR /app/backend
-RUN npm install --production && ls -la node_modules/express/
-COPY backend/ ./
-
-# Copy frontend and build
+# Build frontend
 COPY frontend/package*.json ./frontend/
 WORKDIR /app/frontend
 RUN npm install
@@ -21,15 +15,17 @@ FROM node:20-alpine
 
 RUN apk add --no-cache wget
 
-WORKDIR /app
+WORKDIR /app/backend
 
-# Copy backend with node_modules
-COPY --from=builder /app/backend /app/backend
+# Copy and install backend dependencies in production stage
+COPY backend/package*.json ./
+RUN npm install --omit=dev
+
+# Copy backend source
+COPY backend/*.js ./
 
 # Copy frontend build
 COPY --from=builder /app/frontend/dist /app/frontend/dist
-
-WORKDIR /app/backend
 
 ENV NODE_ENV=production
 ENV PORT=8081
