@@ -6,22 +6,19 @@ WORKDIR /app
 # 使用淘宝镜像加速
 RUN npm config set registry https://registry.npmmirror.com
 
-# 复制 package.json
+# 复制 package.json 并安装后端依赖
 COPY backend/package*.json ./backend/
-COPY frontend/package*.json ./frontend/
-
-# 安装后端依赖
 WORKDIR /app/backend
-RUN npm install --omit=dev
+RUN npm ci --only=production
 
-# 安装前端依赖
+# 复制 package.json 并安装前端依赖
+COPY frontend/package*.json ./frontend/
 WORKDIR /app/frontend
-RUN npm install
+RUN npm ci
 
 # 复制源代码
-WORKDIR /app
-COPY backend/ ./backend/
-COPY frontend/ ./frontend/
+COPY backend/ /app/backend/
+COPY frontend/ /app/frontend/
 
 # 构建前端
 WORKDIR /app/frontend
@@ -35,14 +32,22 @@ RUN apk add --no-cache wget
 
 WORKDIR /app
 
-# 复制后端（包括 node_modules）
-COPY --from=builder /app/backend /app/backend
+# 使用淘宝镜像加速（生产阶段也需要）
+RUN npm config set registry https://registry.npmmirror.com
+
+# 先复制 package.json
+COPY backend/package*.json ./backend/
+
+# 安装生产依赖
+WORKDIR /app/backend
+RUN npm ci --only=production
+
+# 复制后端源代码
+COPY --from=builder /app/backend/*.js ./
+COPY --from=builder /app/backend/*.json ./
 
 # 复制前端构建产物
 COPY --from=builder /app/frontend/dist /app/frontend/dist
-
-# 设置工作目录
-WORKDIR /app/backend
 
 # 环境变量
 ENV NODE_ENV=production
