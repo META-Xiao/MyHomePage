@@ -1,24 +1,16 @@
 <template>
   <div 
-    ref="cardRef"
-    :style="cardStyle()"
-    class="tech-item glass-effect rounded-2xl p-6 text-center group cursor-pointer"
+    class="skill-card"
+    :style="{ background: tech.color }"
   >
-    <div class="tech-icon w-20 h-20 mx-auto mb-5 flex items-center justify-center transition-all duration-500 group-hover:scale-125 group-hover:rotate-12">
-      <Icon :icon="tech.icon" width="64" height="64" />
-    </div>
-    <div class="tech-name text-base font-medium mb-2 tracking-wide transition-colors group-hover:text-accent">
-      {{ tech.name }}
-    </div>
-    <div class="tech-desc text-xs text-white/60 leading-relaxed transition-colors group-hover:text-white/80">
-      {{ tech.desc }}
+    <div class="skill-card-content">
+      <Icon :icon="tech.icon" class="skill-icon" />
     </div>
   </div>
 </template>
 
 <script setup>
 import { Icon } from '@iconify/vue'
-import { use3DCard } from '@/composables/use3DCard'
 
 const props = defineProps({
   tech: {
@@ -30,14 +22,62 @@ const props = defineProps({
     default: 0
   }
 })
-
-const { cardRef, cardStyle } = use3DCard()
 </script>
 
 <style scoped>
-.tech-item {
-  transform-style: preserve-3d;
+.skill-card {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   will-change: transform;
+  pointer-events: none;
+  filter: brightness(var(--recommend-dark-degree, 0.9));
+}
+
+.skill-card-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.skill-icon {
+  width: 70px;
+  height: 70px;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .skill-card {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .skill-icon {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skill-card {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .skill-icon {
+    width: 48px;
+    height: 48px;
+  }
 }
 </style>
 

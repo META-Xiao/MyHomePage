@@ -13,9 +13,6 @@ services:
       - MX_SPACE_API=https://api.teslongxiao.cn/api/v2
       - MX_SPACE_TOKEN=txoo508lo5rf9g46mo93pkgvj0y586x2uhbkocz0t3e
       - BLOG_URL=https://blog.teslongxiao.cn
-    networks:
-      mx-net:
-        ipv4_address: 172.20.0.60
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8081/health"]
       interval: 30s
@@ -27,9 +24,4 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-
-networks:
-  mx-net:
-    external: true
-    name: core_mx-space
 
