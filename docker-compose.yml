@@ -13,7 +13,7 @@ services:
       - MX_SPACE_TOKEN=txoo508lo5rf9g46mo93pkgvj0y586x2uhbkocz0t3e
       - BLOG_URL=https://blog.teslongxiao.cn
     networks:
-      default:
+      mx-net:
         ipv4_address: 172.20.0.60
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8081/health"]
@@ -28,6 +28,6 @@ services:
         max-file: "3"
 
 networks:
-  default:
-    name: core_mx-space
+  mx-net:
     external: true
+    name: core_mx-space
