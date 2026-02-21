@@ -17,9 +17,12 @@ RUN apk add --no-cache wget
 
 WORKDIR /app/backend
 
+# Upgrade npm to fix Alpine Linux bug
+RUN npm install -g npm@latest
+
 # Copy and install backend dependencies in production stage
 COPY backend/package*.json ./
-RUN npm install --production
+RUN npm install --omit=dev
 
 # Copy backend source
 COPY backend/*.js ./
