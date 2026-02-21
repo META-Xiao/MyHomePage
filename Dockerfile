@@ -3,23 +3,15 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY backend/package*.json ./backend/
-COPY frontend/package*.json ./frontend/
-
-# Install backend dependencies
+# Copy backend source and install dependencies
+COPY backend/ ./backend/
 WORKDIR /app/backend
 RUN npm install --production
 
-# Install frontend dependencies and build
+# Copy frontend source and build
+COPY frontend/ /app/frontend/
 WORKDIR /app/frontend
-RUN npm install
-COPY frontend/ ./
-RUN npm run build
-
-# Copy backend source
-WORKDIR /app/backend
-COPY backend/ ./
+RUN npm install && npm run build
 
 # Production stage
 FROM node:20-alpine
