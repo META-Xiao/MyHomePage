@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
@@ -11,16 +11,13 @@ COPY frontend/ ./
 RUN npm run build
 
 # Production stage
-FROM node:20-alpine
+FROM node:20-slim
 
-RUN apk add --no-cache wget
+RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app/backend
 
-# Upgrade npm to fix Alpine Linux bug
-RUN npm install -g npm@latest
-
-# Copy and install backend dependencies in production stage
+# Copy and install backend dependencies
 COPY backend/package*.json ./
 RUN npm install --omit=dev
 
