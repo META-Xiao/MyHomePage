@@ -18,22 +18,78 @@
           </div>
           
           <div class="skills-wall">
-            <div class="skills-row" v-for="(row, rowIndex) in skillRows" :key="rowIndex">
+            <div class="skills-row skills-row-1">
               <TechCard 
-                v-for="(tech, index) in row" 
-                :key="`${rowIndex}-${index}`"
+                v-for="(tech, index) in skillRows[0]" 
+                :key="`row1-${index}-0`"
                 :tech="tech"
                 :index="index"
               />
               <TechCard 
-                v-for="(tech, index) in row" 
-                :key="`${rowIndex}-${index}-dup1`"
+                v-for="(tech, index) in skillRows[0]" 
+                :key="`row1-${index}-1`"
                 :tech="tech"
                 :index="index"
               />
               <TechCard 
-                v-for="(tech, index) in row" 
-                :key="`${rowIndex}-${index}-dup2`"
+                v-for="(tech, index) in skillRows[0]" 
+                :key="`row1-${index}-2`"
+                :tech="tech"
+                :index="index"
+              />
+              <TechCard 
+                v-for="(tech, index) in skillRows[0]" 
+                :key="`row1-${index}-3`"
+                :tech="tech"
+                :index="index"
+              />
+              <TechCard 
+                v-for="(tech, index) in skillRows[0]" 
+                :key="`row1-${index}-4`"
+                :tech="tech"
+                :index="index"
+              />
+              <TechCard 
+                v-for="(tech, index) in skillRows[0]" 
+                :key="`row1-${index}-5`"
+                :tech="tech"
+                :index="index"
+              />
+            </div>
+            <div class="skills-row skills-row-2">
+              <TechCard 
+                v-for="(tech, index) in skillRows[1]" 
+                :key="`row2-${index}-0`"
+                :tech="tech"
+                :index="index"
+              />
+              <TechCard 
+                v-for="(tech, index) in skillRows[1]" 
+                :key="`row2-${index}-1`"
+                :tech="tech"
+                :index="index"
+              />
+              <TechCard 
+                v-for="(tech, index) in skillRows[1]" 
+                :key="`row2-${index}-2`"
+                :tech="tech"
+                :index="index"
+              />
+              <TechCard 
+                v-for="(tech, index) in skillRows[1]" 
+                :key="`row2-${index}-3`"
+                :tech="tech"
+                :index="index"
+              />
+              <TechCard 
+                v-for="(tech, index) in skillRows[1]" 
+                :key="`row2-${index}-4`"
+                :tech="tech"
+                :index="index"
+              />
+              <TechCard 
+                v-for="(tech, index) in skillRows[1]" 
+                :key="`row2-${index}-5`"
                 :tech="tech"
                 :index="index"
               />
@@ -298,21 +354,32 @@ onUnmounted(() => {
 .skills-row {
   display: flex;
   gap: 1rem;
-  animation: scroll-left 30s linear infinite;
   will-change: transform;
 }
 
-.skills-row:nth-child(2) {
-  animation-direction: reverse;
-  animation-duration: 35s;
+.skills-row-1 {
+  animation: scroll-left 60s linear infinite;
+}
+
+.skills-row-2 {
+  animation: scroll-right 60s linear infinite;
 }
 
 @keyframes scroll-left {
-  0% {
-    transform: translateX(0);
+  from {
+    transform: translateX(-33.333%);
   }
-  100% {
+  to {
     transform: translateX(-66.666%);
+  }
+}
+
+@keyframes scroll-right {
+  from {
+    transform: translateX(-66.666%);
+  }
+  to {
+    transform: translateX(-33.333%);
   }
 }
 
