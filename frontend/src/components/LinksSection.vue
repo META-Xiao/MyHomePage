@@ -47,6 +47,8 @@ onMounted(async () => {
   position: relative;
   font-family: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
   font-weight: 500;
+  cursor: pointer;
+  display: inline-block;
 }
 
 .section-title .gradient-text {
@@ -56,10 +58,17 @@ onMounted(async () => {
   letter-spacing: 0.1em;
 }
 
+/* 下划线 */
 .section-title::after {
   content: '';
-  @apply block w-20 h-1 mt-8 rounded-full;
+  @apply block h-1 mt-8 rounded-full;
+  width: 80px;
   background: linear-gradient(90deg, theme('colors.accent.DEFAULT'), theme('colors.accent.secondary'));
+  transition: width 0.3s ease;
+}
+
+.section-title:hover::after {
+  width: 100%;
 }
 </style>
 

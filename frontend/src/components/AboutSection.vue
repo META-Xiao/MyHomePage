@@ -178,7 +178,6 @@ const techStack = [
   { icon: 'skill-icons:postgresql-dark', name: 'PostgreSQL', color: '#336791' }
 ]
 
-// 增加卡片数量，每行8个，让滚动更连续
 const skillRows = [
   techStack.slice(0, 8),
   techStack.slice(8, 16)
@@ -192,7 +191,7 @@ const projects = [
     link: 'https://github.com/META-Xiao/acc_ide'
   },
   {
-    title: 'MyHomePage',
+    title: 'LogosHomepage',
     description: 'A personalized homepage that complements mix-space | Smooth animations | Exquisite components.',
     link: 'https://github.com/META-Xiao/MyHomePage'
   },
@@ -260,6 +259,8 @@ onUnmounted(() => {
   position: relative;
   font-family: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
   font-weight: 500;
+  cursor: pointer;
+  display: inline-block;
 }
 
 .section-title .gradient-text {
@@ -269,10 +270,17 @@ onUnmounted(() => {
   letter-spacing: 0.1em;
 }
 
+/* 下划线 */
 .section-title::after {
   content: '';
-  @apply block w-20 h-1 mt-8 rounded-full;
+  @apply block h-1 mt-8 rounded-full;
+  width: 80px;
   background: linear-gradient(90deg, theme('colors.accent.DEFAULT'), theme('colors.accent.secondary'));
+  transition: width 0.3s ease;
+}
+
+.section-title:hover::after {
+  width: 100%;
 }
 
 .top-section {

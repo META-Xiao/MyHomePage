@@ -19,9 +19,9 @@
       <AboutSection />
     </section>
 
-    <!-- 项目展示 -->
+    <!-- 我会在哪儿 -->
     <section id="projects" class="section-wrapper">
-      <ProjectsSection />
+      <FindSection />
     </section>
 
     <!-- 最新文章 -->
@@ -50,7 +50,7 @@ import StarTrackBackground from '@/components/StarTrackBackground.vue'
 import SideNavigation from '@/components/SideNavigation.vue'
 import HeroSection from '@/components/HeroSection.vue'
 import AboutSection from '@/components/AboutSection.vue'
-import ProjectsSection from '@/components/ProjectsSection.vue'
+import FindSection from '@/components/FindSection.vue'
 import PostsSection from '@/components/PostsSection.vue'
 import LinksSection from '@/components/LinksSection.vue'
 import ContactSection from '@/components/ContactSection.vue'
