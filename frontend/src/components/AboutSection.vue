@@ -187,19 +187,19 @@ const skillRows = [
 // 项目数据
 const projects = [
   {
-    title: 'MX-Space',
-    description: '现代化个人空间系统，支持博客、笔记、动态。Next.js + NestJS 构建。',
-    link: 'https://github.com/mx-space'
+    title: 'ACC IDE',
+    description: 'Native Android IDE for Competitive Programming with C++/Java/Python support.',
+    link: 'https://github.com/META-Xiao/acc_ide'
   },
   {
-    title: 'Homepage',
-    description: '你现在看到的主页。Vue 3 + Node.js，动态获取博客数据。',
+    title: 'MyHomePage',
+    description: 'A personalized homepage that complements mix-space | Smooth animations | Exquisite components.',
     link: 'https://github.com/META-Xiao/MyHomePage'
   },
   {
-    title: 'Docker 工具',
-    description: '一键部署脚本集合，常用服务的 Docker Compose 配置。',
-    link: 'https://github.com/META-Xiao'
+    title: 'ATOCE',
+    description: 'My first proj | Automatic Trim of Chemical Equations (CLI version).',
+    link: 'https://github.com/META-Xiao/ATOCE'
   }
 ]
 
