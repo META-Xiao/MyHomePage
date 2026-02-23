@@ -601,17 +601,33 @@ onUnmounted(() => {
   width: 100%;
 }
 
+/* 平板 */
 @media (max-width: 1024px) {
   .top-section {
     flex-direction: column;
+    gap: 2rem;
   }
   
   .left-section {
     flex: 1;
+    max-width: 100%;
   }
   
   .right-section {
+    flex: 1;
+    max-width: 100%;
     flex-direction: row;
+    gap: 1.5rem;
+  }
+  
+  .music-player-wrapper {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .social-main {
+    flex: 1;
+    min-width: 0;
   }
   
   .projects-container {
@@ -619,22 +635,155 @@ onUnmounted(() => {
   }
 }
 
+/* 中等窄屏  */
 @media (max-width: 768px) {
-  .skills-wall {
-    transform: rotate(-8deg) translate(35%, 25%);
+  .about-section {
+    padding: 60px 0;
   }
   
-  .avatar {
-    width: 100px;
-    height: 100px;
+  .section-title {
+    font-size: 1.75rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
   }
   
-  .projects-container {
-    grid-template-columns: 1fr;
+  .top-section {
+    gap: 1.5rem;
+  }
+  
+  .left-section,
+  .right-section {
+    gap: 1.5rem;
   }
   
   .right-section {
     flex-direction: column;
+  }
+  
+  .music-player-wrapper {
+    width: 100%;
+    min-height: 180px;
+  }
+  
+  .social-main {
+    width: 100%;
+    min-height: 200px;
+  }
+  
+  .skills-wall-wrapper {
+    height: 280px;
+  }
+  
+  .skills-wall {
+    transform: rotate(-8deg) translate(35%, 25%);
+  }
+  
+  .motto-overlay {
+    top: 1.5rem;
+    left: 1.5rem;
+  }
+  
+  .motto-overlay .motto-main,
+  .motto-overlay .motto-sub {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+  }
+  
+  .motto-overlay .motto-url {
+    font-size: 0.8rem;
+  }
+  
+  .projects-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* 小屏 */
+@media (max-width: 480px) {
+  .about-section {
+    padding: 40px 0;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .section-title::after {
+    width: 60px;
+    margin-top: 0.5rem;
+  }
+  
+  .heatmap-section {
+    margin-bottom: 2rem;
+  }
+  
+  .top-section {
+    gap: 1rem;
+  }
+  
+  .left-section,
+  .right-section {
+    gap: 1rem;
+  }
+  
+  .skills-wall-wrapper {
+    height: 240px;
+    padding: 0.75rem 0;
+  }
+  
+  .skills-wall {
+    transform: rotate(-8deg) translate(30%, 20%);
+    gap: 0.75rem;
+  }
+  
+  .skills-row {
+    gap: 0.75rem;
+  }
+  
+  .motto-overlay {
+    top: 1rem;
+    left: 1rem;
+  }
+  
+  .motto-overlay .motto-main,
+  .motto-overlay .motto-sub {
+    font-size: clamp(1.2rem, 6vw, 1.8rem);
+  }
+  
+  .motto-overlay .motto-url {
+    font-size: 0.7rem;
+    margin-top: 0.5rem;
+  }
+  
+  .music-player-wrapper {
+    min-height: 160px;
+  }
+  
+  .social-main {
+    min-height: 180px;
+    gap: 0;
+  }
+  
+  .social-main:hover {
+    gap: 6px;
+  }
+  
+  .social-card {
+    font-size: 1.5rem;
+  }
+  
+  .social-text-svg {
+    max-width: 200px;
+  }
+  
+  .social-text {
+    font-size: 36px;
+  }
+  
+  .projects-container {
+    gap: 0.75rem;
   }
 }
 </style>

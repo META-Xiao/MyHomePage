@@ -810,14 +810,119 @@ onUnmounted(() => {
   z-index: 1;
 }
 
+/* 平板 */
 @media (max-width: 1024px) {
   .single-section {
     flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
   }
   
   .intro-card {
-    flex: 1;
+    flex: 0 0 auto;
     max-width: 100%;
+    width: 100%;
+    height: 240px;
+  }
+  
+  .heatmap-card {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+  
+  .chart-container {
+    height: 180px;
+  }
+}
+
+/* 中等窄屏  */
+@media (max-width: 768px) {
+  .single-section {
+    gap: 1rem;
+  }
+  
+  .intro-card {
+    height: 220px;
+    padding: 2rem;
+  }
+  
+  .intro-hello {
+    font-size: 2rem;
+  }
+  
+  .intro-name {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .intro-hobbies {
+    font-size: 1rem;
+  }
+  
+  .clock {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .water-drop {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .chart-container {
+    height: 160px;
+  }
+}
+
+/* 小屏 */
+@media (max-width: 480px) {
+  .intro-card {
+    height: 200px;
+    padding: 1.5rem;
+  }
+  
+  .intro-hello {
+    font-size: 1.75rem;
+    margin-bottom: 0.4rem;
+  }
+  
+  .intro-name {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .intro-hobbies {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  
+  .clock {
+    width: 70px;
+    height: 70px;
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+  
+  .water-drop {
+    width: 50px;
+    height: 50px;
+    top: 1rem;
+    right: 1rem;
+  }
+  
+  .water-drop .highlight {
+    width: 15px;
+    height: 15px;
+    top: 10px;
+    left: 10px;
+  }
+  
+  .heatmap-card {
+    padding: 0.75rem;
+  }
+  
+  .chart-container {
+    height: 140px;
   }
 }
 </style>
