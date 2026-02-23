@@ -214,10 +214,11 @@ class StarTrack {
     this.ctx.translate(star.x, star.y)
     this.ctx.rotate(star.angle)
     
+    // 渐变从尾巴（起点）到头部（终点），头部最亮
     const gradient = this.ctx.createLinearGradient(0, 0, star.length, 0)
-    gradient.addColorStop(0, `rgba(255, 255, 255, ${star.opacity})`)
-    gradient.addColorStop(0.3, `rgba(0, 212, 255, ${star.opacity * 0.8})`)
-    gradient.addColorStop(1, 'rgba(0, 212, 255, 0)')
+    gradient.addColorStop(0, 'rgba(0, 212, 255, 0)')  // 尾巴透明
+    gradient.addColorStop(0.7, `rgba(0, 212, 255, ${star.opacity * 0.8})`)
+    gradient.addColorStop(1, `rgba(255, 255, 255, ${star.opacity})`)  // 头部最亮
     
     this.ctx.strokeStyle = gradient
     this.ctx.lineWidth = 2
@@ -226,8 +227,9 @@ class StarTrack {
     this.ctx.lineTo(star.length, 0)
     this.ctx.stroke()
     
+    // 流星头部的亮点应该在终点位置
     this.ctx.beginPath()
-    this.ctx.arc(0, 0, 2, 0, Math.PI * 2)
+    this.ctx.arc(star.length, 0, 2, 0, Math.PI * 2)
     this.ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`
     this.ctx.fill()
     
