@@ -30,13 +30,8 @@ export default defineConfig({
         assetFileNames: 'assets/[ext]/[name]-[hash].[ext]'
       }
     },
-    // 压缩选项
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
-    }
+    // CSS 内联阈值（小于 4KB 的 CSS 会被内联）
+    assetsInlineLimit: 4096
   },
   server: {
     port: 5173,
@@ -47,6 +42,11 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  // 优化依赖预构建
+  optimizeDeps: {
+    include: ['vue', 'vue-router', 'animejs', 'echarts'],
+    exclude: []
   }
 })
 

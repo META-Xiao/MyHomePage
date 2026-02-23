@@ -12,6 +12,10 @@
         :src="link.icon" 
         :alt="link.name" 
         class="w-full h-full rounded-full object-cover border-2 border-white/10"
+        loading="lazy"
+        decoding="async"
+        width="64"
+        height="64"
         @error="handleImageError"
       />
       <Icon v-else :icon="link.icon || 'ri:link'" width="48" height="48" />

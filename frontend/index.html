@@ -6,59 +6,54 @@
   <title>TesLongXiao の 主页</title>
   <link rel="icon" type="image/svg+xml" href="/vite.svg">
   
-  <!-- DNS 预解析 -->
-  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-  <link rel="dns-prefetch" href="https://code.iconify.design">
-  
-  <!-- 预连接 -->
+  <!-- 预连接关键域名 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://image-host-for-meta.oss-cn-hangzhou.aliyuncs.com">
+  <link rel="dns-prefetch" href="https://api.teslongxiao.cn">
+  <link rel="dns-prefetch" href="https://cdn.xcnya.cn">
   
-  <!-- 关键字体预加载 -->
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap" as="style">
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- 关键 CSS 内联，避免外部请求 -->
+  <style>
+    /* 使用系统字体作为后备，避免字体加载阻塞 */
+    :root {
+      --font-fallback: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    }
+  </style>
   
-  <!-- Iconify Icons - 异步加载 -->
-  <script async src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <!-- 字体异步加载 -->
+  <script>
+    console.log('[Index] HTML 开始解析')
+    
+    // 延迟加载字体，避免阻塞渲染
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(function() {
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap';
+        document.head.appendChild(link);
+      });
+    } else {
+      setTimeout(function() {
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap';
+        document.head.appendChild(link);
+      }, 100);
+    }
+  </script>
+  
+  <!-- Iconify 图标库 - 立即加载 -->
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" defer></script>
   
   <!-- 内联关键 CSS 防止闪烁 -->
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-        sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      background: #0a0e27;
-      color: #fff;
-      overflow-x: hidden;
-    }
-    
-    #app {
-      min-height: 100vh;
-    }
-    
-    /* Loading 占位符 */
-    .app-loading {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(180deg, rgba(10, 14, 39, 1) 0%, rgba(26, 31, 58, 1) 50%, rgba(10, 14, 39, 1) 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{margin:0;font-family:var(--font-fallback);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background:#0a0e27;color:#fff;overflow-x:hidden}
+    #app{min-height:100vh}
+    .app-loading{position:fixed;top:0;left:0;width:100vw;height:100vh;background:linear-gradient(180deg,rgba(10,14,39,1) 0%,rgba(26,31,58,1) 50%,rgba(10,14,39,1) 100%);display:flex;align-items:center;justify-content:center;z-index:9999}
+    .app-loading::after{content:'Loading...';font-size:2rem;color:rgba(202,215,255,0.9);animation:pulse 1.5s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
   </style>
 </head>
 <body>
@@ -66,6 +61,28 @@
     <!-- 初始加载占位符 -->
     <div class="app-loading"></div>
   </div>
+  <script>
+    console.log('[Index] 开始加载 main.js')
+    console.time('[Index] main.js 加载时间')
+  </script>
   <script type="module" src="/src/main.js"></script>
+  <script>
+    // 移除 loading 占位符
+    window.addEventListener('load', function() {
+      console.timeEnd('[Index] main.js 加载时间')
+      console.log('[Index] 窗口完全加载')
+      setTimeout(function() {
+        var loading = document.querySelector('.app-loading');
+        if (loading) {
+          loading.style.transition = 'opacity 0.5s ease';
+          loading.style.opacity = '0';
+          setTimeout(function() {
+            loading.remove();
+            console.log('[Index] Loading 占位符已移除')
+          }, 500);
+        }
+      }, 100);
+    });
+  </script>
 </body>
 </html>

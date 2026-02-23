@@ -72,8 +72,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+console.log('[Home] Home.vue 开始初始化')
+console.time('[Home] 组件导入时间')
+
+import { ref, onMounted, onBeforeMount } from 'vue'
 import anime from 'animejs'
+
+console.log('[Home] 核心库已导入')
+
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import StarTrackBackground from '@/components/StarTrackBackground.vue'
 import SideNavigation from '@/components/SideNavigation.vue'
@@ -85,6 +91,9 @@ import LinksSection from '@/components/LinksSection.vue'
 import ContactSection from '@/components/ContactSection.vue'
 import FooterSection from '@/components/FooterSection.vue'
 
+console.timeEnd('[Home] 组件导入时间')
+console.log('[Home] 所有组件已导入')
+
 const transitionLayer = ref(null)
 const wave1 = ref(null)
 const wave2 = ref(null)
@@ -94,13 +103,17 @@ let scrollAnimation = null
 const heatmapLoaded = ref(false)
 
 const onLoadingComplete = () => {
-  console.log('Loading complete!')
+  console.log('[Home] Loading complete!')
 }
 
 const onHeatmapLoaded = () => {
-  console.log('Heatmap loaded!')
+  console.log('[Home] Heatmap loaded!')
   heatmapLoaded.value = true
 }
+
+onBeforeMount(() => {
+  console.log('[Home] Home.vue onBeforeMount')
+})
 
 // 生成波浪路径
 const generateWavePath = (baseY, amplitude, frequency, phase, segments = 6) => {
@@ -149,11 +162,15 @@ const handleScroll = () => {
 }
 
 onMounted(() => {
+  console.log('[Home] Home.vue onMounted')
+  console.time('[Home] 动画初始化时间')
+  
   if (transitionLayer.value) {
     transitionLayer.value.style.top = '100vh'
   }
   
   const animateWaves = () => {
+    // 使用 CSS transform 代替 setAttribute，避免强制回流
     // 第一层波浪 - 慢速、大振幅、低频、随机基准高度
     anime({
       targets: { phase: 0, baseY: 60 },
@@ -170,7 +187,10 @@ onMounted(() => {
           const phase = anim.animations[0].currentValue
           const baseY = anim.animations[1].currentValue
           const path = generateWavePath(baseY, 15, 60, phase, 4)
-          wave1.value.setAttribute('d', path)
+          // 批量更新 DOM，减少回流
+          requestAnimationFrame(() => {
+            wave1.value.setAttribute('d', path)
+          })
         }
       }
     })
@@ -191,7 +211,9 @@ onMounted(() => {
           const phase = anim.animations[0].currentValue
           const baseY = anim.animations[1].currentValue
           const path = generateWavePath(baseY, 20, 90, phase, 5)
-          wave2.value.setAttribute('d', path)
+          requestAnimationFrame(() => {
+            wave2.value.setAttribute('d', path)
+          })
         }
       }
     })
@@ -207,13 +229,17 @@ onMounted(() => {
         if (wave3.value) {
           const phase = anim.animations[0].currentValue
           const path = generateWavePath(40, 12, 120, phase, 6)
-          wave3.value.setAttribute('d', path)
+          requestAnimationFrame(() => {
+            wave3.value.setAttribute('d', path)
+          })
         }
       }
     })
   }
   
   animateWaves()
+  console.timeEnd('[Home] 动画初始化时间')
+  console.log('[Home] 波浪动画已启动')
   
   const observerOptions = {
     threshold: 0.2,
@@ -254,6 +280,8 @@ onMounted(() => {
   
   window.addEventListener('scroll', onScroll, { passive: true })
   handleScroll()
+  
+  console.log('[Home] Home.vue 完全初始化完成')
 })
 </script>
 
