@@ -482,7 +482,7 @@ const initChart = () => {
     },
     calendar: {
       top: 30,
-      left: 30,
+      left: 40,
       right: 10,
       bottom: 10,
       cellSize: [15, 15],

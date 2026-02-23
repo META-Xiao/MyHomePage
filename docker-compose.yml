@@ -1,4 +1,25 @@
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: logos-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      mx-net:
+        ipv4_address: 172.20.0.61
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
   homepage:
     image: illyaa/homepage:latest
     container_name: logos-homepage
@@ -10,6 +31,8 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=8081
+      # Redis 配置
+      - REDIS_URL=redis://redis:6379
       # MX-Space 配置
       - MX_SPACE_API=${MX_SPACE_API}
       - MX_SPACE_TOKEN=${MX_SPACE_TOKEN}
@@ -23,6 +46,9 @@ services:
       - NOWCODER_USER_ID=${NOWCODER_USER_ID:-}
       # AtCoder 配置（可选）
       - ATCODER_USERNAME=${ATCODER_USERNAME:-}
+    depends_on:
+      redis:
+        condition: service_healthy
     networks:
       mx-net:
         ipv4_address: 172.20.0.60
@@ -37,6 +63,9 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+volumes:
+  redis-data:
 
 networks:
   mx-net:
