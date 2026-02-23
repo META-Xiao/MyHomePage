@@ -4,6 +4,11 @@
       关于 <span class="gradient-text">ABOUT</span>
     </h2>
     
+    <!-- 活跃度热力图 -->
+    <div class="heatmap-section">
+      <IntroHeatmapSection :year="currentYear" :data="heatmapData" />
+    </div>
+    
     <!-- 上方区域：技能墙 + 个人信息 -->
     <div class="top-section">
       <!-- 左侧区域 -->
@@ -149,6 +154,8 @@ import { Icon } from '@iconify/vue'
 import TechCard from './cards/TechCard.vue'
 import ProjectCard from './cards/ProjectCard.vue'
 import MusicPlayer from './MusicPlayer.vue'
+import IntroHeatmapSection from './IntroHeatmapSection.vue'
+import { fetchHeatmapData } from '@/utils/api'
 
 const socialLinks = [
   { name: 'github', icon: 'ri:github-fill', link: 'https://github.com/META-Xiao', color: '#333' },
@@ -202,6 +209,10 @@ const projects = [
   }
 ]
 
+// 热力图数据
+const currentYear = new Date().getFullYear()
+const heatmapData = ref([])
+
 // 社交卡片 3D 效果
 const socialCardRefs = ref([])
 const socialCardStyles = ref([])
@@ -236,12 +247,19 @@ const setSocialCardRef = (el, index) => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   // 初始化样式数组
   socialCardStyles.value = new Array(socialLinks.length).fill({
     transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1) translateZ(0)',
     transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
   })
+  
+  // 加载热力图数据
+  try {
+    heatmapData.value = await fetchHeatmapData(currentYear)
+  } catch (error) {
+    console.error('Failed to fetch heatmap data:', error)
+  }
 })
 
 onUnmounted(() => {
@@ -579,6 +597,12 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
+}
+
+/* 热力图区域 */
+.heatmap-section {
+  margin-bottom: 3rem;
+  width: 100%;
 }
 
 /* 响应式 */

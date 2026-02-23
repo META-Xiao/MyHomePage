@@ -5,12 +5,24 @@ services:
     restart: unless-stopped
     ports:
       - "8081:8081"
+    volumes:
+      - ./backend/cache:/app/backend/cache
     environment:
       - NODE_ENV=production
       - PORT=8081
-      - MX_SPACE_API=https://api.teslongxiao.cn/api/v2
-      - MX_SPACE_TOKEN=txoo508lo5rf9g46mo93pkgvj0y586x2uhbkocz0t3e
-      - BLOG_URL=https://blog.teslongxiao.cn
+      # MX-Space 配置
+      - MX_SPACE_API=${MX_SPACE_API}
+      - MX_SPACE_TOKEN=${MX_SPACE_TOKEN}
+      - BLOG_URL=${BLOG_URL}
+      # GitHub 配置
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      # Codeforces 配置（可选）
+      - CODEFORCES_HANDLE=${CODEFORCES_HANDLE:-}
+      # 牛客配置（可选）
+      - NOWCODER_USER_ID=${NOWCODER_USER_ID:-}
+      # AtCoder 配置（可选）
+      - ATCODER_USERNAME=${ATCODER_USERNAME:-}
     networks:
       mx-net:
         ipv4_address: 172.20.0.60

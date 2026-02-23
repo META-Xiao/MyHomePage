@@ -11,6 +11,7 @@ dist
 .idea
 backend/node_modules
 backend/.env
+backend/cache/*.json
 xcnya_source.html
 xcnya_styles.css
 xcnya_script.js

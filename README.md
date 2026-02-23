@@ -16,7 +16,42 @@
 
 ## 快速部署
 
-### 方式一：直接部署（推荐）
+### 环境变量配置
+
+#### 必需配置
+```bash
+MX_SPACE_API=https://your-api.com/api/v2    # MX-Space API 地址
+MX_SPACE_TOKEN=your_token_here               # MX-Space Token
+BLOG_URL=https://your-blog.com               # 博客地址
+GITHUB_TOKEN=your_github_token               # GitHub Token
+GITHUB_USERNAME=your_github_username         # GitHub 用户名
+```
+
+#### 可选配置（OJ 平台）
+```bash
+CODEFORCES_HANDLE=your_handle                # Codeforces 用户名
+NOWCODER_USER_ID=your_user_id                # 牛客用户ID
+ATCODER_USERNAME=your_username               # AtCoder 用户名
+```
+
+**提示**: 未配置的 OJ 平台会自动跳过，不影响其他功能。
+
+### 方式一：使用 .env 文件（推荐）
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/META-Xiao/MyHomePage.git
+cd MyHomePage
+
+# 2. 创建 .env 文件
+cp .env.example .env
+nano .env  # 修改为你的配置
+
+# 3. 启动服务
+docker-compose up -d
+```
+
+### 方式二：直接部署
 
 在服务器上直接创建配置文件并启动：
 
@@ -34,15 +69,22 @@ services:
     restart: unless-stopped
     ports:
       - "8081:8081"
+    volumes:
+      - ./backend/cache:/app/backend/cache
     environment:
       - NODE_ENV=production
       - PORT=8081
+      # 必需配置
       - MX_SPACE_API=https://your-api.com/api/v2
       - MX_SPACE_TOKEN=your_token_here
       - BLOG_URL=https://your-blog.com
-    networks:
-      mx-net:
-        ipv4_address: 172.20.0.60
+      - GITHUB_TOKEN=your_github_token
+      - GITHUB_USERNAME=your_github_username
+      # 可选配置
+      - CODEFORCES_HANDLE=
+      - NOWCODER_USER_ID=
+      - ATCODER_USERNAME=
+      - LUOGU_USER_ID=
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8081/health"]
       interval: 30s
@@ -54,11 +96,6 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-
-networks:
-  mx-net:
-    external: true
-    name: core_mx-space
 EOF
 
 # 3. 修改环境变量（重要！）
@@ -71,7 +108,7 @@ docker compose up -d
 docker compose logs -f homepage
 ```
 
-### 方式二：克隆项目
+### 方式三：克隆项目
 
 ```bash
 git clone https://github.com/META-Xiao/MyHomePage.git
@@ -79,6 +116,13 @@ cd MyHomePage
 # 修改 docker-compose.yml 中的环境变量
 ./deploy-docker.sh
 ```
+
+### 缓存说明
+
+项目使用文件缓存系统（12小时有效期）来存储 OJ 数据：
+- 缓存位置：`./backend/cache/`
+- 自动持久化：通过 Docker volume 挂载
+- 首次启动会全量爬取数据，后续只增量更新
 
 ### 自定义配置
 

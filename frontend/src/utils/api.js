@@ -86,5 +86,17 @@ export const fetchSiteStats = async () => {
   }
 }
 
+ export const fetchHeatmapData = async (year) => {
+  try {
+    const response = await apiClient.get('/heatmap', {
+      params: { year }
+    })
+    return response.data || []
+  } catch (error) {
+    console.error('Failed to fetch heatmap data:', error)
+    return []
+  }
+}
+
 export default apiClient
 
