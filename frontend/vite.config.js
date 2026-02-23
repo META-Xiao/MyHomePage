@@ -33,6 +33,10 @@ export default defineConfig({
     // CSS 内联阈值（小于 4KB 的 CSS 会被内联）
     assetsInlineLimit: 4096
   },
+  esbuild: {
+    drop: ['console', 'debugger'],
+    pure: ['console.log', 'console.time', 'console.timeEnd']
+  },
   server: {
     port: 5173,
     host: true,
