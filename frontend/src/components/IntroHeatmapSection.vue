@@ -202,7 +202,6 @@ const updateClock = () => {
   const seconds = now.getSeconds()
   const milliseconds = now.getMilliseconds()
   
-  // 计算精确角度
   const secondAngle = (seconds + milliseconds / 1000) * 6
   const minuteAngle = (minutes + seconds / 60 + milliseconds / 60000) * 6
   const hourAngle = (hours + minutes / 60 + seconds / 3600) * 30
@@ -221,7 +220,6 @@ const updateClock = () => {
     y: 100 + 51 * Math.sin((hourAngle - 90) * Math.PI / 180)
   }
   
-  // 使用 anime.js 动画更新指针和轨迹
   if (secondHand.value && minuteHand.value && hourHand.value && 
       secondTrail.value && minuteTrail.value && hourTrail.value) {
     
@@ -230,8 +228,8 @@ const updateClock = () => {
       targets: secondHand.value,
       cx: secondPos.x,
       cy: secondPos.y,
-      duration: 1000,
-      easing: 'easeOutCubic'
+      duration: 100,
+      easing: 'linear'
     })
     
     // 动画更新分钟指针
@@ -239,8 +237,8 @@ const updateClock = () => {
       targets: minuteHand.value,
       cx: minutePos.x,
       cy: minutePos.y,
-      duration: 1000,
-      easing: 'easeOutCubic'
+      duration: 100,
+      easing: 'linear'
     })
     
     // 动画更新小时指针
@@ -248,8 +246,8 @@ const updateClock = () => {
       targets: hourHand.value,
       cx: hourPos.x,
       cy: hourPos.y,
-      duration: 1000,
-      easing: 'easeOutCubic'
+      duration: 100,
+      easing: 'linear'
     })
     
     // 更新轨迹路径
@@ -260,28 +258,27 @@ const updateClock = () => {
     anime({
       targets: secondTrail.value,
       d: secondTrailPath,
-      duration: 1000,
-      easing: 'easeOutCubic'
+      duration: 100,
+      easing: 'linear'
     })
     
     anime({
       targets: minuteTrail.value,
       d: minuteTrailPath,
-      duration: 1000,
-      easing: 'easeOutCubic'
+      duration: 100,
+      easing: 'linear'
     })
     
     anime({
       targets: hourTrail.value,
       d: hourTrailPath,
-      duration: 1000,
-      easing: 'easeOutCubic'
+      duration: 100,
+      easing: 'linear'
     })
   }
 }
 
 const startClock = () => {
-  // 立即初始化轨迹，不使用动画
   const now = new Date()
   const hours = now.getHours() % 12
   const minutes = now.getMinutes()
@@ -325,8 +322,8 @@ const startClock = () => {
     hourTrail.value.setAttribute('d', hourTrailPath)
   }
   
-  // 开始定时更新
-  clockAnimation = setInterval(updateClock, 1000)
+  // 每 100ms 更新一次
+  clockAnimation = setInterval(updateClock, 100)
 }
 
 // 水滴动画
