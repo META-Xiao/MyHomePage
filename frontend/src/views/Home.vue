@@ -91,20 +91,22 @@ let scrollAnimation = null
 const generateWavePath = (baseY, amplitude, frequency, phase, segments = 6) => {
   const width = 1440
   const segmentWidth = width / segments
-  let path = `M0,${baseY + amplitude * Math.sin(phase)}`
   
-  for (let i = 0; i <= segments; i++) {
+  // 起点使用与循环一致的频率计算
+  const startY = baseY + amplitude * Math.sin((0 * frequency + phase) * Math.PI / 180)
+  let path = `M0,${startY}`
+  
+  for (let i = 0; i < segments; i++) {
     const x = i * segmentWidth
     const y = baseY + amplitude * Math.sin((i * frequency + phase) * Math.PI / 180)
     const nextX = (i + 1) * segmentWidth
     const nextY = baseY + amplitude * Math.sin(((i + 1) * frequency + phase) * Math.PI / 180)
     
+    // 贝塞尔曲线控制点
     const cpX = x + segmentWidth / 2
     const cpY = (y + nextY) / 2 + amplitude * 0.3 * Math.sin((i * frequency + phase + 45) * Math.PI / 180)
     
-    if (i < segments) {
-      path += ` C${cpX},${cpY} ${cpX},${cpY} ${nextX},${nextY}`
-    }
+    path += ` C${cpX},${cpY} ${cpX},${cpY} ${nextX},${nextY}`
   }
   
   path += ` L1440,120 L0,120 Z`
@@ -116,12 +118,11 @@ const handleScroll = () => {
   const triggerDistance = window.innerHeight * 0.6
   const progress = Math.min(scrollY / triggerDistance, 1)
   
-  // 计算过渡层的位置（从 100vh 移动到 38.2vh）
+  // 计算过渡层的位置（从 100vh 移动到 25vh，让灰色背景占 75vh）
   const startTop = 100
-  const endTop = 38.2
+  const endTop = 25
   const currentTop = startTop - (startTop - endTop) * progress
   
-  // 使用 anime.js 平滑更新位置
   if (transitionLayer.value && !scrollAnimation) {
     anime({
       targets: transitionLayer.value,
@@ -138,39 +139,49 @@ onMounted(() => {
   }
   
   const animateWaves = () => {
-    // 第一层波浪 - 慢速、大振幅、低频
+    // 第一层波浪 - 慢速、大振幅、低频、随机基准高度
     anime({
-      targets: { phase: 0 },
+      targets: { phase: 0, baseY: 60 },
       phase: 360,
+      baseY: [
+        { value: 55, duration: 6000, easing: 'easeInOutQuad' },
+        { value: 65, duration: 6000, easing: 'easeInOutQuad' }
+      ],
       duration: 12000,
       easing: 'linear',
       loop: true,
       update: function(anim) {
         if (wave1.value) {
           const phase = anim.animations[0].currentValue
-          const path = generateWavePath(60, 15, 60, phase, 4)
+          const baseY = anim.animations[1].currentValue
+          const path = generateWavePath(baseY, 15, 60, phase, 4)
           wave1.value.setAttribute('d', path)
         }
       }
     })
     
-    // 第二层波浪 - 中速、中振幅、中频
+    // 第二层波浪 - 中速、中振幅、中频、随机基准高度
     anime({
-      targets: { phase: 0 },
+      targets: { phase: 0, baseY: 50 },
       phase: 360,
+      baseY: [
+        { value: 45, duration: 4000, easing: 'easeInOutQuad' },
+        { value: 55, duration: 4000, easing: 'easeInOutQuad' }
+      ],
       duration: 8000,
       easing: 'linear',
       loop: true,
       update: function(anim) {
         if (wave2.value) {
           const phase = anim.animations[0].currentValue
-          const path = generateWavePath(50, 20, 90, phase, 5)
+          const baseY = anim.animations[1].currentValue
+          const path = generateWavePath(baseY, 20, 90, phase, 5)
           wave2.value.setAttribute('d', path)
         }
       }
     })
     
-    // 第三层波浪 - 快速、小振幅、高频
+    // 第三层波浪 - 快速、小振幅、高频（前景深色，保持固定）
     anime({
       targets: { phase: 0 },
       phase: 360,
