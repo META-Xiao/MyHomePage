@@ -131,7 +131,6 @@ onMounted(() => {
   font-style: italic;
 }
 
-/* 移动端适配 */
 @media (max-width: 768px) {
   .side-navigation {
     padding: 15px 0;
@@ -151,7 +150,6 @@ onMounted(() => {
   .nav-content {
     overflow-x: auto;
     padding: 0 5%;
-    /* 隐藏滚动条但保持可滚动 */
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE/Edge */
   }
@@ -161,7 +159,6 @@ onMounted(() => {
   }
 }
 
-/* 大屏幕适配 */
 @media screen and (min-width: 1400px) {
   .nav-link,
   .time {

@@ -109,9 +109,8 @@ class StarTrack {
       { color: 'rgba(255, 204, 111, 1)', name: '红巨星', weight: 0.05 }       // M型星 - 最冷
     ]
     
-    // 地球自转方向（从西向东，画面上从右向左）
     this.driftVelocity = {
-      x: -0.015,  // 向左漂移（非常慢）
+      x: -0.015, 
       y: 0
     }
     
@@ -125,7 +124,7 @@ class StarTrack {
   
   init() {
     this.canvas.width = window.innerWidth
-    this.canvas.height = window.innerHeight  // 全屏高度
+    this.canvas.height = window.innerHeight
     this.createStars()
   }
   
@@ -141,13 +140,13 @@ class StarTrack {
       }
     }
     
-    return this.starColors[4].color  // 默认黄矮星
+    return this.starColors[4].color
   }
   
   createStars() {
     this.stars = []
     for (let i = 0; i < this.maxStars; i++) {
-      const isPermanent = Math.random() > 0.3  // 70% 是恒星（不消失）
+      const isPermanent = Math.random() > 0.3
       
       this.stars.push({
         x: Math.random() * this.canvas.width,
@@ -168,7 +167,7 @@ class StarTrack {
     if (this.floatingParticles.length < this.maxFloatingParticles && Math.random() < 0.02) {
       this.floatingParticles.push({
         x: Math.random() * this.canvas.width,
-        y: Math.random() * this.canvas.height,  // 随机位置
+        y: Math.random() * this.canvas.height,
         radius: Math.random() * 1.5 + 0.5,
         opacity: Math.random() * 0.6 + 0.2,
         color: this.getRandomStarColor(),

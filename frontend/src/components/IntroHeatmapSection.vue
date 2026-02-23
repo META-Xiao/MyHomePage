@@ -3,25 +3,28 @@
     <!-- 左侧：自我介绍卡片 -->
     <div class="intro-card">
       <!-- 水滴装饰 -->
-      <div class="water-drop">
-        <div class="highlight"></div>
+      <div ref="waterDrop" class="water-drop">
+        <div ref="waterHighlight" class="highlight"></div>
       </div>
       
       <!-- 右上角时钟 -->
       <div class="clock">
-        <svg class="clock-svg" viewBox="0 0 200 200">
+        <svg ref="clockSvg" class="clock-svg" viewBox="0 0 200 200">
           <defs>
-            <linearGradient id="minuteGradient">
+            <linearGradient id="secondGradient" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" style="stop-color:#fff;stop-opacity:0.05" />
-              <stop offset="33%" style="stop-color:#fff;stop-opacity:0.3" />
-              <stop offset="67%" style="stop-color:#fff;stop-opacity:0.7" />
+              <stop offset="50%" style="stop-color:#fff;stop-opacity:0.6" />
               <stop offset="100%" style="stop-color:#fff;stop-opacity:1" />
             </linearGradient>
-            <linearGradient id="hourGradient">
+            <linearGradient id="minuteGradient" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" style="stop-color:#fff;stop-opacity:0.05" />
-              <stop offset="33%" style="stop-color:#fff;stop-opacity:0.25" />
-              <stop offset="67%" style="stop-color:#fff;stop-opacity:0.6" />
-              <stop offset="100%" style="stop-color:#fff;stop-opacity:0.9" />
+              <stop offset="50%" style="stop-color:#fff;stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:#fff;stop-opacity:0.95" />
+            </linearGradient>
+            <linearGradient id="hourGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#fff;stop-opacity:0.05" />
+              <stop offset="50%" style="stop-color:#fff;stop-opacity:0.4" />
+              <stop offset="100%" style="stop-color:#fff;stop-opacity:0.85" />
             </linearGradient>
             <filter id="glow">
               <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
@@ -32,54 +35,76 @@
             </filter>
           </defs>
           
+          <!-- 秒针轨道背景 -->
+          <circle 
+            class="track-bg" 
+            cx="100" 
+            cy="100" 
+            r="85"
+          />
+          
           <!-- 分钟轨道背景 -->
           <circle 
             class="track-bg" 
             cx="100" 
             cy="100" 
-            r="85"
+            r="68"
           />
           
-          <!-- 时钟轨道背景 -->
+          <!-- 时针轨道背景 -->
           <circle 
             class="track-bg" 
             cx="100" 
             cy="100" 
-            r="65"
+            r="51"
           />
           
-          <!-- 分钟轨迹（圆环） -->
-          <circle 
+          <!-- 秒针轨迹路径 -->
+          <path 
+            ref="secondTrail"
+            class="second-trail" 
+            fill="none"
+          />
+          
+          <!-- 分钟轨迹路径 -->
+          <path 
+            ref="minuteTrail"
             class="minute-trail" 
-            cx="100" 
-            cy="100" 
-            r="85"
-            :style="{ strokeDashoffset: minuteTrailOffset }"
+            fill="none"
           />
           
-          <!-- 时钟轨迹（圆环） -->
-          <circle 
+          <!-- 时针轨迹路径 -->
+          <path 
+            ref="hourTrail"
             class="hour-trail" 
+            fill="none"
+          />
+          
+          <!-- 秒针指针（高亮点） -->
+          <circle 
+            ref="secondHand"
+            class="second-hand" 
             cx="100" 
-            cy="100" 
-            r="65"
-            :style="{ strokeDashoffset: hourTrailOffset }"
+            cy="15" 
+            r="6"
           />
           
           <!-- 分钟指针（高亮点） -->
           <circle 
+            ref="minuteHand"
             class="minute-hand" 
-            :cx="minuteX" 
-            :cy="minuteY" 
-            r="10"
+            cx="100" 
+            cy="32" 
+            r="8"
           />
           
-          <!-- 时钟指针（高亮点） -->
+          <!-- 时针指针（高亮点） -->
           <circle 
+            ref="hourHand"
             class="hour-hand" 
-            :cx="hourX" 
-            :cy="hourY" 
-            r="8"
+            cx="100" 
+            cy="49" 
+            r="7"
           />
         </svg>
       </div>
@@ -104,6 +129,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import * as echarts from 'echarts'
+import anime from 'animejs'
 
 interface HeatmapData {
   date: string
@@ -127,43 +153,230 @@ const props = defineProps<{
 
 const chartRef = ref<HTMLElement>()
 const cardRef = ref<HTMLElement>()
+const clockSvg = ref<SVGSVGElement>()
+const secondHand = ref<SVGCircleElement>()
+const minuteHand = ref<SVGCircleElement>()
+const hourHand = ref<SVGCircleElement>()
+const secondTrail = ref<SVGPathElement>()
+const minuteTrail = ref<SVGPathElement>()
+const hourTrail = ref<SVGPathElement>()
+const waterDrop = ref<HTMLElement>()
+const waterHighlight = ref<HTMLElement>()
+
 let chartInstance: echarts.ECharts | null = null
 let observer: IntersectionObserver | null = null
-let clockTimer: number | null = null
+let clockAnimation: any = null
 
 const activeDays = computed(() => {
   return props.data?.filter(item => item.value > 0).length || 0
 })
 
-// 时钟相关
-const minuteX = ref(100)
-const minuteY = ref(15)
-const hourX = ref(100)
-const hourY = ref(35)
-const minuteTrailOffset = ref(534)
-const hourTrailOffset = ref(408)
+// 生成圆弧路径（从起点到终点，逆时针）
+const createArcPath = (centerX: number, centerY: number, radius: number, startAngle: number, endAngle: number) => {
+  // 限制轨迹长度，最多显示 240 度（2/3 圆）
+  const maxArc = 240
+  let arcAngle = endAngle - startAngle
+  if (arcAngle < 0) arcAngle += 360
+  if (arcAngle > maxArc) {
+    startAngle = endAngle - maxArc
+  }
+  
+  const start = {
+    x: centerX + radius * Math.cos((startAngle - 90) * Math.PI / 180),
+    y: centerY + radius * Math.sin((startAngle - 90) * Math.PI / 180)
+  }
+  const end = {
+    x: centerX + radius * Math.cos((endAngle - 90) * Math.PI / 180),
+    y: centerY + radius * Math.sin((endAngle - 90) * Math.PI / 180)
+  }
+  
+  const largeArcFlag = arcAngle > maxArc ? 1 : (arcAngle > 180 ? 1 : 0)
+  
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`
+}
 
 const updateClock = () => {
   const now = new Date()
   const hours = now.getHours() % 12
   const minutes = now.getMinutes()
   const seconds = now.getSeconds()
+  const milliseconds = now.getMilliseconds()
   
-  const minuteAngle = ((minutes + seconds / 60) * 6 - 90) * Math.PI / 180
-  const hourAngle = ((hours + minutes / 60) * 30 - 90) * Math.PI / 180
+  // 计算精确角度
+  const secondAngle = (seconds + milliseconds / 1000) * 6
+  const minuteAngle = (minutes + seconds / 60 + milliseconds / 60000) * 6
+  const hourAngle = (hours + minutes / 60 + seconds / 3600) * 30
   
-  minuteX.value = 100 + 85 * Math.cos(minuteAngle)
-  minuteY.value = 100 + 85 * Math.sin(minuteAngle)
-  hourX.value = 100 + 65 * Math.cos(hourAngle)
-  hourY.value = 100 + 65 * Math.sin(hourAngle)
+  // 计算指针位置
+  const secondPos = {
+    x: 100 + 85 * Math.cos((secondAngle - 90) * Math.PI / 180),
+    y: 100 + 85 * Math.sin((secondAngle - 90) * Math.PI / 180)
+  }
+  const minutePos = {
+    x: 100 + 68 * Math.cos((minuteAngle - 90) * Math.PI / 180),
+    y: 100 + 68 * Math.sin((minuteAngle - 90) * Math.PI / 180)
+  }
+  const hourPos = {
+    x: 100 + 51 * Math.cos((hourAngle - 90) * Math.PI / 180),
+    y: 100 + 51 * Math.sin((hourAngle - 90) * Math.PI / 180)
+  }
   
-  const minuteCircumference = 2 * Math.PI * 85
-  const hourCircumference = 2 * Math.PI * 65
-  const minuteProgress = (minutes + seconds / 60) / 60
-  const hourProgress = (hours + minutes / 60) / 12
+  // 使用 anime.js 动画更新指针和轨迹
+  if (secondHand.value && minuteHand.value && hourHand.value && 
+      secondTrail.value && minuteTrail.value && hourTrail.value) {
+    
+    // 动画更新秒针
+    anime({
+      targets: secondHand.value,
+      cx: secondPos.x,
+      cy: secondPos.y,
+      duration: 1000,
+      easing: 'easeOutCubic'
+    })
+    
+    // 动画更新分钟指针
+    anime({
+      targets: minuteHand.value,
+      cx: minutePos.x,
+      cy: minutePos.y,
+      duration: 1000,
+      easing: 'easeOutCubic'
+    })
+    
+    // 动画更新小时指针
+    anime({
+      targets: hourHand.value,
+      cx: hourPos.x,
+      cy: hourPos.y,
+      duration: 1000,
+      easing: 'easeOutCubic'
+    })
+    
+    // 更新轨迹路径
+    const secondTrailPath = createArcPath(100, 100, 85, secondAngle - 240, secondAngle)
+    const minuteTrailPath = createArcPath(100, 100, 68, minuteAngle - 240, minuteAngle)
+    const hourTrailPath = createArcPath(100, 100, 51, hourAngle - 240, hourAngle)
+    
+    anime({
+      targets: secondTrail.value,
+      d: secondTrailPath,
+      duration: 1000,
+      easing: 'easeOutCubic'
+    })
+    
+    anime({
+      targets: minuteTrail.value,
+      d: minuteTrailPath,
+      duration: 1000,
+      easing: 'easeOutCubic'
+    })
+    
+    anime({
+      targets: hourTrail.value,
+      d: hourTrailPath,
+      duration: 1000,
+      easing: 'easeOutCubic'
+    })
+  }
+}
+
+const startClock = () => {
+  // 立即初始化轨迹，不使用动画
+  const now = new Date()
+  const hours = now.getHours() % 12
+  const minutes = now.getMinutes()
+  const seconds = now.getSeconds()
   
-  minuteTrailOffset.value = minuteCircumference * (1 - minuteProgress * 0.67)
-  hourTrailOffset.value = hourCircumference * (1 - hourProgress * 0.67)
+  const secondAngle = seconds * 6
+  const minuteAngle = (minutes + seconds / 60) * 6
+  const hourAngle = (hours + minutes / 60) * 30
+  
+  if (secondHand.value && minuteHand.value && hourHand.value && 
+      secondTrail.value && minuteTrail.value && hourTrail.value) {
+    
+    // 立即设置指针位置
+    const secondPos = {
+      x: 100 + 85 * Math.cos((secondAngle - 90) * Math.PI / 180),
+      y: 100 + 85 * Math.sin((secondAngle - 90) * Math.PI / 180)
+    }
+    const minutePos = {
+      x: 100 + 68 * Math.cos((minuteAngle - 90) * Math.PI / 180),
+      y: 100 + 68 * Math.sin((minuteAngle - 90) * Math.PI / 180)
+    }
+    const hourPos = {
+      x: 100 + 51 * Math.cos((hourAngle - 90) * Math.PI / 180),
+      y: 100 + 51 * Math.sin((hourAngle - 90) * Math.PI / 180)
+    }
+    
+    secondHand.value.setAttribute('cx', secondPos.x.toString())
+    secondHand.value.setAttribute('cy', secondPos.y.toString())
+    minuteHand.value.setAttribute('cx', minutePos.x.toString())
+    minuteHand.value.setAttribute('cy', minutePos.y.toString())
+    hourHand.value.setAttribute('cx', hourPos.x.toString())
+    hourHand.value.setAttribute('cy', hourPos.y.toString())
+    
+    // 立即设置轨迹路径
+    const secondTrailPath = createArcPath(100, 100, 85, secondAngle - 240, secondAngle)
+    const minuteTrailPath = createArcPath(100, 100, 68, minuteAngle - 240, minuteAngle)
+    const hourTrailPath = createArcPath(100, 100, 51, hourAngle - 240, hourAngle)
+    
+    secondTrail.value.setAttribute('d', secondTrailPath)
+    minuteTrail.value.setAttribute('d', minuteTrailPath)
+    hourTrail.value.setAttribute('d', hourTrailPath)
+  }
+  
+  // 开始定时更新
+  clockAnimation = setInterval(updateClock, 1000)
+}
+
+// 水滴动画
+const animateWaterDrop = () => {
+  if (!waterDrop.value || !waterHighlight.value) return
+  
+  // 水滴形状变化动画（持续循环）
+  anime({
+    targets: waterDrop.value,
+    borderRadius: [
+      { value: '60% 40% 64% 36% / 34% 36% 64% 66%' },
+      { value: '55% 45% 58% 42% / 54% 39% 61% 46%' },
+      { value: '48% 52% 45% 55% / 62% 44% 56% 38%' },
+      { value: '41% 59% 35% 65% / 71% 32% 68% 29%' },
+      { value: '60% 40% 64% 36% / 34% 36% 64% 66%' }
+    ],
+    duration: 8000,
+    easing: 'easeInOutQuad',
+    loop: true
+  })
+  
+  // 水滴轻微旋转
+  anime({
+    targets: waterDrop.value,
+    rotate: [0, 5, -3, 2, 0],
+    duration: 10000,
+    easing: 'easeInOutSine',
+    loop: true
+  })
+  
+  // 水滴轻微缩放呼吸效果
+  anime({
+    targets: waterDrop.value,
+    scale: [1, 1.05, 0.98, 1.02, 1],
+    duration: 6000,
+    easing: 'easeInOutQuad',
+    loop: true
+  })
+  
+  // 高光移动动画
+  anime({
+    targets: waterHighlight.value,
+    translateX: [0, 5, -2, 3, 0],
+    translateY: [0, -3, 2, -1, 0],
+    scale: [1, 1.2, 0.9, 1.1, 1],
+    opacity: [0.8, 1, 0.7, 0.9, 0.8],
+    duration: 5000,
+    easing: 'easeInOutQuad',
+    loop: true
+  })
 }
 
 // 滚动动画观察器
@@ -357,14 +570,14 @@ watch(() => props.data, () => {
 onMounted(() => {
   initChart()
   setupScrollAnimation()
-  updateClock()
-  clockTimer = window.setInterval(updateClock, 1000)
+  startClock()
+  animateWaterDrop()
   window.addEventListener('resize', handleResize)
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
-  if (clockTimer) clearInterval(clockTimer)
+  if (clockAnimation) clearInterval(clockAnimation)
   observer?.disconnect()
   chartInstance?.dispose()
 })
@@ -449,22 +662,7 @@ onUnmounted(() => {
   border-radius: 60% 40% 64% 36% / 34% 36% 64% 66%;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(5px);
-}
-
-.water-drop:hover {
-  animation: water-animate 2s linear infinite alternate;
-}
-
-@keyframes water-animate {
-  0% {
-    border-radius: 60% 40% 64% 36% / 34% 36% 64% 66%;
-  }
-  50% {
-    border-radius: 55% 45% 58% 42% / 54% 39% 61% 46%;
-  }
-  100% {
-    border-radius: 41% 59% 35% 65% / 71% 32% 68% 29%;
-  }
+  transform-origin: center;
 }
 
 .water-drop .highlight {
@@ -500,42 +698,42 @@ onUnmounted(() => {
   stroke-width: 6;
 }
 
-/* 轨迹圆环 */
-.minute-trail,
-.hour-trail {
-  fill: none;
+/* 轨迹路径 */
+.second-trail {
+  stroke: url(#secondGradient);
+  stroke-width: 4;
   stroke-linecap: round;
-  transform-origin: center;
-  transform: rotate(-90deg);
+  filter: url(#glow);
 }
 
 .minute-trail {
   stroke: url(#minuteGradient);
-  stroke-width: 6;
-  stroke-dasharray: 534;
-  transition: stroke-dashoffset 0.5s ease-out;
+  stroke-width: 5;
+  stroke-linecap: round;
   filter: url(#glow);
 }
 
 .hour-trail {
   stroke: url(#hourGradient);
-  stroke-width: 6;
-  stroke-dasharray: 408;
-  transition: stroke-dashoffset 0.5s ease-out;
+  stroke-width: 5;
+  stroke-linecap: round;
   filter: url(#glow);
 }
 
 /* 指针高亮点 */
+.second-hand {
+  fill: #fff;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
+
 .minute-hand {
   fill: #fff;
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 12px rgba(255, 255, 255, 0.4));
-  transition: cx 0.5s ease-out, cy 0.5s ease-out;
 }
 
 .hour-hand {
   fill: #fff;
   filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-  transition: cx 0.5s ease-out, cy 0.5s ease-out;
 }
 
 /* 自我介绍内容 */

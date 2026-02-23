@@ -123,22 +123,18 @@ const typewriterCycle = async () => {
 
 // 启动循环
 const startTypingLoop = async () => {
-  // 首次加载
   const initialContent = await fetchHitokoto()
   mainTitle.value = initialContent.title
   currentSlogan.value = initialContent.slogan
   
-  // 先打 title
   await typeWriter(initialContent.title, displayedTitle, 'title', 80)
   await new Promise(resolve => setTimeout(resolve, 300))
-  // 再打 slogan
   await typeWriter(initialContent.slogan, displayedSlogan, 'slogan', 60)
   
   // 打完字后等待3秒，然后淡出光标
   await new Promise(resolve => setTimeout(resolve, 3000))
   fadeCursor.value = true
   
-  // 淡出动画完成后隐藏光标
   await new Promise(resolve => setTimeout(resolve, 1000))
   currentCursor.value = ''
   

@@ -21,11 +21,9 @@ export function use3DCard() {
     const x = (e.clientX - rect.left) / rect.width - 0.5
     const y = (e.clientY - rect.top) / rect.height - 0.5
     
-    // 计算旋转角度（最大 12 度）
     rotateY.value = x * 12
     rotateX.value = -y * 12
     
-    // 悬浮时轻微放大
     scale.value = 1.02
   }
 

@@ -248,13 +248,11 @@ const setSocialCardRef = (el, index) => {
 }
 
 onMounted(async () => {
-  // 初始化样式数组
   socialCardStyles.value = new Array(socialLinks.length).fill({
     transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1) translateZ(0)',
     transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
   })
   
-  // 加载热力图数据
   try {
     heatmapData.value = await fetchHeatmapData(currentYear)
   } catch (error) {
@@ -592,20 +590,17 @@ onUnmounted(() => {
   color: white;
 }
 
-/* 项目展示区域 */
 .projects-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
 
-/* 热力图区域 */
 .heatmap-section {
   margin-bottom: 3rem;
   width: 100%;
 }
 
-/* 响应式 */
 @media (max-width: 1024px) {
   .top-section {
     flex-direction: column;
