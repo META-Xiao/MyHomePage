@@ -330,7 +330,7 @@ const startClock = () => {
 const animateWaterDrop = () => {
   if (!waterDrop.value || !waterHighlight.value) return
   
-  // 水滴形状变化动画（持续循环）
+  // 水滴形状变化动画
   anime({
     targets: waterDrop.value,
     borderRadius: [

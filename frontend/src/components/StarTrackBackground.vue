@@ -1,26 +1,9 @@
 <template>
   <div 
     ref="containerRef"
-    class="star-track-background" 
-    :style="{ transform: starTransform }"
+    class="star-track-background"
   >
     <canvas ref="canvasRef" id="startrack" :style="canvasTransform"></canvas>
-    
-    <!-- 波浪形渐变遮罩 -->
-    <div class="cover" :style="{ opacity: coverOpacity }">
-      <svg class="wave-mask" viewBox="0 0 1440 120" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="waveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style="stop-color:#202020;stop-opacity:0" />
-            <stop offset="100%" style="stop-color:#202020;stop-opacity:1" />
-          </linearGradient>
-        </defs>
-        <path 
-          d="M0,40 C240,10 480,70 720,40 C960,10 1200,70 1440,40 L1440,120 L0,120 Z" 
-          fill="url(#waveGradient)"
-        />
-      </svg>
-    </div>
   </div>
 </template>
 
@@ -33,13 +16,6 @@ const scrollProgress = ref(0)
 const mouseX = ref(0)
 const mouseY = ref(0)
 let animationId = null
-
-// 计算星空位移（向上移动 61.8vh）
-const starTransform = computed(() => {
-  const maxMove = -61.8  // 向上移动到只剩 38.2vh 可见
-  const translateY = maxMove * scrollProgress.value
-  return `translateY(${translateY}vh)`
-})
 
 // 计算 Canvas 视差效果（只在未滚动时生效）
 const canvasTransform = computed(() => {
@@ -59,11 +35,6 @@ const canvasTransform = computed(() => {
     transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.1)`,
     transition: 'transform 0.15s ease-out'
   }
-})
-
-// 计算遮罩透明度
-const coverOpacity = computed(() => {
-  return scrollProgress.value
 })
 
 // 监听滚动 - 根据滚动距离计算进度
@@ -412,7 +383,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 星空背景 - 线性向上移动 */
+/* 星空背景 - 固定全屏 */
 .star-track-background {
   position: fixed;
   top: 0;
@@ -421,8 +392,6 @@ onMounted(() => {
   height: 100vh;
   z-index: 0;
   overflow: hidden;
-  transition: transform 0.1s linear;  /* 线性过渡，跟随滚动 */
-  will-change: transform;
 }
 
 #startrack {
@@ -433,35 +402,6 @@ onMounted(() => {
   width: 100%;
   will-change: transform;
   transform-origin: center center;
-}
-
-.cover {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 50%;
-  width: 100%;
-  pointer-events: none;
-  transition: opacity 0.1s linear;
-}
-
-.wave-mask {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 120px;
-  transform: translateY(-1px);
-}
-
-.cover::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 120px);
-  background: linear-gradient(0deg, #202020 0%, rgba(32, 32, 32, 0) 100%);
 }
 </style>
 

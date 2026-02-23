@@ -3,8 +3,32 @@
     <!-- 星轨背景 - 延伸到下方 -->
     <StarTrackBackground />
     
-    <!-- 灰色背景 - 滚动后才显示 -->
-    <div class="gray-background" :style="{ top: grayBgTop, height: grayBgHeight, opacity: scrollProgress }"></div>
+    <!-- 波浪遮罩 + 灰色背景  -->
+    <div ref="transitionLayer" class="transition-layer">
+      <!-- 多重动态波浪 -->
+      <svg class="wave-separator" viewBox="0 0 1440 120" preserveAspectRatio="none">
+        <path 
+          ref="wave1"
+          class="wave-path wave-1"
+          d="M0,60 C360,30 720,90 1080,60 C1260,45 1350,75 1440,60 L1440,120 L0,120 Z" 
+          fill="rgba(32, 32, 32, 0.4)"
+        />
+        <path 
+          ref="wave2"
+          class="wave-path wave-2"
+          d="M0,50 C360,80 720,20 1080,50 C1260,65 1350,35 1440,50 L1440,120 L0,120 Z" 
+          fill="rgba(32, 32, 32, 0.6)"
+        />
+        <path 
+          ref="wave3"
+          class="wave-path wave-3"
+          d="M0,40 C360,10 720,70 1080,40 C1260,25 1350,55 1440,40 L1440,120 L0,120 Z" 
+          fill="#202020"
+        />
+      </svg>
+      <!-- 灰色背景紧接波浪 -->
+      <div class="gray-background"></div>
+    </div>
     
     <!-- 侧边导航 -->
     <SideNavigation />
@@ -45,7 +69,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
+import anime from 'animejs'
 import StarTrackBackground from '@/components/StarTrackBackground.vue'
 import SideNavigation from '@/components/SideNavigation.vue'
 import HeroSection from '@/components/HeroSection.vue'
@@ -56,69 +81,153 @@ import LinksSection from '@/components/LinksSection.vue'
 import ContactSection from '@/components/ContactSection.vue'
 import FooterSection from '@/components/FooterSection.vue'
 
-const isScrolled = ref(false)
-const scrollProgress = ref(0)
+const transitionLayer = ref(null)
+const wave1 = ref(null)
+const wave2 = ref(null)
+const wave3 = ref(null)
+let scrollAnimation = null
 
-// 计算灰色背景的位置和高度
-const grayBgTop = computed(() => {
-  const start = 100
-  const end = 38.2
-  const top = start - (start - end) * scrollProgress.value
-  return `${top}vh`
-})
-
-const grayBgHeight = computed(() => {
-  const start = 0
-  const end = 61.8
-  const height = start + end * scrollProgress.value
-  return `${height}vh`
-})
+// 生成波浪路径
+const generateWavePath = (baseY, amplitude, frequency, phase, segments = 6) => {
+  const width = 1440
+  const segmentWidth = width / segments
+  let path = `M0,${baseY + amplitude * Math.sin(phase)}`
+  
+  for (let i = 0; i <= segments; i++) {
+    const x = i * segmentWidth
+    const y = baseY + amplitude * Math.sin((i * frequency + phase) * Math.PI / 180)
+    const nextX = (i + 1) * segmentWidth
+    const nextY = baseY + amplitude * Math.sin(((i + 1) * frequency + phase) * Math.PI / 180)
+    
+    const cpX = x + segmentWidth / 2
+    const cpY = (y + nextY) / 2 + amplitude * 0.3 * Math.sin((i * frequency + phase + 45) * Math.PI / 180)
+    
+    if (i < segments) {
+      path += ` C${cpX},${cpY} ${cpX},${cpY} ${nextX},${nextY}`
+    }
+  }
+  
+  path += ` L1440,120 L0,120 Z`
+  return path
+}
 
 const handleScroll = () => {
   const scrollY = window.scrollY
-  const triggerDistance = window.innerHeight * 0.6  // 滚动 60vh 才完全上移
+  const triggerDistance = window.innerHeight * 0.6
+  const progress = Math.min(scrollY / triggerDistance, 1)
   
-  // 计算进度 (0 到 1)
-  scrollProgress.value = Math.min(scrollY / triggerDistance, 1)
-  isScrolled.value = scrollProgress.value > 0
+  // 计算过渡层的位置（从 100vh 移动到 38.2vh）
+  const startTop = 100
+  const endTop = 38.2
+  const currentTop = startTop - (startTop - endTop) * progress
+  
+  // 使用 anime.js 平滑更新位置
+  if (transitionLayer.value && !scrollAnimation) {
+    anime({
+      targets: transitionLayer.value,
+      top: `${currentTop}vh`,
+      duration: 0,
+      easing: 'linear'
+    })
+  }
 }
 
 onMounted(() => {
-  // 初始化滚动动画观察器 - 双向弹出效果
+  if (transitionLayer.value) {
+    transitionLayer.value.style.top = '100vh'
+  }
+  
+  const animateWaves = () => {
+    // 第一层波浪 - 慢速、大振幅、低频
+    anime({
+      targets: { phase: 0 },
+      phase: 360,
+      duration: 12000,
+      easing: 'linear',
+      loop: true,
+      update: function(anim) {
+        if (wave1.value) {
+          const phase = anim.animations[0].currentValue
+          const path = generateWavePath(60, 15, 60, phase, 4)
+          wave1.value.setAttribute('d', path)
+        }
+      }
+    })
+    
+    // 第二层波浪 - 中速、中振幅、中频
+    anime({
+      targets: { phase: 0 },
+      phase: 360,
+      duration: 8000,
+      easing: 'linear',
+      loop: true,
+      update: function(anim) {
+        if (wave2.value) {
+          const phase = anim.animations[0].currentValue
+          const path = generateWavePath(50, 20, 90, phase, 5)
+          wave2.value.setAttribute('d', path)
+        }
+      }
+    })
+    
+    // 第三层波浪 - 快速、小振幅、高频
+    anime({
+      targets: { phase: 0 },
+      phase: 360,
+      duration: 5000,
+      easing: 'linear',
+      loop: true,
+      update: function(anim) {
+        if (wave3.value) {
+          const phase = anim.animations[0].currentValue
+          const path = generateWavePath(40, 12, 120, phase, 6)
+          wave3.value.setAttribute('d', path)
+        }
+      }
+    })
+  }
+  
+  animateWaves()
+  
   const observerOptions = {
-    threshold: 0.2,  // 元素露出 20% 就触发
-    rootMargin: '0px 0px -80px 0px'  // 提前 80px 触发
+    threshold: 0.2,
+    rootMargin: '0px 0px -80px 0px'
   }
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        // 判断滚动方向
         const isScrollingDown = entry.boundingClientRect.top > 0
         if (isScrollingDown) {
-          // 向下滚动：从下方弹出
           entry.target.classList.remove('animate-bounce-in-up')
           entry.target.classList.add('animate-bounce-in-down')
         } else {
-          // 向上滚动：从上方弹出
           entry.target.classList.remove('animate-bounce-in-down')
           entry.target.classList.add('animate-bounce-in-up')
         }
       } else {
-        // 离开视口时移除动画类，可以重新触发
         entry.target.classList.remove('animate-bounce-in-down', 'animate-bounce-in-up')
       }
     })
   }, observerOptions)
 
-  // 观察所有需要动画的元素
   document.querySelectorAll('.section-wrapper').forEach(el => {
     observer.observe(el)
   })
   
-  // 监听滚动
-  window.addEventListener('scroll', handleScroll, { passive: true })
-  handleScroll() // 初始检查
+  let ticking = false
+  const onScroll = () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        handleScroll()
+        ticking = false
+      })
+      ticking = true
+    }
+  }
+  
+  window.addEventListener('scroll', onScroll, { passive: true })
+  handleScroll()
 })
 </script>
 
@@ -128,15 +237,41 @@ onMounted(() => {
   min-height: 100vh;
 }
 
-/* 灰色背景 - 动态调整 */
-.gray-background {
+/* 过渡层 - 波浪 + 灰色背景紧密贴合 */
+.transition-layer {
   position: fixed;
   left: 0;
+  top: 100vh;
   width: 100%;
-  background: #202020;
+  height: 100vh;
   z-index: 0;
   pointer-events: none;
-  transition: all 0.1s linear;  /* 线性过渡，跟随滚动 */
+  will-change: top;
+}
+
+/* 波浪分隔符 */
+.wave-separator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  display: block;
+}
+
+/* 波浪路径 - 多层叠加 */
+.wave-path {
+  will-change: d;
+}
+
+/* 灰色背景紧接波浪底部 */
+.gray-background {
+  position: absolute;
+  top: 120px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 120px);
+  background: #202020;
 }
 
 .intro-section {
