@@ -35,7 +35,7 @@
             </filter>
           </defs>
           
-          <!-- 秒针轨道背景 -->
+          <!-- 秒针轨道 -->
           <circle 
             class="track-bg" 
             cx="100" 
@@ -43,7 +43,7 @@
             r="85"
           />
           
-          <!-- 分钟轨道背景 -->
+          <!-- 分钟轨道 -->
           <circle 
             class="track-bg" 
             cx="100" 
@@ -51,7 +51,7 @@
             r="68"
           />
           
-          <!-- 时针轨道背景 -->
+          <!-- 时针轨道 -->
           <circle 
             class="track-bg" 
             cx="100" 
@@ -80,7 +80,7 @@
             fill="none"
           />
           
-          <!-- 秒针指针（高亮点） -->
+          <!-- 秒针指针 -->
           <circle 
             ref="secondHand"
             class="second-hand" 
@@ -89,7 +89,7 @@
             r="6"
           />
           
-          <!-- 分钟指针（高亮点） -->
+          <!-- 分钟指针 -->
           <circle 
             ref="minuteHand"
             class="minute-hand" 
@@ -98,7 +98,7 @@
             r="8"
           />
           
-          <!-- 时针指针（高亮点） -->
+          <!-- 时针指针 -->
           <circle 
             ref="hourHand"
             class="hour-hand" 
@@ -173,7 +173,6 @@ const activeDays = computed(() => {
 
 // 生成圆弧路径（从起点到终点，逆时针）
 const createArcPath = (centerX: number, centerY: number, radius: number, startAngle: number, endAngle: number) => {
-  // 限制轨迹长度，最多显示 240 度（2/3 圆）
   const maxArc = 240
   let arcAngle = endAngle - startAngle
   if (arcAngle < 0) arcAngle += 360
@@ -223,7 +222,6 @@ const updateClock = () => {
   if (secondHand.value && minuteHand.value && hourHand.value && 
       secondTrail.value && minuteTrail.value && hourTrail.value) {
     
-    // 动画更新秒针
     anime({
       targets: secondHand.value,
       cx: secondPos.x,
@@ -232,7 +230,6 @@ const updateClock = () => {
       easing: 'linear'
     })
     
-    // 动画更新分钟指针
     anime({
       targets: minuteHand.value,
       cx: minutePos.x,
@@ -241,7 +238,6 @@ const updateClock = () => {
       easing: 'linear'
     })
     
-    // 动画更新小时指针
     anime({
       targets: hourHand.value,
       cx: hourPos.x,
@@ -250,7 +246,6 @@ const updateClock = () => {
       easing: 'linear'
     })
     
-    // 更新轨迹路径
     const secondTrailPath = createArcPath(100, 100, 85, secondAngle - 240, secondAngle)
     const minuteTrailPath = createArcPath(100, 100, 68, minuteAngle - 240, minuteAngle)
     const hourTrailPath = createArcPath(100, 100, 51, hourAngle - 240, hourAngle)
@@ -291,7 +286,6 @@ const startClock = () => {
   if (secondHand.value && minuteHand.value && hourHand.value && 
       secondTrail.value && minuteTrail.value && hourTrail.value) {
     
-    // 立即设置指针位置
     const secondPos = {
       x: 100 + 85 * Math.cos((secondAngle - 90) * Math.PI / 180),
       y: 100 + 85 * Math.sin((secondAngle - 90) * Math.PI / 180)
@@ -312,7 +306,6 @@ const startClock = () => {
     hourHand.value.setAttribute('cx', hourPos.x.toString())
     hourHand.value.setAttribute('cy', hourPos.y.toString())
     
-    // 立即设置轨迹路径
     const secondTrailPath = createArcPath(100, 100, 85, secondAngle - 240, secondAngle)
     const minuteTrailPath = createArcPath(100, 100, 68, minuteAngle - 240, minuteAngle)
     const hourTrailPath = createArcPath(100, 100, 51, hourAngle - 240, hourAngle)
@@ -363,7 +356,6 @@ const animateWaterDrop = () => {
     loop: true
   })
   
-  // 高光移动动画
   anime({
     targets: waterHighlight.value,
     translateX: [0, 5, -2, 3, 0],
@@ -376,7 +368,6 @@ const animateWaterDrop = () => {
   })
 }
 
-// 滚动动画观察器
 const setupScrollAnimation = () => {
   if (!cardRef.value) return
   

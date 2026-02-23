@@ -1,5 +1,8 @@
 <template>
   <div class="home-page">
+    <!-- Loading 动画 -->
+    <LoadingScreen @loaded="onLoadingComplete" />
+    
     <!-- 星轨背景 - 延伸到下方 -->
     <StarTrackBackground />
     
@@ -71,6 +74,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import anime from 'animejs'
+import LoadingScreen from '@/components/LoadingScreen.vue'
 import StarTrackBackground from '@/components/StarTrackBackground.vue'
 import SideNavigation from '@/components/SideNavigation.vue'
 import HeroSection from '@/components/HeroSection.vue'
@@ -86,6 +90,11 @@ const wave1 = ref(null)
 const wave2 = ref(null)
 const wave3 = ref(null)
 let scrollAnimation = null
+
+// Loading 完成回调
+const onLoadingComplete = () => {
+  console.log('Loading complete!')
+}
 
 // 生成波浪路径
 const generateWavePath = (baseY, amplitude, frequency, phase, segments = 6) => {
