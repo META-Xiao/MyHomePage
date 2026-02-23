@@ -6,7 +6,7 @@
     
     <!-- 活跃度热力图 -->
     <div class="heatmap-section">
-      <IntroHeatmapSection :year="currentYear" :data="heatmapData" />
+      <IntroHeatmapSection :year="currentYear" :data="heatmapData" @data-loaded="onHeatmapDataLoaded" />
     </div>
     
     <!-- 上方区域：技能墙 + 个人信息 -->
@@ -157,6 +157,8 @@ import MusicPlayer from './MusicPlayer.vue'
 import IntroHeatmapSection from './IntroHeatmapSection.vue'
 import { fetchHeatmapData } from '@/utils/api'
 
+const emit = defineEmits(['heatmap-loaded'])
+
 const socialLinks = [
   { name: 'github', icon: 'ri:github-fill', link: 'https://github.com/META-Xiao', color: '#333' },
   { name: 'bilibili', icon: 'ri:bilibili-fill', link: '#', color: '#fb7299' },
@@ -245,6 +247,11 @@ const setSocialCardRef = (el, index) => {
   if (el) {
     socialCardRefs.value[index] = el
   }
+}
+
+// 热力图数据加载完成回调
+const onHeatmapDataLoaded = () => {
+  emit('heatmap-loaded')
 }
 
 onMounted(async () => {

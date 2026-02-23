@@ -151,6 +151,8 @@ const props = defineProps<{
   data?: HeatmapData[]
 }>()
 
+const emit = defineEmits(['data-loaded'])
+
 const chartRef = ref<HTMLElement>()
 const cardRef = ref<HTMLElement>()
 const clockSvg = ref<SVGSVGElement>()
@@ -539,6 +541,8 @@ const initChart = () => {
   }
 
   chartInstance.setOption(option)
+  
+  emit('data-loaded')
 }
 
 const handleResize = () => {
@@ -552,6 +556,8 @@ watch(() => props.data, () => {
         data: props.data.map(item => [item.date, item.value])
       }
     })
+    // 数据更新后也触发加载完成事件
+    emit('data-loaded')
   }
 }, { deep: true })
 

@@ -1,7 +1,7 @@
 <template>
   <div class="home-page">
     <!-- Loading 动画 -->
-    <LoadingScreen @loaded="onLoadingComplete" />
+    <LoadingScreen :heatmap-loaded="heatmapLoaded" @loaded="onLoadingComplete" />
     
     <!-- 星轨背景 - 延伸到下方 -->
     <StarTrackBackground />
@@ -43,7 +43,7 @@
 
     <!-- 关于我 -->
     <section id="about" class="section-wrapper">
-      <AboutSection />
+      <AboutSection @heatmap-loaded="onHeatmapLoaded" />
     </section>
 
     <!-- 我会在哪儿 -->
@@ -91,9 +91,15 @@ const wave2 = ref(null)
 const wave3 = ref(null)
 let scrollAnimation = null
 
-// Loading 完成回调
+const heatmapLoaded = ref(false)
+
 const onLoadingComplete = () => {
   console.log('Loading complete!')
+}
+
+const onHeatmapLoaded = () => {
+  console.log('Heatmap loaded!')
+  heatmapLoaded.value = true
 }
 
 // 生成波浪路径

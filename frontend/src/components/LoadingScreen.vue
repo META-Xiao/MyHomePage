@@ -52,8 +52,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import anime from 'animejs'
+
+const props = defineProps({
+  heatmapLoaded: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const isLoading = ref(true)
 const svgRefs = ref([])
@@ -61,6 +68,18 @@ const pathRefs = ref([])
 const wavePath0 = ref(null)
 const wavePath1 = ref(null)
 const wavePath2 = ref(null)
+const minLoadingTime = ref(false)
+
+// 监听热力图加载状态
+watch(() => props.heatmapLoaded, (loaded) => {
+  if (loaded && minLoadingTime.value) {
+    // 热力图加载完成且最小加载时间已过
+    setTimeout(() => {
+      isLoading.value = false
+      emit('loaded')
+    }, 500) // 额外延迟 0.5 秒，让用户看到完整动画
+  }
+})
 
 const morphPaths = {
   path1: [
@@ -135,11 +154,16 @@ onMounted(() => {
 
   animateWaves()
   
-  // 模拟加载完成
-  // 就让你看我动画：）
+  // 设置最小加载时间（1.5秒）
   setTimeout(() => {
-    isLoading.value = false
-    emit('loaded')
+    minLoadingTime.value = true
+    // 如果热力图已经加载完成，立即关闭 loading
+    if (props.heatmapLoaded) {
+      setTimeout(() => {
+        isLoading.value = false
+        emit('loaded')
+      }, 500)
+    }
   }, 1500)
 })
 
