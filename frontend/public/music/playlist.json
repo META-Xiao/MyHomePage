@@ -4,20 +4,20 @@
     "name": "pinKing",
     "artist": "ChiliChill、陈Z-STUDIO",
     "url": "https://image-host-for-meta.oss-cn-hangzhou.aliyuncs.com/MusicPlayer/music/1.mp3",
-    "cover": "https://image-host-for-meta.oss-cn-hangzhou.aliyuncs.com/MusicPlayer/img/1.jpg?x-oss-process=image/resize,w_200,h_200/quality,q_80"
+    "cover": "https://image-host-for-meta.oss-cn-hangzhou.aliyuncs.com/MusicPlayer/img/1.jpg"
   },
   {
     "id": 2,
     "name": "不及",
     "artist": "蔡诗芸、陈Z-STUDIO、HOYO-MiX",
     "url": "https://image-host-for-meta.oss-cn-hangzhou.aliyuncs.com/MusicPlayer/music/2.mp3",
-    "cover": "https://image-host-for-meta.oss-cn-hangzhou.aliyuncs.com/MusicPlayer/img/2.jpg?x-oss-process=image/resize,w_200,h_200/quality,q_80"
+    "cover": "https://image-host-for-meta.oss-cn-hangzhou.aliyuncs.com/MusicPlayer/img/2.jpg"
   },
   {
     "id": 3,
     "name": "Automaton Waltz",
     "artist": "PLUM",
     "url": "https://image-host-for-meta.oss-cn-hangzhou.aliyuncs.com/MusicPlayer/music/3.mp3",
-    "cover": "https://image-host-for-meta.oss-cn-hangzhou.aliyuncs.com/MusicPlayer/img/3.jpg?x-oss-process=image/resize,w_200,h_200/quality,q_80"
+    "cover": "https://image-host-for-meta.oss-cn-hangzhou.aliyuncs.com/MusicPlayer/img/3.jpg"
   }
 ]
