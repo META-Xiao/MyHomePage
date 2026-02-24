@@ -138,6 +138,12 @@ const drawVisualizer = () => {
 const togglePlay = async () => {
   if (!audioRef.value) return
   
+  // 首次播放时才加载音频文件
+  if (!audioRef.value.src) {
+    audioRef.value.src = currentSong.value.url
+    audioRef.value.load()
+  }
+  
   if (!audioContext) {
     initAudioContext()
   }
@@ -179,9 +185,10 @@ const formatTime = (seconds) => {
   return `${mins}:${secs.toString().padStart(2, '0')}`
 }
 
-const loadSong = (song) => {
+const loadSong = (song, autoLoad = false) => {
   currentSong.value = song
-  if (audioRef.value) {
+  if (audioRef.value && autoLoad) {
+    // 只有在需要时才加载音频文件
     audioRef.value.src = song.url
     audioRef.value.load()
   }
@@ -196,7 +203,7 @@ const loadPlaylist = async () => {
 
     if (data.length > 0) {
       currentIndex.value = 0
-      loadSong(data[0])
+      loadSong(data[0], false)  // 不自动加载音频文件
     }
   } catch (error) {
     console.error('加载播放列表失败:', error)
@@ -212,7 +219,7 @@ const loadPlaylist = async () => {
 const nextSong = () => {
   if (playlist.value.length === 0) return
   currentIndex.value = (currentIndex.value + 1) % playlist.value.length
-  loadSong(playlist.value[currentIndex.value])
+  loadSong(playlist.value[currentIndex.value], true)  // 切歌时加载
   if (isPlaying.value) {
     setTimeout(() => audioRef.value.play(), 100)
   }
@@ -221,7 +228,7 @@ const nextSong = () => {
 const prevSong = () => {
   if (playlist.value.length === 0) return
   currentIndex.value = (currentIndex.value - 1 + playlist.value.length) % playlist.value.length
-  loadSong(playlist.value[currentIndex.value])
+  loadSong(playlist.value[currentIndex.value], true) 
   if (isPlaying.value) {
     setTimeout(() => audioRef.value.play(), 100)
   }

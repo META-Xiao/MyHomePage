@@ -61,13 +61,23 @@ const thumbnailUrl = computed(() => {
   return props.link.icon
 })
 
-// 图片加载完成后，替换为高清图
+// 图片加载完成后，等待页面完全加载再替换为高清图
 const onImageLoad = (e) => {
   if (imageLoaded.value) return
   imageLoaded.value = true
   
+  if (document.readyState === 'complete') {
+    loadHighResImage(e.target)
+  } else {
+    window.addEventListener('load', () => {
+      loadHighResImage(e.target)
+    }, { once: true })
+  }
+}
+
+// 加载高清图
+const loadHighResImage = (img) => {
   setTimeout(() => {
-    const img = e.target
     const hdSrc = img.getAttribute('data-src')
     if (hdSrc && hdSrc !== img.src) {
       const hdImg = new Image()
@@ -76,7 +86,7 @@ const onImageLoad = (e) => {
       }
       hdImg.src = hdSrc
     }
-  }, 100)
+  }, 500)
 }
 
 // 图片加载失败时的处理
