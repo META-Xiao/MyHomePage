@@ -7,8 +7,8 @@
   <link rel="icon" type="image/svg+xml" href="/vite.svg">
   
   <!-- 预连接关键域名 -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.loli.net">
+  <link rel="preconnect" href="https://gstatic.loli.net" crossorigin>
   <link rel="dns-prefetch" href="https://image-host-for-meta.oss-cn-hangzhou.aliyuncs.com">
   <link rel="dns-prefetch" href="https://api.teslongxiao.cn">
   <link rel="dns-prefetch" href="https://cdn.xcnya.cn">
@@ -21,7 +21,7 @@
     }
   </style>
   
-  <!-- 字体异步加载 -->
+  <!-- 字体使用国内 CDN 镜像 -->
   <script>
     console.log('[Index] HTML 开始解析')
     
@@ -30,14 +30,14 @@
       requestIdleCallback(function() {
         var link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap';
+        link.href = 'https://fonts.loli.net/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap';
         document.head.appendChild(link);
       });
     } else {
       setTimeout(function() {
         var link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap';
+        link.href = 'https://fonts.loli.net/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap';
         document.head.appendChild(link);
       }, 100);
     }

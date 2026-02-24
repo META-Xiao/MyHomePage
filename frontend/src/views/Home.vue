@@ -189,7 +189,7 @@ onMounted(() => {
           const path = generateWavePath(baseY, 15, 60, phase, 4)
           // 批量更新 DOM，减少回流
           requestAnimationFrame(() => {
-            wave1.value.setAttribute('d', path)
+          wave1.value.setAttribute('d', path)
           })
         }
       }
@@ -212,7 +212,7 @@ onMounted(() => {
           const baseY = anim.animations[1].currentValue
           const path = generateWavePath(baseY, 20, 90, phase, 5)
           requestAnimationFrame(() => {
-            wave2.value.setAttribute('d', path)
+          wave2.value.setAttribute('d', path)
           })
         }
       }
@@ -230,7 +230,7 @@ onMounted(() => {
           const phase = anim.animations[0].currentValue
           const path = generateWavePath(40, 12, 120, phase, 6)
           requestAnimationFrame(() => {
-            wave3.value.setAttribute('d', path)
+          wave3.value.setAttribute('d', path)
           })
         }
       }
