@@ -161,11 +161,11 @@ const emit = defineEmits(['heatmap-loaded'])
 
 const socialLinks = [
   { name: 'github', icon: 'ri:github-fill', link: 'https://github.com/META-Xiao', color: '#333' },
-  { name: 'bilibili', icon: 'ri:bilibili-fill', link: '#', color: '#fb7299' },
+  { name: 'bilibili', icon: 'ri:bilibili-fill', link: 'https://space.bilibili.com/332124713', color: '#fb7299' },
   { name: 'twitter', icon: 'ri:twitter-x-fill', link: '#', color: '#1da1f2' },
-  { name: 'email', icon: 'ri:mail-fill', link: 'mailto:your@email.com', color: '#ea4335' },
+  { name: 'email', icon: 'ri:mail-fill', link: 'mailto:2040426884@qq.com', color: '#ea4335' },
   { name: 'wechat', icon: 'ri:wechat-fill', link: '#', color: '#07c160' },
-  { name: 'qq', icon: 'ri:qq-fill', link: '#', color: '#12b7f5' },
+  { name: 'qq', icon: 'ri:qq-fill', link: '2040426884', color: '#12b7f5' },
 ]
 
 const techStack = [
