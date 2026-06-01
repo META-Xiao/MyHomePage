@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-slim AS builder
+FROM node:22-slim AS builder
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
@@ -7,14 +7,14 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 
 # Build frontend
-COPY frontend/package*.json ./frontend/
+COPY frontend/package*.json frontend/pnpm-workspace.yaml ./frontend/
 WORKDIR /app/frontend
 RUN pnpm install
 COPY frontend/ ./
 RUN pnpm run build
 
 # Production stage
-FROM node:20-slim
+FROM node:22-slim
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 WORKDIR /app/backend
 
 # Copy and install backend dependencies
-COPY backend/package*.json ./
+COPY backend/package*.json backend/pnpm-workspace.yaml ./
 COPY backend/tsconfig.json ./
 RUN pnpm install
 
