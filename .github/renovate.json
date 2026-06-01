@@ -8,19 +8,19 @@
   "labels": ["dependencies"],
   "packageRules": [
     {
-      "description": "Auto-merge patch updates for non-major deps",
+      "description": "Auto-merge patch updates for devDependencies",
+      "matchDepTypes": ["devDependencies"],
       "matchUpdateTypes": ["patch"],
       "automerge": true
     },
     {
-      "description": "Dockerfile base images — pin to LTS tags",
+      "description": "Keep Node.js on LTS 22",
       "matchManagers": ["dockerfile"],
       "matchPackageNames": ["node"],
       "allowedVersions": "/^22/"
     },
     {
       "description": "Group pnpm updates together",
-      "matchManagers": ["dockerfile", "npm"],
       "matchPackageNames": ["pnpm"],
       "groupName": "pnpm"
     }
