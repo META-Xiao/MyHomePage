@@ -1,5 +1,5 @@
 # Build stage
-FROM node:22.23.0-slim AS builder
+FROM node:22.23.1-slim AS builder
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
@@ -14,7 +14,7 @@ COPY frontend/ ./
 RUN pnpm run build
 
 # Production stage
-FROM node:22.23.0-slim
+FROM node:22.23.1-slim
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
