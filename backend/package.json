@@ -10,7 +10,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "express": "4.22.2",
+    "express": "4.22.3",
     "cors": "2.8.6",
     "axios": "1.19.0",
     "dotenv": "16.6.1",
